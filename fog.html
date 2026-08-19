@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1200"/>
+<title>Inside the Fog · Somewhere Still</title>
+<meta name="description" content="A perceptual descent. Part of Somewhere Still."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&family=Space+Mono&display=swap" rel="stylesheet">
+<script>
+window.addEventListener('DOMContentLoaded',function(){
+  var fe=document.getElementById('fogentry');
+  if(fe) fe.classList.add('ready');
+});
+</script>
+<script src="assets/lib/three.min.js"></script>
+<script>
+if(typeof THREE==='undefined'){
+  document.write('<scr'+'ipt crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/scr'+'ipt>');
+}
+</script>
+<link rel="stylesheet" href="fog.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="cursor"></div>
+<div id="vignette"></div>
+<div id="consume"></div>
+<div id="stage-counter"></div>
+<a id="leave-btn" href="index.html">&larr; leave</a>
+<div id="whisper"></div>
+<div id="forkhint" aria-hidden="true">choose a way down</div>
+<div id="descent"></div>
+
+<div id="fogentry">
+  <div class="fe-in">
+    <div class="fe-warn">
+      This experience contains sudden sounds, flashing light, and
+      disorienting motion.<br>
+      It recreates aspects of memory loss and may be distressing.<br>
+      You can leave at any time.
+    </div>
+    <div class="fe-ring" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="fe-hint">click anywhere to enter the fog</div>
+  </div>
+</div>
+<div id="clin-note" aria-live="polite"></div>
+
+<div class="screen" id="screen-stage2">
+  <div id="s2-fog"></div>
+  <div id="s2-thread"></div>
+  <div class="notch" style="left:22%"></div>
+  <div class="notch" style="left:36%"></div>
+  <div class="notch" style="left:50%"></div>
+  <div class="notch" style="left:64%"></div>
+  <div class="notch" style="left:78%"></div>
+  <div class="slip" data-i="0">a birth</div>
+  <div class="slip" data-i="1">a first day of school</div>
+  <div class="slip" data-i="2">a wedding</div>
+  <div class="slip" data-i="3">a long winter</div>
+  <div class="slip" data-i="4">this morning</div>
+  <div id="s2-hint">hang the days on the line &middot; any order</div>
+</div>
+
+<div class="screen" id="screen-stage3">
+  <div id="s3-prompt">What is your name?</div>
+  <div id="s3-typed"></div>
+  <div id="s3-keyboard"></div>
+  <div class="frag" id="s3-frag" style="left:14%;top:72%;">what was it</div>
+</div>
+
+<div class="screen" id="screen-stage4">
+  <div id="s4-obj">
+    <svg viewBox="0 0 160 160" aria-hidden="true">
+
+      <circle cx="52" cy="58" r="22" fill="none"/>
+      <circle cx="52" cy="58" r="9" fill="none"/>
+      <path d="M70 66 L118 114"/>
+      <path d="M118 114 L118 128"/>
+      <path d="M118 114 L132 114"/>
+      <path d="M108 104 L108 116"/>
+    </svg>
+  </div>
+  <div id="s4-label">ballet shoes</div>
+  <div class="frag" id="s4-frag1" style="left:12%;top:24%;">bid</div>
+  <div class="frag" id="s4-frag2" style="left:78%;top:80%;">drawing</div>
+</div>
+
+<div class="screen" id="screen-stage5">
+  <div id="s5-prompt">before sleep</div>
+  <div class="task" id="task-lamp" style="left:20%;top:26%;">
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <path class="tk-off" d="M22 14 h16 l4 16 h-24 z"/>
+      <path d="M26 30 h8 v10 h-8 z"/>
+      <path d="M24 44 h12"/>
+      <g class="tk-glow"><path d="M30 8 v-5 M42 12 l4-4 M18 12 l-4-4"/></g>
+    </svg>
+    <div class="tk-cap">the lamp</div>
+  </div>
+  <div class="task" id="task-lock" style="left:50%;top:60%;">
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <circle class="tk-glow" cx="30" cy="37" r="13"/>
+      <rect x="18" y="28" width="24" height="20" rx="2"/>
+      <path class="tk-shackle" d="M23 28 v-6 a7 7 0 0 1 14 0 v6"/>
+      <circle cx="30" cy="37" r="2.5"/>
+    </svg>
+    <div class="tk-cap">the door</div>
+  </div>
+  <div class="task" id="task-key" style="left:80%;top:30%;">
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <circle cx="24" cy="24" r="9" fill="none"/>
+      <circle cx="24" cy="24" r="3.5" fill="none"/>
+      <path d="M31 31 L46 46"/>
+      <path d="M46 46 L46 52"/>
+      <path d="M46 46 L52 46"/>
+    </svg>
+    <div class="tk-cap">the key</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-stage6">
+  <div id="s6-bars"></div>
+  <div id="s6-sync">sync: 100%</div>
+  <div id="s6-label">Listen. Watch. Do they match?</div>
+</div>
+
+<div class="screen" id="screen-stage7">
+  <button id="s7-stop">STOP</button>
+  <div id="s7-note">emergency stop</div>
+</div>
+<div id="s7-agit"></div>
+<div id="s7-white"></div>
+<div id="s7-final">Still here.<br>Somewhere still.</div>
+<div id="s7-evidence">
+  <div class="ev-head ev-line">what you felt has names</div>
+  <div class="ev-line">words that flee the hand &middot; Peters-Founshtein et al., 2024</div>
+  <div class="ev-line">days that will not hold their order &middot; Khot et al., 2026</div>
+  <div class="ev-line">a name that will not come &middot; Weekes, 2020</div>
+  <div class="ev-line">a thing seen but no longer known &middot; Isella et al., 2022</div>
+  <div class="ev-line">steps that reset behind you &middot; Gleichgerrcht et al., 2011</div>
+  <div class="ev-line">a world out of sync with itself &middot; Wu et al., 2012 / Festa et al., 2017</div>
+  <div class="ev-line">and at last, the white &middot; Alzheimer&rsquo;s Society, 2023</div>
+  <div class="ev-line" style="height:10px"></div>
+  <div class="ev-line" style="color:rgba(16,23,28,0.9);font-style:italic;font-family:'Lora',serif;font-size:12px;">
+  you could leave at any time. that is the difference.</div>
+</div>
+<div id="s7-replay">
+  <div class="rp-head">return to any moment</div>
+  <a class="rp-line" data-stage="1">the words that fled the hand</a>
+  <a class="rp-line" data-stage="2">the string of days</a>
+  <a class="rp-line" data-stage="3">the name that would not come</a>
+  <a class="rp-line" data-stage="4">the thing you could not name</a>
+  <a class="rp-line" data-stage="5">the steps that reset</a>
+  <a class="rp-line" data-stage="6">the world out of sync</a>
+  <a class="rp-line" data-stage="7">the white</a>
+  <a class="rp-line rp-full" data-stage="0">from the beginning</a>
+  <a class="rp-line rp-sea" href="index.html#/sea">&larr; return to the sea</a>
+</div>
+<div id="s7-fade"></div>
+
+<div id="corridor"><div class="door"></div></div>
+<div id="demo-end">the fog closed early &middot; refresh to return</div>
+<div id="opening"></div>
+<script>
+if(typeof THREE==='undefined'){
+  document.body.insertAdjacentHTML('beforeend',
+    '<div style="position:fixed;inset:0;z-index:99999;background:#02101C;color:#9fc0d0;'
+    +'display:flex;align-items:center;justify-content:center;font:14px/1.8 monospace;'
+    +'text-align:center;padding:0 8vw">three.js did not load.<br>'
+    +'check assets/lib/three.min.js exists, or your connection.</div>');
+}
+</script>
+<script src="core.js"></script>
+<script src="fog.js"></script>
+</body>
+</html>

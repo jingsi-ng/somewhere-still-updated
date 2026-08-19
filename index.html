@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Somewhere Still</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=DM+Sans:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+  <style id="ss-critical">
+#ss-veil{position:fixed;inset:0;background:#000;z-index:99999;pointer-events:none;opacity:1;transition:opacity 700ms ease;}
+</style>
+</head>
+<body>
+<div id="ss-veil" aria-hidden="true"></div>
+
+<div id="spacer"></div>
+<div id="landing-overlay">
+
+<canvas id="c"></canvas>
+
+<div id="caustics" class="hud"></div>
+<div id="flashlayer"></div>
+<div class="vignette"></div>
+
+<div id="gate0">
+  <canvas id="g0canvas"></canvas>
+  <div class="g0-inner" id="g0click">
+    <div class="g0-text">Headphones on.<br>Take a breath, and sink.</div>
+    <div class="g0-permission">This story can hear you. Allow the microphone when prompted.<br>It can be declined - the story continues either way.</div>
+    <div class="g0-hint">touch the surface</div>
+  </div>
+</div>
+
+<div id="hero">
+  <div id="hero-inner">
+    <div class="hero-eyebrow">Somewhere Still</div>
+    <div class="hero-title">She is not <span class="flick">gone</span>.<br>She is somewhere<br>you haven&rsquo;t <span class="flick b">looked</span> yet.</div>
+    <div class="hero-sub">Alzheimer&rsquo;s disease is taking the memories of three people.<br>You are a memory diver. Below, in the dark water,<br>rest what they could not bear to lose.</div>
+    <div class="hero-descend"><span>scroll to descend</span><div class="sink-dots"><i></i><i></i><i></i></div></div>
+  </div>
+</div>
+
+<div class="hud layer" id="l1">Margaret &middot; the unfinished dance</div>
+<div class="hud layer" id="l2">Megan &middot; the unsaid words</div>
+<div class="hud layer" id="l3">Thomas &middot; the unsung song</div>
+<div class="hud layer" id="lbottom" style="top:50%;font-size:clamp(16px,2.2vw,26px);color:var(--ui);">Three memories never learned to fade.<br>Swim into the light. Stay, and they will let you in.</div>
+
+<div class="hud" id="depth"><span class="d-label">DEPTH</span><span class="d-num">0000</span><span class="d-unit">M</span></div>
+
+<div id="floorgate">
+  <div class="fg-line">You have drifted as deep as memory goes.</div>
+  <button id="floorMap">rise through the currents</button>
+</div>
+
+<div id="navlayer">
+  <canvas id="navcanvas"></canvas>
+  <a href="#" id="navback">&larr; back to the deep sea</a>
+  <nav id="nava11y" aria-label="Somewhere Still navigation">
+    <a href="#" class="nav-a11y-link" data-key="threads">The Threads</a>
+    <a href="fog.html" class="nav-a11y-link" data-key="fog">Inside the Fog</a>
+    <a href="understanding.html" class="nav-a11y-link" data-key="understanding">Understanding</a>
+    <a href="team.html" class="nav-a11y-link" data-key="team">The Team</a>
+    <a href="our-story.html" class="nav-a11y-link" data-key="ourstory">Our Story</a>
+  </nav>
+</div>
+
+<div id="ropelamp" role="button" tabindex="0" aria-label="Rise to the surface: open navigation">
+  <i aria-hidden="true"></i>
+  <span aria-hidden="true">to the surface</span>
+</div>
+
+<div id="whiteout"></div>
+</div>
+
+
+<script src="core.js"></script>
+<script>
+(function(){
+  Libs.ready([['THREE','assets/lib/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js']], function(){
+    var s = document.createElement('script');
+    s.src = 'script.js';
+    s.async = false;
+    document.body.appendChild(s);
+  });
+})();
+</script>
+</body>
+</html>

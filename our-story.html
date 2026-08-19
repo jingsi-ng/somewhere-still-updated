@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1200"/>
+<title>Our Story · Somewhere Still</title>
+<meta name="description" content="How Somewhere Still began, why we chose Alzheimer's disease, and what we built."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="frame.css">
+</head>
+<body class="veiled p-story">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="inkStill" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="paperbed" aria-hidden="true"></div>
+<canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+<header class="chrome">
+  <a class="return-sea" href="index.html#/sea" data-leave>&larr; return to the sea</a>
+  <span class="station">SHIP&rsquo;S LOG · N 53.34 W 6.26</span>
+</header>
+
+<main class="page">
+  <span class="eyebrow">OUR STORY</span>
+  <h1 class="title ink">Nothing Lasts Forever.</h1>
+  <p class="subtitle">People say memories are eternal, but Alzheimer&rsquo;s pauses eternity.</p>
+</main>
+
+<div class="story-stanza told" data-log="ENTRY 01&#10;THE CREW"><p>At the very beginning, our team consisted of just two people. We did not
+have a clear idea yet but we simply wanted to create an immersive interactive website that could offer
+a different way of experiencing stories. As the concept evolved, we realised that illustrations would
+make the experience far more engaging, so Emily joined the team as our illustrator. Through further
+discussions, we also discovered that immersion relies heavily on sound, ambience, and music, which led
+Fatih to become our sound designer. By the end of our journey, our team had grown into a collaboration
+between a web developer, a storyteller, an illustrator, and a sound designer. This combination allowed
+us to move beyond traditional storytelling formats such as books, videos, and films, and explore a new
+way of telling stories through an immersive web experience.</p></div>
+
+<div class="story-stanza told" data-log="ENTRY 02&#10;THE COURSE">
+  <div>
+    <p>When we first began the project, we did not have a specific theme in mind. As we explored
+    different ideas together, our discussions naturally led us to Alzheimer&rsquo;s disease. One of our
+    team members, Elin, had previously created a short film about Alzheimer&rsquo;s during her
+    undergraduate studies. This project became an opportunity to revisit the subject from a completely
+    different perspective.</p>
+    <p>Rather than asking audiences to observe Alzheimer&rsquo;s from the third perspective, we wanted
+    them to experience fragments of the condition from first view. Through interaction and storytelling,
+    we hoped to move beyond traditional narrative forms and create a more personal and emotional
+    understanding of memory loss.</p>
+    <p>To Elin, Alzheimer&rsquo;s is different from illnesses such as cancer. It is not simply a disease
+    that brings people closer to death. Instead, it feels like a long tug-of-war between a person and
+    their own memories, gradually taking away independence and the sense of self. That perspective
+    became the emotional foundation of our project and ultimately shaped Alzheimer&rsquo;s into the
+    central theme of our storytelling.</p>
+  </div>
+</div>
+
+<div class="story-stanza told" data-log="ENTRY 03&#10;THE VESSEL">
+  <div>
+    <p>As populations continue to age, dementia is becoming an increasingly significant global health
+    challenge. According to the World Health Organization (WHO), around 57 million people worldwide were
+    living with dementia in 2021, with nearly 10 million new cases diagnosed every year.
+    Alzheimer&rsquo;s disease is the most common form of dementia, accounting for approximately
+    60&ndash;70% of all dementia cases. Rather than asking people to learn about it through articles or
+    medical descriptions alone, we wanted to create an experience that allows visitors to feel, even
+    briefly, what living with memory loss might be like.</p>
+    <p>Besides, Somewhere Still is an immersive narrative website built around three interconnected
+    stories: Margaret, Megan, and Thomas. Together, they represent three of the relationships that shape
+    our lives &middot; family, friendship, and love. In many ways, these relationships are also what we
+    spend our lives searching for and holding onto.</p>
+  </div>
+</div>
+
+<div class="story-stanza closing ink"><p>Memories may fade,<br>
+the love and connections we share remain somewhere, still.</p></div>
+
+<footer class="sea-floor">
+  <div class="closing">Still here. Somewhere still.</div>
+  <div class="credit">SOMEWHERE STILL · MSC INTERACTIVE DIGITAL MEDIA · GRIFFITH COLLEGE DUBLIN · N 53.34 W 6.26</div>
+</footer>
+
+<div id="veil" aria-hidden="true"></div>
+
+<script src="frame.js"></script>
+</body>
+</html>

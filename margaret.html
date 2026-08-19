@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Margaret &middot; Somewhere Still</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="margaret.css">
+<style id="ss-critical">
+html,body{background:#04192B;margin:0;}
+#margaret-scene{ display:block; }
+.wscene,
+#w1s1, #w1s2, #w1s3, #w1s4, #w1s5, #w1s6, #w1s7, #w1s8, #w1s9 {
+  position:absolute; inset:0; display:none;
+}
+#transCanvas { position:fixed; inset:0; z-index:100; pointer-events:none; display:none; }
+</style>
+</head>
+<body>
+<div id="ss-veil" aria-hidden="true"></div>
+
+<div id="margaret-scene">
+  <div id="w1s9-choice">
+    <button id="w1s9-tomap">continue</button>
+    <button id="w1s9-tosea">back to the deep sea</button>
+  </div>
+  <div id="scene"></div>
+
+  <div id="mirrorHouse">
+    <div id="houseAmbientLabel">somewhere still &middot; margaret</div>
+    <div id="houseStage">
+       <div id="corridorZone">
+        <div class="corr-layer" id="corr-bg" data-asset="corridor_bg"></div>
+        <div class="corr-layer" id="corr-mg" data-asset="corridor_mg"></div>
+        <div class="corr-layer" id="corr-fg" data-asset="corridor_fg"></div>
+      </div>
+
+<div class="mirror" id="m1" data-wave="1" style="left:12%; bottom:23%;">
+  <div class="frame" style="width:170px; height:204px;" data-mirror="mirror1">
+    <div class="glow" style="inset:11% 37% 22% 33%;"></div>
+    <div class="sweep"></div>
+  </div>
+</div>
+
+<div class="mirror" id="m2" data-wave="2" style="left:31%; bottom:22%;">
+  <div class="frame" style="width:230px; height:276px;" data-mirror="mirror2">
+    <div class="glow" style="inset:25% 37% 19% 32%;"></div>
+    <div class="sweep"></div>
+  </div>
+</div>
+
+<div class="mirror" id="m3" data-wave="3" style="left:53%; bottom:48%;">
+  <div class="frame" style="width:125px; height:150px;" data-mirror="mirror3">
+    <div class="glow" style="inset:39% 30% 19% 26%; border-radius:50%;"></div>
+    <div class="sweep"></div>
+  </div>
+</div>
+
+<div class="mirror" id="m4" data-wave="4" style="left:72%; bottom:38%;">
+  <div class="frame" style="width:115px; height:138px;" data-mirror="mirror4">
+    <div class="glow" style="inset:26% 29% 22% 26%;"></div>
+    <div class="sweep"></div>
+  </div>
+</div>
+
+<div class="mirror" id="m5" data-wave="5" style="left:88%; bottom:44%;">
+  <div class="frame" style="width:95px; height:114px;" data-mirror="mirror5">
+    <div class="glow" style="inset:25% 26% 25% 21%;"></div>
+    <div class="sweep"></div>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <div id="waitRing" aria-hidden="true"><i></i></div>
+  <div id="houseMarks" aria-hidden="true"></div>
+  <div id="houseEdgeL" class="house-edge" aria-hidden="true"></div>
+  <div id="houseEdgeR" class="house-edge" aria-hidden="true"></div>
+
+  <div id="torch"></div>
+
+  <canvas id="housemotes"></canvas>
+
+  <canvas id="transCanvas"></canvas>
+
+  <div id="ss-overlay" aria-hidden="true">
+    <div class="ss-grain"></div>
+    <div class="ss-vig"></div>
+  </div>
+
+  <div id="houseSubtitle"></div>
+
+  <div id="w1s1">
+    <div id="w1s1-frame">
+      <div class="w1s1-layer" id="w1s1-hospital" data-asset="flicker_hospital"></div>
+      <div class="w1s1-layer" id="w1s1-academy" data-asset="flicker_academy"></div>
+      <div class="w1s1-layer" id="w1s1-kitchen" data-asset="flicker_kitchen"></div>
+      <div id="w1s1-er">
+        <canvas id="w1s1-ercanvas"></canvas>
+        <div id="w1s1-erpulse"></div>
+        <div class="er-grain"></div>
+      </div>
+      <div id="w1s1-panic">
+        <div id="w1s1-alarmwash"></div>
+      </div>
+      <div id="w1s1-doorway">
+        <div id="w1s1-dark"></div>
+        <div id="w1s1-pool"></div>
+      </div>
+      <div id="w1s1-coldflash"></div>
+      <div id="w1s1-door">
+        <div id="w1s1-buildingPush">
+          <div id="w1s1-building"></div>
+          <div id="w1s1-facade">
+            <svg id="w1s1-buildingSvg" viewBox="0 0 600 620" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+          <g stroke="#241f1c" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="40" y="64" width="520" height="526" rx="7" fill="#C9BCA8"/>
+            <polygon points="26,64 574,64 562,36 38,36" fill="#A2937F"/>
+            <rect x="40" y="292" width="520" height="10" fill="#B3A692"/>
+            <path class="w1s1-window-lit" d="M76,262 L76,196 A32,32 0 0 1 140,196 L140,262 Z" fill="#E9E2D6"/>
+            <path d="M164,262 L164,196 A32,32 0 0 1 228,196 L228,262 Z" fill="#3A3129"/>
+            <path d="M372,262 L372,196 A32,32 0 0 1 436,196 L436,262 Z" fill="#3A3129"/>
+            <path class="w1s1-window-lit" d="M460,262 L460,196 A32,32 0 0 1 524,196 L524,262 Z" fill="#E9E2D6"/>
+            <path d="M76,520 L76,454 A32,32 0 0 1 140,454 L140,520 Z" fill="#3A3129"/>
+            <path d="M164,520 L164,454 A32,32 0 0 1 228,454 L228,520 Z" fill="#3A3129"/>
+            <path d="M372,520 L372,454 A32,32 0 0 1 436,454 L436,520 Z" fill="#3A3129"/>
+            <path d="M460,520 L460,454 A32,32 0 0 1 524,454 L524,520 Z" fill="#3A3129"/>
+            <rect x="240" y="404" width="120" height="162" fill="#B3A692"/>
+            <path d="M252,458 L252,428 A48,48 0 0 1 348,428 L348,458 Z" fill="#2A2420"/>
+            <path d="M300,410 L300,458 M272,418 L284,458 M328,418 L316,458" stroke="#B3A692" stroke-width="3" fill="none"/>
+            <rect x="252" y="458" width="96" height="108" fill="#2A2420"/>
+            <rect x="228" y="386" width="144" height="18" fill="#A2937F"/>
+            <rect x="216" y="580" width="168" height="14" fill="#A2937F"/>
+            <rect x="226" y="566" width="148" height="14" fill="#B3A692"/>
+            <rect x="0" y="592" width="600" height="28" fill="#6E6154"/>
+            <rect x="0" y="592" width="600" height="4" fill="#8A7C6C"/>
+            <ellipse cx="300" cy="596" rx="230" ry="12" fill="#4E443A" opacity=".55" stroke="none"/>
+            <g transform="translate(300,116)">
+              <rect x="-116" y="-30" width="232" height="60" rx="4" fill="#E9E2D6"/>
+              <text x="0" y="15" text-anchor="middle" fill="#241f1c" stroke="none"
+                    font-family="Georgia, 'Times New Roman', serif" font-size="42"
+                    letter-spacing="7">BALLET</text>
+            </g>
+        </svg>
+            <div id="w1s1-doorFrame">
+              <div id="w1s1-doorL"></div>
+              <div id="w1s1-doorSeam"></div>
+              <div id="w1s1-doorHandle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <svg id="w1s1-dwellRing" viewBox="0 0 46 46">
+    <circle class="track" cx="23" cy="23" r="20" fill="none" stroke-width="2"/>
+    <circle class="progress" cx="23" cy="23" r="20" fill="none" stroke-width="2"
+            stroke-linecap="round" transform="rotate(-90 23 23)"
+            stroke-dasharray="125.66" stroke-dashoffset="125.66"/>
+  </svg>
+
+  <div id="w1s2">
+    <div id="w1s2-ambience">
+      <div id="w1s2-room"></div>
+      <div id="w1s2-spot"></div>
+      <div id="w1s2-floorline"></div>
+      <div id="w1s2-floorglow"></div>
+    </div>
+    <div id="w1s2-camera">
+      <div id="w1s2-mirror">
+        <div class="w1s2-mirror-layer fit-contain" id="w1s2-youngmargaret" data-asset="mirror_young"></div>
+        <div class="w1s2-mirror-layer fit-contain" id="w1s2-scarface" data-asset="mirror_daughter"></div>
+        <div class="w1s2-mirror-layer fit-contain" id="w1s2-dancing" data-asset="mirror_dancing"></div>
+      </div>
+      <div id="w1s2-table">
+        <div class="w1s2-object fit-contain" data-object="shoe" data-asset="obj_shoe"></div>
+        <div class="w1s2-object fit-contain" data-object="ring" data-asset="obj_ring"></div>
+        <div class="w1s2-object fit-contain mother-hand" data-object="hand" data-asset="obj_hand"></div>
+        <div class="w1s2-object fit-contain" data-object="trophy" data-asset="obj_trophy"></div>
+      </div>
+    </div>
+    <div id="w1s2-hint">hold SPACE to rise onto her toes<br>then point at one object</div>
+  </div>
+
+  <svg id="w1s2-dwellRing" viewBox="0 0 36 36">
+    <circle class="track" cx="18" cy="18" r="15" fill="none" stroke-width="2"/>
+    <circle class="progress" cx="18" cy="18" r="15" fill="none" stroke-width="2"
+            stroke-linecap="round" transform="rotate(-90 18 18)"
+            stroke-dasharray="94.25" stroke-dashoffset="94.25"/>
+  </svg>
+
+  <div id="w1s2to3"><div class="bar"></div></div>
+
+  <div id="w1s3-whiteflash"></div>
+
+  <div id="w1s3-blackhold"></div>
+
+  <div id="w1s3">
+
+    <div id="w1s3-bg"></div>
+    <div id="w1s3-mirrors">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+
+        <line x1="14" y1="0" x2="14" y2="88" stroke="rgba(201,211,218,.07)" stroke-width=".4"/>
+        <line x1="29" y1="0" x2="29" y2="88" stroke="rgba(201,211,218,.06)" stroke-width=".4"/>
+        <line x1="50" y1="0" x2="50" y2="88" stroke="rgba(201,211,218,.09)" stroke-width=".5"/>
+        <line x1="71" y1="0" x2="71" y2="88" stroke="rgba(201,211,218,.06)" stroke-width=".4"/>
+        <line x1="86" y1="0" x2="86" y2="88" stroke="rgba(201,211,218,.07)" stroke-width=".4"/>
+
+        <line x1="8" y1="87" x2="92" y2="87" stroke="rgba(201,211,218,.1)" stroke-width=".6"/>
+      </svg>
+    </div>
+    <div id="w1s3-fluorescent">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+
+        <line x1="30" y1="1.5" x2="30" y2="88" stroke="rgba(200,215,220,.05)" stroke-width="1.2"/>
+        <line x1="70" y1="1.5" x2="70" y2="88" stroke="rgba(200,215,220,.05)" stroke-width="1.2"/>
+        <rect x="27" y="0" width="6" height="1.5" fill="rgba(200,215,220,.25)" rx=".3"/>
+        <rect x="67" y="0" width="6" height="1.5" fill="rgba(200,215,220,.25)" rx=".3"/>
+      </svg>
+    </div>
+    <div id="w1s3-floor"></div>
+
+    <svg id="w1s3-barSvg" xmlns="http://www.w3.org/2000/svg">
+      <g id="w1s3-barre" class="on">
+        <line id="w1s3-railGlow" stroke="rgba(201,211,218,.16)" stroke-width="12" stroke-linecap="round"/>
+        <line id="w1s3-railLine" stroke="rgba(201,211,218,.75)" stroke-width="5"  stroke-linecap="round"/>
+        <line id="w1s3-post1" stroke="rgba(201,211,218,.34)" stroke-width="4" stroke-linecap="round"/>
+        <line id="w1s3-post2" stroke="rgba(201,211,218,.34)" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <g id="w1s3-handrail">
+        <line id="w1s3-railCold" stroke="rgba(120,140,150,.8)" stroke-width="5" stroke-linecap="round"/>
+        <rect id="w1s3-bracket1" fill="rgba(96,116,126,.7)" rx="1"/>
+        <rect id="w1s3-bracket2" fill="rgba(96,116,126,.7)" rx="1"/>
+      </g>
+    </svg>
+
+    <svg id="w1s3-figure" viewBox="0 0 90 220" xmlns="http://www.w3.org/2000/svg">
+        <g class="ink" stroke="#000000" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M46,96 C42,138 41,172 40,206 L38,214 L52,214 L50,206 C51,172 51,138 50,96 Z" fill="#E4CDB4"/>
+          <path d="M54,98 C60,132 64,162 68,196 L64,204 L76,206 L76,198 C72,162 66,130 62,98 Z" fill="#E4CDB4"/>
+          <path d="M36,210 q9,-7 18,-1 l1,7 q-10,4 -20,0 Z" fill="#E6BEE9"/>
+          <path d="M62,200 q11,-4 17,3 l-1,6 q-11,2 -18,-3 Z" fill="#E6BEE9"/>
+          <path d="M39,212 q-6,-6 -4,-12" fill="none" stroke="#E6BEE9" stroke-width="1.6"/>
+          <path d="M74,203 q7,-5 6,-11" fill="none" stroke="#E6BEE9" stroke-width="1.6"/>
+          <path d="M40,84 C28,110 22,128 18,142 C34,134 44,140 51,136 C58,140 68,134 82,142 C76,126 68,108 63,84 Z" fill="#E6BEE9"/>
+          <path d="M42,86 C34,106 30,120 27,132 C40,126 47,130 51,127 C56,130 62,126 74,133 C70,118 64,102 61,86 Z" fill="#EDD2EF"/>
+          <path d="M44,88 q7,26 0,44 M58,88 q-7,26 0,44" fill="none" stroke="#D9A8DD" stroke-width=".8"/>
+          <path d="M45,40 q7,-4 13,0 l3,46 q-9,4 -19,0 Z" fill="#E6BEE9"/>
+          <path d="M46,42 q6,-3 11,0 l2,20 q-8,3 -15,0 Z" fill="#EDD2EF"/>
+          <path d="M45,44 q-3,-8 3,-11 M58,44 q3,-8 -3,-11" fill="none" stroke="#E6BEE9" stroke-width="2.2"/>
+          <path d="M44,34 q9,-5 16,0" fill="none" stroke="#E4CDB4" stroke-width="6"/>
+          <g id="w1s3-upper">
+            <ellipse cx="52" cy="21" rx="13" ry="14" fill="#E4CDB4"/>
+            <path d="M38,22 C39,7 45,4 52,4 C59,4 65,7 66,22 C62,12 57,10 52,10 C47,10 42,12 38,22 Z" fill="#5C4630"/>
+            <ellipse cx="59" cy="8" rx="7" ry="6" fill="#5C4630"/>
+            <path d="M40,19 q4,-9 12,-10" fill="none" stroke="#7A5C42" stroke-width=".8"/>
+            <path d="M58,48 C66,56 72,64 78,73 L74,77 C67,68 61,59 55,51 Z" fill="#E4CDB4"/>
+          </g>
+        </g>
+      </svg>
+
+    <svg id="w1s3-armSvg" xmlns="http://www.w3.org/2000/svg">
+      <line id="w1s3-armUpper" stroke="#D8C0A8" stroke-width="11" stroke-linecap="round"/>
+      <line id="w1s3-armUpperInk" stroke="#101010" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+      <line id="w1s3-armFore"  stroke="#D8C0A8" stroke-width="9.5" stroke-linecap="round"/>
+      <circle id="w1s3-hand" r="6.5" fill="#D8C0A8"/>
+      <path id="w1s3-fingers" stroke="#101010" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".72"/>
+    </svg>
+    <div id="w1s3-grippoint"></div>
+
+    <div id="w1s3-catchflash" data-asset="peter_catch"></div>
+    <div id="w1s3-hint">move the mouse to lean her<br>press SPACE again and again to hold on<span class="hint-count"></span></div>
+  </div>
+
+  <div id="w1s3to4"><div class="face fit-contain" data-asset="face_peter"></div></div>
+
+  <div id="w1s4">
+    <div id="w1s4-kitchen">
+      <svg viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1000" height="620" fill="#0a1016"/>
+        <rect x="120" y="120" width="230" height="190" fill="#15232c"/>
+        <line x1="235" y1="120" x2="235" y2="310" stroke="#22323c" stroke-width="4"/>
+        <line x1="120" y1="215" x2="350" y2="215" stroke="#22323c" stroke-width="4"/>
+        <rect x="620" y="118" width="120" height="120" fill="#111a20" stroke="#1a262e" stroke-width="2"/>
+        <rect x="760" y="118" width="120" height="120" fill="#111a20" stroke="#1a262e" stroke-width="2"/>
+        <rect x="0" y="440" width="1000" height="18" fill="#141c22"/>
+        <rect x="0" y="458" width="1000" height="162" fill="#0d141a"/>
+        <rect x="452" y="360" width="10" height="98" fill="#0f171d"/>
+        <rect x="430" y="356" width="54" height="8" fill="#0f171d"/>
+      </svg>
+    </div>
+    <div id="w1s4-facewrap">
+      <div id="w1s4-peter" class="fit-contain" data-asset="face_peter">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <path d="M72,400 Q72,300 142,282 L258,282 Q328,300 328,400 Z" fill="#9aa7b0" opacity=".8"/>
+          <rect x="184" y="238" width="32" height="62" fill="#9aa7b0" opacity=".8"/>
+          <path d="M148,150 Q148,86 200,86 Q252,86 252,150 Q252,116 200,110 Q148,116 148,150 Z" fill="#7f8c96" opacity=".85"/>
+          <ellipse cx="200" cy="166" rx="52" ry="60" fill="#aab6be" opacity=".9"/>
+        </svg>
+      </div>
+      <div id="w1s4-mother" class="fit-contain" data-asset="face_mother">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <path d="M86,400 Q86,308 152,290 L248,290 Q314,308 314,400 Z" fill="#a89a94" opacity=".8"/>
+          <rect x="186" y="246" width="28" height="58" fill="#a89a94" opacity=".8"/>
+          <ellipse cx="200" cy="158" rx="58" ry="60" fill="#8a7f7a" opacity=".85"/>
+          <circle cx="200" cy="92" r="22" fill="#8a7f7a" opacity=".88"/>
+          <ellipse cx="200" cy="172" rx="50" ry="56" fill="#b6aaa4" opacity=".9"/>
+        </svg>
+      </div>
+    </div>
+    <div id="w1s4-inputwrap">
+      <div id="w1s4-typed"><span id="w1s4-caret">_</span></div>
+      <div id="w1s4-bar"><div id="w1s4-barfill"></div></div>
+    </div>
+    <div id="w1s4-hint" class="whint"></div>
+  </div>
+
+  <div id="w1s5">
+    <div id="w1s5-kitchen" data-asset="kitchen_reveal">
+      <svg viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1000" height="620" fill="#0a1016"/>
+        <rect x="120" y="120" width="230" height="190" fill="#16242e"/>
+        <line x1="235" y1="120" x2="235" y2="310" stroke="#22323c" stroke-width="4"/>
+        <line x1="120" y1="215" x2="350" y2="215" stroke="#22323c" stroke-width="4"/>
+        <ellipse cx="235" cy="215" rx="150" ry="150" fill="#1c2f3a" opacity=".35"/>
+        <rect x="620" y="118" width="120" height="120" fill="#111a20" stroke="#1a262e" stroke-width="2"/>
+        <rect x="760" y="118" width="120" height="120" fill="#111a20" stroke="#1a262e" stroke-width="2"/>
+        <rect x="0" y="440" width="1000" height="18" fill="#141c22"/>
+        <rect x="0" y="458" width="1000" height="162" fill="#0d141a"/>
+        <rect x="452" y="360" width="10" height="98" fill="#0f171d"/>
+        <rect x="430" y="356" width="54" height="8" fill="#0f171d"/>
+      </svg>
+    </div>
+    <div id="w1s5-dancer">
+      <svg viewBox="0 0 120 300" xmlns="http://www.w3.org/2000/svg">
+        <line x1="58" y1="150" x2="52" y2="292" stroke="#8f9aa2" stroke-width="7" stroke-linecap="round"/>
+        <line x1="62" y1="150" x2="96" y2="238" stroke="#8f9aa2" stroke-width="7" stroke-linecap="round"/>
+        <path d="M46,152 Q34,196 22,236 Q40,228 52,244 Q64,228 84,240 Q70,196 66,152 Z" fill="#a85f49" opacity=".5"/>
+        <line x1="52" y1="86" x2="52" y2="150" stroke="#9aa5ad" stroke-width="11" stroke-linecap="round"/>
+        <line x1="50" y1="96" x2="20" y2="52" stroke="#9aa5ad" stroke-width="6" stroke-linecap="round"/>
+        <line x1="56" y1="96" x2="86" y2="50" stroke="#9aa5ad" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="52" cy="74" r="12" fill="#a8b2ba"/>
+        <path d="M41,74 Q42,60 52,60 Q62,60 63,74 Q59,66 52,66 Q45,66 41,74 Z" fill="#5A4038"/>
+        <circle cx="57" cy="60" r="4.5" fill="#5A4038"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w1s6">
+    <div id="w1s6-illo" class="leaf-art" data-asset="crying">
+      <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="w1s6bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0b1219"/><stop offset="1" stop-color="#05090d"/></linearGradient></defs>
+        <rect width="1000" height="600" fill="url(#w1s6bg)"/>
+        <rect x="0" y="472" width="1000" height="128" fill="#070b10"/>
+        <ellipse cx="500" cy="506" rx="235" ry="32" fill="#000" opacity="0.42"/>
+        <path d="M392,480 Q408,414 505,404 Q602,414 618,480 Q560,504 505,504 Q450,504 392,480 Z" fill="#a05a45" opacity="0.6"/>
+        <path d="M420,480 Q432,436 505,428 Q578,436 590,480 Q548,498 505,498 Q462,498 420,480 Z" fill="#87472f" opacity="0.5"/>
+        <path d="M452,488 Q505,472 560,488" stroke="#8f9aa2" stroke-width="20" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <ellipse cx="470" cy="432" rx="42" ry="30" fill="#87472f" opacity="0.55"/>
+        <path d="M505,412 Q524,352 502,316 Q490,300 472,300" stroke="#9aa5ad" stroke-width="30" fill="none" stroke-linecap="round" opacity="0.72"/>
+        <path d="M486,316 Q450,352 470,432" stroke="#9aa5ad" stroke-width="15" fill="none" stroke-linecap="round" opacity="0.62"/>
+        <path d="M498,314 Q470,338 476,398" stroke="#9aa5ad" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.48"/>
+        <circle cx="468" cy="300" r="27" fill="#a8b2ba" opacity="0.86"/>
+        <path d="M445,300 Q446,281 468,280 Q490,281 491,300 Q484,289 468,289 Q452,289 445,300 Z" fill="#5A4038" opacity="0.9"/>
+        <circle cx="481" cy="281" r="9" fill="#5A4038" opacity="0.9"/>
+      </svg>
+    </div>
+    <div id="w1s6-light"></div>
+  </div>
+
+  <div id="w1s7">
+    <div id="w1s7-illo" class="leaf-art" data-asset="shoe_gift">
+      <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="w1s7room" cx="62%" cy="18%" r="95%">
+          <stop offset="0" stop-color="#3c2b1b"/><stop offset="0.6" stop-color="#241811"/><stop offset="1" stop-color="#130c08"/>
+        </radialGradient></defs>
+        <rect width="1000" height="600" fill="url(#w1s7room)"/>
+        <rect x="0" y="470" width="1000" height="130" fill="#1c130c"/>
+        <path d="M640,470 Q650,360 700,340 Q760,340 770,470 Z" fill="#5a4230" opacity=".92"/>
+        <line x1="700" y1="360" x2="612" y2="356" stroke="#5a4230" stroke-width="16" stroke-linecap="round" opacity=".92"/>
+        <circle cx="700" cy="315" r="26" fill="#6b5038" opacity=".92"/>
+        <circle cx="712" cy="298" r="9" fill="#4a3527" opacity=".92"/>
+        <path d="M250,470 Q256,400 290,388 Q326,400 330,470 Z" fill="#6a4d38" opacity=".88"/>
+        <line x1="300" y1="404" x2="430" y2="352" stroke="#6a4d38" stroke-width="11" stroke-linecap="round" opacity=".88"/>
+        <circle cx="290" cy="372" r="19" fill="#7a5a42" opacity=".88"/>
+        <circle cx="300" cy="360" r="7" fill="#5A4038" opacity=".9"/>
+        <ellipse cx="505" cy="366" rx="72" ry="22" fill="#000" opacity="0.28"/>
+        <path d="M462,352 Q470,336 492,338 Q512,340 516,352 Q512,364 490,366 Q470,366 462,352 Z" fill="#ffffff"/>
+        <path d="M492,338 Q500,320 508,314" stroke="#f2f2f2" stroke-width="3" fill="none"/>
+        <path d="M496,356 Q504,342 526,344 Q546,346 550,358 Q546,370 524,372 Q504,372 496,356 Z" fill="#fbfbfb"/>
+        <path d="M526,344 Q534,326 542,320" stroke="#eeeeee" stroke-width="3" fill="none"/>
+      </svg>
+    </div>
+    <div id="w1s7-warm"></div>
+    <div id="w1s7-shoeglow" class="leaf-keep"></div>
+  </div>
+
+  <div id="w1s8">
+    <div id="w1s8-spot"></div>
+    <div id="w1s8-beam"></div>
+    <div id="w1s8-illo" data-asset="dancing_stage">
+      <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="w1s8sp" cx="50%" cy="30%" r="70%">
+          <stop offset="0" stop-color="#2a2320"/><stop offset="0.55" stop-color="#14100e"/><stop offset="1" stop-color="#0a0807"/></radialGradient></defs>
+        <rect width="1000" height="600" fill="url(#w1s8sp)"/>
+        <ellipse cx="500" cy="500" rx="300" ry="70" fill="#4a3826" opacity="0.4"/>
+        <ellipse cx="500" cy="500" rx="180" ry="42" fill="#6b5236" opacity="0.35"/>
+        <rect x="0" y="0" width="90" height="600" fill="#241611" opacity="0.8"/>
+        <rect x="910" y="0" width="90" height="600" fill="#241611" opacity="0.8"/>
+        <line x1="494" y1="300" x2="486" y2="470" stroke="#c3ccd2" stroke-width="12" stroke-linecap="round"/>
+        <line x1="506" y1="300" x2="520" y2="452" stroke="#c3ccd2" stroke-width="12" stroke-linecap="round"/>
+        <ellipse cx="484" cy="474" rx="13" ry="7" fill="#ffffff"/>
+        <ellipse cx="524" cy="456" rx="13" ry="7" fill="#fbfbfb" transform="rotate(20 524 456)"/>
+        <path d="M470,286 Q430,360 410,412 Q460,398 500,410 Q540,398 590,412 Q570,360 530,286 Z" fill="#c96f52" opacity="0.85"/>
+        <path d="M478,286 Q452,346 442,392 Q472,384 500,392 Q528,384 558,392 Q548,346 522,286 Z" fill="#b0563f" opacity="0.6"/>
+        <line x1="500" y1="210" x2="500" y2="292" stroke="#c3ccd2" stroke-width="16" stroke-linecap="round"/>
+        <line x1="490" y1="220" x2="424" y2="118" stroke="#c3ccd2" stroke-width="10" stroke-linecap="round"/>
+        <line x1="510" y1="220" x2="576" y2="118" stroke="#c3ccd2" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="500" cy="188" r="20" fill="#cfd7dc"/>
+        <path d="M483,188 Q484,168 500,167 Q516,168 517,188 Q510,176 500,176 Q490,176 483,188 Z" fill="#5A4038"/>
+        <circle cx="510" cy="168" r="7" fill="#5A4038"/>
+      </svg>
+    </div>
+    <div id="w1s8-petal">
+      <svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2,13 Q12,0 30,4 Q40,7 38,15 Q30,26 14,23 Q4,21 2,13 Z" fill="#B23A2E"/>
+        <path d="M8,13 Q16,6 28,9" stroke="#8f2c22" stroke-width="1.2" fill="none" opacity=".6"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w1s9">
+    <div id="w1s9-dancer" class="fit-contain" data-asset="dancing_stage"></div>
+    <div id="w1s9-spot"></div>
+    <canvas id="w1s9-canvas"></canvas>
+    <div id="w1s9-cover"></div>
+  </div>
+
+  <div id="w2s1" class="wscene">
+    <div id="w2s1-doorframe">
+      <div class="half l"></div><div class="half r"></div><div class="seam"></div>
+    </div>
+    <div id="w2s1-push" class="artlayer" data-asset="w2_doorpush">
+
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="0,900 640,340 960,340 1600,900" fill="rgba(150,185,200,.05)"/>
+        <rect x="640" y="180" width="14" height="480" fill="rgba(190,215,225,.10)" transform="rotate(-9 647 420)"/>
+        <rect x="946" y="180" width="14" height="480" fill="rgba(190,215,225,.10)" transform="rotate(9 953 420)"/>
+        <ellipse cx="800" cy="330" rx="270" ry="190" fill="rgba(215,235,242,.10)"/>
+        <g transform="translate(800,560)">
+          <circle cx="0" cy="-160" r="26" fill="rgba(201,211,218,.55)"/>
+          <path d="M -10 -134 C -46 -60 -60 30 -78 118 L -30 118 C -18 40 -6 -10 0 -40 C 6 -10 22 46 44 112 L 88 104 C 52 20 26 -66 12 -134 Z" fill="rgba(201,211,218,.42)"/>
+          <path d="M -46 -20 C -60 30 -70 80 -78 118 L -30 118 C -24 70 -20 30 -18 0 Z" fill="rgba(178,58,46,.5)"/>
+          <path d="M 10 -80 C 16 -40 26 10 40 60 L 22 66 C 12 20 6 -30 4 -74 Z" fill="rgba(178,58,46,.38)"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="emilyInk" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="7" result="warp"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="3.4"
+                           xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="emilyInkSoft" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="19" result="warp2"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp2" scale="2.2"
+                           xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="emilyGrain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="3" result="g"/>
+        <feColorMatrix in="g" type="saturate" values="0"/>
+        <feComponentTransfer><feFuncA type="linear" slope="0.30"/></feComponentTransfer>
+      </filter>
+    </defs>
+  </svg>
+
+  <div id="w2s2" class="wscene">
+    <div id="w2s2-altar" data-asset="wedding_bg"></div>
+    <canvas id="w2s2-petals"></canvas>
+    <div id="w2s2-margaret" data-asset="wedding_margaret"></div>
+    <div id="w2s2-peter" data-asset="wedding_peter"></div>
+    <div id="w2s2-ido">
+      <div class="w2key" data-key="KeyI">i<div class="bar"><div class="fill"></div></div></div>
+      <div class="w2key" data-key="KeyD">d<div class="bar"><div class="fill"></div></div></div>
+      <div class="w2key" data-key="KeyO">o<div class="bar"><div class="fill"></div></div></div>
+    </div>
+    <div class="whint" id="w2s2-hint">press and hold i &middot; d &middot; o</div>
+    <div id="w2s2-beeppulse"></div>
+  </div>
+
+  <div id="w2s3" class="wscene">
+    <div id="w2s3-peter" class="artlayer fit-contain" data-asset="w2_peter_blur">
+      <svg viewBox="0 0 900 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <rect width="900" height="900" fill="#0a0c10"/>
+        <ellipse cx="450" cy="360" rx="150" ry="176" fill="rgba(201,211,218,.42)"/>
+        <path d="M 250 900 Q 450 610 650 900 Z" fill="rgba(201,211,218,.34)"/>
+      </svg>
+    </div>
+    <div id="w2s3-peterclear" class="artlayer fit-contain" data-asset="w2_peter_clear"></div>
+  </div>
+
+  <div id="w2s4" class="wscene">
+    <div id="w2s4-stage">
+      <div id="w2s4-hand" class="fit-contain" data-asset="obj_hand"></div>
+      <div id="w2s4-warm"></div>
+      <div id="w2s4-box">
+        <div class="bx-shadow"></div>
+        <div class="bx-lid"><div class="bx-lid-in"></div><div class="bx-lid-lip"></div></div>
+        <div class="bx-base">
+          <div class="bx-well"></div>
+          <div class="bx-slot"></div>
+          <div class="bx-front"></div>
+        </div>
+      </div>
+      <div id="w2s4-ring" class="fit-contain" data-asset="obj_ring"></div>
+    </div>
+    <div class="whint" id="w2s4-hint"></div>
+  </div>
+
+  <div id="w2s5" class="wscene">
+    <div id="w2s5-ringwrap">
+      <div id="w2s5-ring" class="fit-contain" data-asset="w2_ring"></div>
+      <div id="w2s5-shards">
+      <div class="w2shard" data-frag="1"><i class="w2shard-face" style="clip-path:polygon(50% 50%, 8% 4%, 62% 0%);-webkit-clip-path:polygon(50% 50%, 8% 4%, 62% 0%);"></i></div>
+      <div class="w2shard" data-frag="2"><i class="w2shard-face" style="clip-path:polygon(50% 50%, 62% 0%, 100% 34%);-webkit-clip-path:polygon(50% 50%, 62% 0%, 100% 34%);"></i></div>
+      <div class="w2shard" data-frag="3"><i class="w2shard-face" style="clip-path:polygon(50% 50%, 100% 34%, 82% 100%);-webkit-clip-path:polygon(50% 50%, 100% 34%, 82% 100%);"></i></div>
+      <div class="w2shard" data-frag="4"><i class="w2shard-face" style="clip-path:polygon(50% 50%, 82% 100%, 18% 96%);-webkit-clip-path:polygon(50% 50%, 82% 100%, 18% 96%);"></i></div>
+      <div class="w2shard" data-frag="5"><i class="w2shard-face" style="clip-path:polygon(50% 50%, 18% 96%, 8% 4%);-webkit-clip-path:polygon(50% 50%, 18% 96%, 8% 4%);"></i></div>
+      </div>
+    </div>
+    <div class="whint" id="w2s5-hint"></div>
+    <div class="whint" id="w2s6-hint"></div>
+  </div>
+
+  <div id="w2s6" class="wscene">
+    <div class="w2frag" id="w2frag-1">
+      <div class="artlayer fit-contain" data-asset="w2_frag_ballet"></div>
+      <canvas class="w2frag-fx"></canvas>
+                </div>
+    <div class="w2frag" id="w2frag-2">
+      <div class="artlayer fit-contain" data-asset="w2_frag_doll_girl"></div>
+      <canvas class="w2frag-fx"></canvas>
+                </div>
+    <div class="w2frag" id="w2frag-3">
+      <div class="artlayer fit-contain" data-asset="w2_frag_phonecall"></div>
+      <canvas class="w2frag-fx"></canvas>
+                </div>
+    <div class="w2frag" id="w2frag-4">
+      <div class="artlayer fit-contain" data-asset="w2_frag_hospitalbed"></div>
+      <canvas class="w2frag-fx"></canvas>
+                </div>
+    <div class="w2frag" id="w2frag-5">
+      <div class="artlayer fit-contain" data-asset="w2_frag_reddoll"></div>
+      <canvas class="w2frag-fx"></canvas>
+    </div>
+    <div id="w2s6-final"></div>
+  </div>
+
+  <div id="w3s1" class="wscene">
+    <div class="w3layer artlayer" id="w3s1-funeral" data-asset="w3_funeral">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1600" height="900" fill="#070c10"/>
+        <rect x="580" y="470" width="440" height="120" rx="10" fill="rgba(201,211,218,.14)"/>
+        <g fill="rgba(4,8,10,.95)">
+          <ellipse cx="300" cy="640" rx="70" ry="180"/><ellipse cx="470" cy="660" rx="66" ry="170"/>
+          <ellipse cx="1130" cy="655" rx="68" ry="175"/><ellipse cx="1300" cy="640" rx="70" ry="182"/>
+        </g>
+        <ellipse cx="800" cy="330" rx="360" ry="200" fill="rgba(150,180,195,.05)"/>
+      </svg>
+    </div>
+    <div class="w3layer artlayer" id="w3s1-dance" data-asset="w3_dance">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(820,420) rotate(-8)" fill="rgba(220,232,238,.9)">
+          <circle cx="0" cy="-170" r="26"/>
+          <path d="M -12 -144 C -30 -80 -26 -20 -14 30 L 22 26 C 16 -30 18 -90 14 -144 Z"/>
+          <path d="M -14 30 Q -60 90 -130 96 L -126 116 Q -40 116 24 44 Z" opacity=".8"/>
+          <path d="M -12 -120 L -110 -180 M 14 -120 L 116 -168" stroke="rgba(220,232,238,.9)" stroke-width="13" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <div class="w3layer artlayer" id="w3s1-scar" data-asset="w3_scar">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 420 320 C 620 260 900 300 1180 480" stroke="rgba(178,58,46,.5)" stroke-width="26" stroke-linecap="round" fill="none"/>
+        <path d="M 470 300 l 26 62 M 610 280 l 20 66 M 780 282 l 14 70 M 960 314 l 8 72 M 1110 396 l 2 74"
+              stroke="rgba(178,58,46,.35)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w3s2" class="wscene">
+    <div class="illo artlayer" id="w3s2-illo" data-asset="w3_mortuary">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1600" height="900" fill="#05090d"/>
+        <rect x="360" y="430" width="880" height="200" rx="16" fill="rgba(201,211,218,.10)"/>
+        <path d="M 380 470 Q 800 380 1220 470 L 1220 610 Q 800 560 380 610 Z" fill="rgba(201,211,218,.16)"/>
+        <g transform="translate(800,470)">
+          <path d="M-44 0 Q-48 -22 -34 -26 L -32 -13 Q -30 -30 -19 -30 L -18 -14 Q -16 -33 -5 -32 L -5 -14 Q -1 -31 9 -29 L 7 -10 Q 20 -17 24 -8 Q 28 3 14 12 Q -10 23 -28 18 Q -41 14 -44 0 Z"
+                fill="rgba(216,224,230,.6)"/>
+        </g>
+        <ellipse cx="800" cy="250" rx="420" ry="150" fill="rgba(140,170,185,.04)"/>
+      </svg>
+    </div>
+    <div id="w3s2-hand"></div>
+    <div id="w3s2-ring">
+      <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="70" cy="70" r="58" fill="rgba(255,240,214,.06)" stroke="rgba(255,255,255,.36)" stroke-width="4"/>
+        <circle class="w3ring-fill" cx="70" cy="70" r="58" fill="none" stroke="rgba(255,244,220,1)"
+                stroke-width="7" stroke-linecap="round" transform="rotate(-90 70 70)"
+                stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+        <circle cx="70" cy="70" r="9" fill="rgba(255,244,220,.9)"/>
+      </svg>
+    </div>
+    <div class="whint" id="w3s2-hint"></div>
+  </div>
+
+  <div id="w3s3" class="wscene">
+    <div id="w3s3-room">
+      <div class="artlayer w3s3-hall" id="w3s3-hallbg" data-asset="corridor_bg"></div>
+      <div class="artlayer w3s3-hall" id="w3s3-hallmg" data-asset="corridor_mg"></div>
+      <div class="artlayer w3s3-hall" id="w3s3-hallfg" data-asset="corridor_fg"></div>
+      <div class="w3s3-ambience">
+        <div class="w3s3-floorline"></div>
+        <div class="w3s3-floorglow"></div>
+      </div>
+    </div>
+    <div id="w3s3-tiptoe">
+      <svg viewBox="0 0 260 560" xmlns="http://www.w3.org/2000/svg">
+        <g id="w3s3-tipfig" stroke="#000000" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round">
+          <ellipse cx="130" cy="72" rx="28" ry="32" fill="#E4CDB4"/>
+          <path d="M 102 64 q 28 -30 56 0 q 5 26 -8 35 q -20 10 -40 0 q -13 -9 -8 -35 Z" fill="#5C4630"/>
+          <ellipse cx="130" cy="36" rx="17" ry="14" fill="#5C4630"/>
+          <path d="M 118 104 q 12 6 24 0 l 5 17 q -17 8 -34 0 Z" fill="#E4CDB4"/>
+          <path d="M 106 122 q 24 -11 48 0 L 158 248 q -28 11 -56 0 Z" fill="#E6BEE9"/>
+          <path d="M 112 126 q 18 -8 36 0 L 150 200 q -20 8 -40 0 Z" fill="#EDD2EF"/>
+          <path d="M 130 128 L 130 248" stroke="#D9A8DD" stroke-width="1.4" fill="none"/>
+          <path id="w3s3-armL" d="M 106 138 q -42 20 -52 -12" fill="none" stroke="#E4CDB4" stroke-width="12"/>
+          <path id="w3s3-armR" d="M 154 138 q 42 20 52 -12" fill="none" stroke="#E4CDB4" stroke-width="12"/>
+          <path d="M 130 252 q -72 8 -82 30 q 50 25 164 0 q -10 -22 -82 -30 Z" fill="#E6BEE9"/>
+          <path d="M 130 260 q -52 6 -60 20 q 35 17 120 0 q -8 -14 -60 -20 Z" fill="#EDD2EF"/>
+          <path d="M 130 266 q -36 5 -42 14 q 25 11 84 0 q -6 -9 -42 -14 Z" fill="#F4E2F6"/>
+          <path d="M 116 290 L 112 448" stroke="#E4CDB4" stroke-width="15" fill="none"/>
+          <path d="M 144 290 L 148 448" stroke="#E4CDB4" stroke-width="15" fill="none"/>
+          <path d="M 112 448 q -5 24 3 34 q -15 8 -22 -4 q 5 -19 7 -30 Z" fill="#E6BEE9"/>
+          <path d="M 148 448 q 5 24 -3 34 q 15 8 22 -4 q -5 -19 -7 -30 Z" fill="#E6BEE9"/>
+          <path d="M 104 462 q -8 -8 -6 -16 M 156 462 q 8 -8 6 -16" fill="none" stroke="#E6BEE9" stroke-width="2.6"/>
+        </g>
+      </svg>
+    </div>
+    <div id="w3s3-xray" class="fit-contain" data-asset="w3_xray"></div>
+  </div>
+
+  <div id="w3s4" class="wscene">
+    <div class="illo artlayer" id="w3s4-corridor" data-asset="w3_corridor_youngself">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1600" height="900" fill="#05090d"/>
+        <polygon points="0,900 660,330 940,330 1600,900" fill="rgba(150,185,200,.05)"/>
+        <line x1="660" y1="330" x2="0" y2="900" stroke="rgba(201,211,218,.10)" stroke-width="3"/>
+        <line x1="940" y1="330" x2="1600" y2="900" stroke="rgba(201,211,218,.10)" stroke-width="3"/>
+        <g transform="translate(430,470)">
+          <circle cx="0" cy="-96" r="22" fill="rgba(201,211,218,.5)"/>
+          <path d="M -14 -76 C -24 -20 -22 60 -20 150 L 20 150 C 22 60 18 -20 14 -76 Z" fill="rgba(201,211,218,.4)"/>
+          <line x1="30" y1="-30" x2="58" y2="150" stroke="rgba(201,211,218,.45)" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(806,392) scale(.34)" opacity=".55">
+          <circle cx="0" cy="-150" r="24" fill="rgba(220,232,238,.9)"/>
+          <path d="M -11 -128 C -24 -70 -20 -14 -10 30 L 18 26 C 14 -24 15 -80 12 -128 Z" fill="rgba(220,232,238,.8)"/>
+          <path d="M -10 -108 L -96 -160 M 12 -108 L 100 -152" stroke="rgba(220,232,238,.85)" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <path d="M -6 30 L -40 150 M 10 30 L 70 128" stroke="rgba(220,232,238,.85)" stroke-width="13" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <div class="whint" id="w3s4-hint"></div>
+  </div>
+
+  <div id="w3s5" class="wscene">
+    <div class="w3s5layer artlayer" id="w3s5-crib" data-asset="w3_crib">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1600" height="900" fill="#060a0e"/>
+        <rect x="560" y="380" width="480" height="230" rx="18" fill="rgba(201,211,218,.08)"/>
+        <g stroke="rgba(201,211,218,.3)" stroke-width="7">
+          <line x1="600" y1="380" x2="600" y2="610"/><line x1="670" y1="380" x2="670" y2="610"/>
+          <line x1="740" y1="380" x2="740" y2="610"/><line x1="810" y1="380" x2="810" y2="610"/>
+          <line x1="880" y1="380" x2="880" y2="610"/><line x1="950" y1="380" x2="950" y2="610"/>
+          <line x1="1010" y1="380" x2="1010" y2="610"/>
+        </g>
+        <ellipse cx="800" cy="560" rx="120" ry="46" fill="rgba(214,222,228,.4)"/>
+        <circle cx="720" cy="540" r="30" fill="rgba(214,222,228,.5)"/>
+      </svg>
+    </div>
+    <div class="w3s5layer artlayer" id="w3s5-band" data-asset="w3_bandaged">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1600" height="900" fill="#060a0e"/>
+        <rect x="470" y="430" width="660" height="180" rx="16" fill="rgba(201,211,218,.1)"/>
+        <ellipse cx="800" cy="480" rx="200" ry="70" fill="rgba(214,222,228,.28)"/>
+        <circle cx="690" cy="452" r="52" fill="rgba(214,222,228,.5)"/>
+        <path d="M 646 430 Q 690 414 734 430 M 640 452 Q 690 438 740 452 M 646 474 Q 690 462 734 474"
+              stroke="rgba(240,246,250,.75)" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M 668 486 q 8 8 18 6" stroke="rgba(178,58,46,.55)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w3s6" class="wscene">
+    <div class="illo artlayer fit-contain" id="w3s6-band" data-asset="w3_bandaged">
+      <svg viewBox="0 0 900 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="900" height="900" fill="#060a0e"/>
+        <circle cx="450" cy="430" r="240" fill="rgba(214,222,228,.5)"/>
+        <path d="M 250 400 Q 450 360 650 400 M 244 452 Q 450 434 656 452 M 250 504 Q 450 486 650 504"
+              stroke="rgba(240,246,250,.75)" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <path d="M 360 540 q 30 26 70 20" stroke="rgba(178,58,46,.5)" stroke-width="7" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w3s7" class="wscene">
+    <div id="w3s7-sky">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="w3sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0a1420"/><stop offset="0.6" stop-color="#0c1a26"/><stop offset="1" stop-color="#0a1118"/>
+        </linearGradient></defs>
+        <rect width="1600" height="900" fill="url(#w3sky)"/>
+        <ellipse cx="300" cy="640" rx="420" ry="60" fill="rgba(160,180,196,.05)"/>
+        <ellipse cx="1200" cy="720" rx="520" ry="70" fill="rgba(160,180,196,.04)"/>
+      </svg>
+    </div>
+    <div id="w3s7-plane" class="fit-contain" data-asset="w5_plane">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 6 34 L 78 30 L 104 20 L 108 26 L 86 34 L 78 40 L 40 42 L 30 52 L 24 52 L 28 40 L 6 38 Z" fill="rgba(210,222,230,.8)"/>
+        <path d="M 60 32 L 74 12 L 80 14 L 70 34 Z" fill="rgba(210,222,230,.6)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="w4s1" class="wscene">
+    <div class="artlayer" data-asset="w4_oversized_shoes"></div>
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="960" y="205" width="210" height="310" rx="8" fill="rgba(150,185,200,.08)" stroke="rgba(201,211,218,.2)" stroke-width="5"/>
+      <g transform="translate(1064,430) scale(.42)" opacity=".6">
+        <circle cx="0" cy="-150" r="24" fill="rgba(220,232,238,.9)"/>
+        <path d="M -11 -128 C -24 -70 -20 -14 -10 30 L 18 26 C 14 -24 15 -80 12 -128 Z" fill="rgba(220,232,238,.8)"/>
+        <path d="M -6 30 L -14 140 M 8 30 L 16 140" stroke="rgba(220,232,238,.8)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M -20 140 l 10 14 M 22 140 l -8 14" stroke="rgba(220,232,238,.9)" stroke-width="10" stroke-linecap="round"/>
+      </g>
+      <g transform="translate(430,560)">
+        <rect x="60" y="-70" width="120" height="18" rx="6" fill="rgba(120,95,70,.5)"/>
+        <rect x="66" y="-52" width="14" height="120" fill="rgba(120,95,70,.45)"/>
+        <rect x="160" y="-52" width="14" height="120" fill="rgba(120,95,70,.45)"/>
+        <circle cx="120" cy="-104" r="22" fill="rgba(201,211,218,.42)"/>
+        <path d="M 98 -84 Q 84 -30 92 -8 L 152 -8 Q 158 -34 142 -84 Z" fill="rgba(201,211,218,.34)"/>
+      </g>
+      <g transform="translate(760,610)">
+        <circle cx="0" cy="-130" r="17" fill="rgba(201,211,218,.55)"/>
+        <path d="M -13 -114 L -18 -30 L 18 -30 L 13 -114 Z" fill="rgba(201,211,218,.42)"/>
+        <path d="M -16 -30 L -20 26 M 16 -30 L 20 26" stroke="rgba(201,211,218,.45)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M -42 26 Q -20 12 -6 26 L -6 44 L -46 44 Z" fill="rgba(230,238,242,.7)"/>
+        <path d="M 6 26 Q 22 12 44 26 L 48 44 L 6 44 Z" fill="rgba(230,238,242,.7)"/>
+        <path d="M 34 -96 q 10 4 10 14" stroke="rgba(178,58,46,.0)" stroke-width="3"/>
+        <path d="M -8 -136 q 6 -8 14 -6" stroke="rgba(178,58,46,.5)" stroke-width="3" fill="none"/>
+      </g>
+      <ellipse cx="700" cy="700" rx="560" ry="30" fill="rgba(201,211,218,.04)"/>
+    </svg>
+    <div id="w4s1-mirrorspot"><div class="shimmer"></div></div>
+    <div class="whint" id="w4s1-hint"></div>
+  </div>
+
+  <div id="w4s2" class="wscene">
+    <div class="artlayer" data-asset="w4_teaching"></div>
+    <canvas id="w4s2-path"></canvas>
+    <div class="whint" id="w4s2-hint"></div>
+  </div>
+
+  <div id="w4s3" class="wscene">
+    <div class="artlayer fit-contain" id="w4s3-falling" data-asset="w4_falling_echo"></div>
+  </div>
+
+  <div id="w4s4" class="wscene">
+    <div class="artlayer fit-contain" id="w4s4-crying" data-asset="crying"></div>
+  </div>
+
+  <div id="w4s5" class="wscene">
+    <div class="artlayer fit-contain" id="w4s5-doll" data-asset="w4_reddoll"></div>
+  </div>
+
+  <div id="w4s6" class="wscene">
+    <div class="artlayer" id="w4s6-podium" data-asset="w4_podium"></div>
+    
+    <canvas id="w4s6-petals"></canvas>
+  </div>
+
+  <div id="w4blackout"></div>
+
+  <div id="w5s1" class="wscene">
+    <div class="fit-contain" id="w5s1-letter" data-asset="w5_letter"></div>
+    <div class="fit-contain" id="w5s1-cert" data-asset="w5_deathcert"></div>
+    <div class="whint" id="w5s1-hint"></div>
+  </div>
+
+  <div id="w5s2" class="wscene">
+    <div class="fit-contain" id="w5s2-cert" data-asset="w5_deathcert"></div>
+  </div>
+
+  <div id="w5s3" class="wscene">
+    <div class="fit-contain artlayer" id="w5s3-airport" data-asset="w5_airport_dress"></div>
+  </div>
+
+  <div id="w5s4" class="wscene">
+    <div class="fit-contain artlayer" id="w5s4-plane" data-asset="w5_plane"></div>
+    <div id="w5s4-flash"></div>
+  </div>
+
+  <div id="w5s5" class="wscene">
+    <div class="fit-contain artlayer" id="w5s5-waving" data-asset="w5_waving"></div>
+    <div class="fit-contain artlayer" id="w5s5-peter" data-asset="w5_peter_walking"></div>
+    <div class="fit-contain artlayer" id="w5s5-call" data-asset="w5_videocall"></div>
+    <div id="w5s5-shut"><span class="top"></span><span class="bot"></span></div>
+  </div>
+
+  <div id="endingStagePic" class="fit-contain" data-asset="dancing_stage"></div>
+
+  <div id="endingStorm"><canvas id="endingStorm-canvas"></canvas></div>
+
+  <div id="endingWhite">
+    <div class="shoe">
+
+      <svg viewBox="0 0 560 350" xmlns="http://www.w3.org/2000/svg">
+        <rect width="560" height="350" fill="#f4f6f7"/>
+        <g transform="translate(150,190)">
+          <circle cx="0" cy="-70" r="24" fill="rgba(120,135,145,.55)"/>
+          <path d="M -18 -48 Q -40 20 -10 66 L 30 60 Q 16 6 16 -48 Z" fill="rgba(120,135,145,.45)"/>
+          <path d="M 14 -30 Q 70 -6 120 6" stroke="rgba(120,135,145,.5)" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </g>
+        <g transform="translate(392,206)">
+          <circle cx="0" cy="-48" r="17" fill="rgba(120,135,145,.55)"/>
+          <path d="M -13 -32 L -18 40 L 18 40 L 13 -32 Z" fill="rgba(120,135,145,.45)"/>
+          <path d="M -13 -18 Q -62 -6 -104 2" stroke="rgba(120,135,145,.5)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        </g>
+        <g transform="translate(280,214)">
+          <path d="M -34 0 Q -30 -18 -8 -16 L 0 2 Q -6 12 -22 10 Q -34 8 -34 0 Z" fill="#fff" stroke="rgba(150,165,175,.7)" stroke-width="2.5"/>
+          <path d="M 34 4 Q 32 -14 10 -14 L 2 4 Q 8 14 24 13 Q 34 12 34 4 Z" fill="#fff" stroke="rgba(150,165,175,.7)" stroke-width="2.5"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="endingStage">
+    <div id="endingPaper">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="endGrain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" result="n"/>
+            <feColorMatrix in="n" type="saturate" values="0"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.16"/></feComponentTransfer></filter>
+        </defs>
+        <rect width="1600" height="900" fill="#efe7da"/>
+        <rect width="1600" height="900" filter="url(#endGrain)" opacity=".7"/>
+      </svg>
+    </div>
+    <div id="endingLines">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="endSpot" cx="50%" cy="86%" r="56%">
+            <stop offset="0" stop-color="rgba(255,246,222,.55)"/>
+            <stop offset="55%" stop-color="rgba(246,228,192,.16)"/>
+            <stop offset="100%" stop-color="rgba(246,228,192,0)"/>
+          </radialGradient>
+          <linearGradient id="endBeam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(255,246,222,.20)"/>
+            <stop offset="100%" stop-color="rgba(255,246,222,0)"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="1600" height="628" fill="rgba(214,198,172,.16)"/>
+        <path d="M 0 628 L 1600 628 L 1600 900 L 0 900 Z" fill="rgba(196,176,146,.20)"/>
+        <line x1="0" y1="628" x2="1600" y2="628" stroke="rgba(90,74,58,.30)" stroke-width="2.5"/>
+        <g stroke="rgba(120,100,78,.16)" stroke-width="1.6">
+          <line x1="-40" y1="712" x2="1640" y2="712"/>
+          <line x1="-40" y1="800" x2="1640" y2="800"/>
+        </g>
+        <path d="M 640 628 L 470 900 L 1130 900 L 960 628 Z" fill="url(#endBeam)"/>
+        <rect x="0" y="0" width="1600" height="900" fill="url(#endSpot)"/>
+        <path d="M 0 0 L 250 0 Q 210 220 250 430 Q 150 470 96 300 Q 60 150 0 96 Z" fill="rgba(96,58,52,.26)"/>
+        <path d="M 1600 0 L 1350 0 Q 1390 220 1350 430 Q 1450 470 1504 300 Q 1540 150 1600 96 Z" fill="rgba(96,58,52,.26)"/>
+        <path d="M 0 0 L 1600 0 L 1600 78 Q 800 132 0 78 Z" fill="rgba(96,58,52,.30)"/>
+      </svg>
+    </div>
+    <div id="endingDanceHost"></div><div id="endingHint"></div>
+    <div id="endingCurtain"><span class="l"></span><span class="r"></span></div></div>
+
+  <div id="endingFade"></div>
+
+  <div id="endingLabel">somewhere still &middot; margaret</div>
+
+  <div id="waveStage" style="display:none;">
+    <div id="wavePlaceholder">Wave begins here. Full build is the next pass.</div>
+    <button id="waveReturnBtn">Return to the house</button>
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script src="margaret.js"></script>
+<script>
+(function(){
+  window.__backToSea = function(){
+    Veil.drop('index.html#at=margaret', 900);
+  };
+  Veil.silentResume();
+  function start(){
+    Veil.lift();
+    if (typeof window.__margaretEnter === 'function') window.__margaretEnter();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>

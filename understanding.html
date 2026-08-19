@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1200"/>
+<title>Understanding · Somewhere Still</title>
+<meta name="description" content="What Alzheimer's disease is, what it takes, and why we built this."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="frame.css">
+</head>
+<body class="veiled p-understanding">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="inkStill" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+<div id="warmth-wash" aria-hidden="true"></div>
+<div id="lampfall" aria-hidden="true"></div>
+
+<header class="chrome">
+  <a class="return-sea" href="index.html#/sea" data-leave>&larr; return to the sea</a>
+  <span class="station">THE READING ROOM · N 53.34 W 6.26</span>
+</header>
+
+<div id="gauge" aria-hidden="true">
+  <div class="tick"></div>
+  <div class="readout">0000 M</div>
+</div>
+
+<main class="page">
+  <span class="eyebrow">UNDERSTANDING</span>
+  <h1 class="title ink">Understanding Alzheimer&rsquo;s</h1>
+  <p class="subtitle">Most of what people believe about Alzheimer&rsquo;s disease is seen
+  from the outside. This room is for the inside. Read slowly. Nothing here asks
+  for pity. It asks for recognition.</p>
+
+  <article class="prose">
+
+    <section class="section">
+      <span class="depth-label" data-depth="200">&minus;0200 M · WHAT IT IS</span>
+      <p>Alzheimer&rsquo;s disease is the most common cause of Dementia (Mayo Clinic, 2026). There are
+      early, middle, and late-stage symptoms of the disease as it gets progressively worse. General
+      symptoms for Alzheimer&rsquo;s are:</p>
+      <ul class="two-sided">
+        <li tabindex="0"><span class="out">Memory</span><span class="in">The question is new every time it is asked.</span></li>
+        <li tabindex="0"><span class="out">Thinking and reasoning</span><span class="in">The thought is there. The road to it is not.</span></li>
+        <li tabindex="0"><span class="out">Making judgments and decisions</span><span class="in">Two coats on the hook, and no way left to choose between them.</span></li>
+        <li tabindex="0"><span class="out">Planning and performing familiar tasks</span><span class="in">The wish is whole. The steps arrive out of order.</span></li>
+        <li tabindex="0"><span class="out">Changes in personality and behavior</span><span class="in">The temper is not new. The patience it used to have is gone.</span></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="800">&minus;0800 M · HOW MANY</span>
+      <p>There&rsquo;s no cure for Alzheimer&rsquo;s disease at present, and it affects a considerable
+      portion of the world&rsquo;s population. It is shown that &ldquo;an estimated 40 million people,
+      mostly older than 60 years, have dementia worldwide, and this figure is projected to double every
+      20 years, until at least 2050.&rdquo; (Scheltens et al., 2016, p. 506). It&rsquo;s a very relevant
+      and serious issue all around the world.</p>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="1600">&minus;1600 M · WHAT IS LOST</span>
+      <p>Living with Alzheimer&rsquo;s disease is a difficult experience to be sure. Memory and cognition
+      are chief components of our invaluable consciousness. One patient cites:</p>
+      <p class="voice">&ldquo;I don&rsquo;t know where my head is, it&rsquo;s driving me mad. I
+      can&rsquo;t remember anything.&rdquo;<br>
+      <span style="font-family:var(--f-machine);font-style:normal;font-size:11px;letter-spacing:0.18em;color:var(--ui-faint);">AGGARWAL ET AL., 2003, P. 193</span></p>
+      <p>People affected by the disease not only lose cognitive abilities, but their autonomy as well,
+      sadly.</p>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="2400">&minus;2400 M · INDEPENDENCE</span>
+      <p>The importance of independence and a functioning autonomy in a person&rsquo;s life can be argued
+      to be overlooked, as it&rsquo;s thought a given any adult should have. Having to be accompanied to
+      most places, and generally not being able to care for yourself properly is a shared experience in
+      Alzheimer&rsquo;s in its progressive stages. As Aggarwal argues: &ldquo;as the disease progressed,
+      independence was gradually lost.&rdquo; (Aggarwal et al., 2003, p. 192). So, it&rsquo;s not just
+      memory loss or decline that comes with the experience of Alzheimer&rsquo;s.</p>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="3000">&minus;3000 M · COMMUNICATION</span>
+      <p>And to give one final example for the scope of the experience, communication also deteriorates.
+      Being able to communicate is another core aspect of everyday life, as basic as it is, so much
+      depends on it. &ldquo;People with dementia could not always communicate to others how they
+      felt.&rdquo; (Aggarwal et al., 2003, p. 193). Family members and loved ones not being able to relate
+      or understand the patient because of their difficulties communicating is a massive, and an
+      understandably crushing problem for them. The patients suffer both on an emotional plane because of
+      this disconnect, and in a practical manner, because at times they are unable to communicate their
+      immediate needs as well.</p>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="3400">&minus;3400 M · MISUNDERSTOOD, NOT PITIED</span>
+      <p>None of this asks you to feel sorry. Pity looks at a person from above.
+      Understanding stands next to them in the water. A person with Alzheimer&rsquo;s
+      is not fading into someone else. They are navigating a sea the rest of us
+      have never had to swim, with less light than we are given, and mostly
+      without complaint.</p>
+      <span class="margin-soft">so that is what it is like</span>
+    </section>
+
+    <section class="section">
+      <span class="depth-label" data-depth="3800">&minus;3800 M · WHY WE MADE THIS</span>
+      <p class="voice">With these defining traits of the disease, our group has set out to bring a digital
+      means to witness what it&rsquo;s like to live with Alzheimer&rsquo;s disease. Explore the fragmented
+      memories and lives of our three different characters in Somewhere Still.</p>
+    </section>
+
+  </article>
+
+  <section class="refs">
+    <span class="mark">References</span>
+    <ol>
+      <li>Mayo Clinic (2026) <em>Alzheimer&rsquo;s disease: Symptoms and causes.</em> Available at:
+      <a href="https://www.mayoclinic.org/diseases-conditions/alzheimers-disease/symptoms-causes/syc-20350447" target="_blank" rel="noopener">https://www.mayoclinic.org/diseases-conditions/alzheimers-disease/symptoms-causes/syc-20350447</a>
+      (Accessed: 22 July 2026).</li>
+      <li>Scheltens, P., Blennow, K., Breteler, M.M.B., de Strooper, B., Frisoni, G.B., Salloway, S. and
+      van der Flier, W.M. (2016) &lsquo;Alzheimer&rsquo;s disease&rsquo;, <em>The Lancet</em>, 388(10043),
+      pp. 505&ndash;517. Available at:
+      <a href="https://doi.org/10.1016/S0140-6736(15)01124-1" target="_blank" rel="noopener">https://doi.org/10.1016/S0140-6736(15)01124-1</a>
+      (Accessed: 22 July 2026).</li>
+      <li>Aggarwal, N., Vass, A.A., Minardi, H.A., Ward, R., Garfield, C. and Cybyk, B. (2003)
+      &lsquo;People with dementia and their relatives: personal experiences of Alzheimer&rsquo;s and of
+      the provision of care&rsquo;, <em>Journal of Psychiatric and Mental Health Nursing</em>, 10(2),
+      pp. 187&ndash;197. Available at:
+      <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1046/j.1365-2850.2003.00550.x" target="_blank" rel="noopener">https://onlinelibrary.wiley.com/doi/epdf/10.1046/j.1365-2850.2003.00550.x</a>
+      (Accessed: 22 July 2026).</li>
+    </ol>
+  </section>
+
+  <section class="refs">
+    <span class="mark">Inside the Fog &middot; clinical grounding</span>
+    <p class="refs-note">Each stage models a documented symptom. The sources below informed the
+    specific failure built into that stage.</p>
+    <ol>
+      <li><strong>Encoding.</strong> Peters-Founshtein, G., Gazit, L., Naveh, T., Domachevsky, L.,
+      Korczyn, A.D., Bernstine, H., Shaharabani-Gargir, L., Groshar, D., Marshall, G.A. and Arzy, S.
+      (2024) &lsquo;Lost in space(s): multimodal neuroimaging of disorientation along the
+      Alzheimer&rsquo;s disease continuum&rsquo;, <em>Human Brain Mapping</em>, 45(2), e26623.
+      Available at:
+      <a href="https://doi.org/10.1002/hbm.26623" target="_blank" rel="noopener">https://doi.org/10.1002/hbm.26623</a>
+      (Accessed: 22 July 2026).</li>
+
+      <li><strong>Chronology.</strong> Khot, R., Brankaert, R., IJsselsteijn, W. and Lee, M. (2026)
+      &lsquo;Temporal snapshots: probing and designing for subjective time in dementia&rsquo;, in
+      <em>Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems</em>.
+      New York: ACM. Available at:
+      <a href="https://doi.org/10.1145/3772318.3790347" target="_blank" rel="noopener">https://doi.org/10.1145/3772318.3790347</a>
+      (Accessed: 22 July 2026).</li>
+
+      <li><strong>Word retrieval.</strong> Weekes, B.S.H. (2020) &lsquo;Aphasia in Alzheimer&rsquo;s
+      disease and other dementias (ADOD): evidence from Chinese&rsquo;, <em>American Journal of
+      Alzheimer&rsquo;s Disease &amp; Other Dementias</em>, 35, pp. 1&ndash;12. Available at:
+      <a href="https://doi.org/10.1177/1533317520949708" target="_blank" rel="noopener">https://doi.org/10.1177/1533317520949708</a>
+      (Accessed: 22 July 2026).</li>
+
+      <li><strong>Naming.</strong> Isella, V., Rosazza, C., Ferri, F., Gazzotti, M., Impagnatiello, V.,
+      Mapelli, C., Morzenti, S., Crivellaro, C., Appollonio, I.M. and Ferrarese, C. (2022)
+      &lsquo;Learning from mistakes: cognitive and metabolic correlates of errors on picture naming in
+      the Alzheimer&rsquo;s disease spectrum&rsquo;, <em>Journal of Alzheimer&rsquo;s Disease</em>,
+      87(3), pp. 1033&ndash;1053. Available at:
+      <a href="https://doi.org/10.3233/JAD-220053" target="_blank" rel="noopener">https://doi.org/10.3233/JAD-220053</a>
+      (Accessed: 22 July 2026).</li>
+
+      <li><strong>Executive function.</strong> Gleichgerrcht, E., Torralva, T., Martinez, D., Roca, M.
+      and Manes, F. (2011) &lsquo;Impact of executive dysfunction on verbal memory performance in
+      patients with Alzheimer&rsquo;s disease&rsquo;, <em>Journal of Alzheimer&rsquo;s Disease</em>,
+      23(1), pp. 79&ndash;85. Available at:
+      <a href="https://doi.org/10.3233/JAD-2010-100990" target="_blank" rel="noopener">https://doi.org/10.3233/JAD-2010-100990</a>
+      (Accessed: 22 July 2026).</li>
+
+      <li><strong>Audiovisual binding.</strong> Wu, J., Yang, J., Yu, Y., Li, Q., Nakamura, N., Shen, Y.,
+      Ohta, Y., Yu, S. and Abe, K. (2012) &lsquo;Delayed audiovisual integration of patients with mild
+      cognitive impairment and Alzheimer&rsquo;s disease compared with normal aged controls&rsquo;,
+      <em>Journal of Alzheimer&rsquo;s Disease</em>, 32(2), pp. 317&ndash;328. Available at:
+      <a href="https://doi.org/10.3233/JAD-2012-111070" target="_blank" rel="noopener">https://doi.org/10.3233/JAD-2012-111070</a>
+      (Accessed: 22 July 2026).</li>
+    </ol>
+  </section>
+
+  <a class="fog-door" href="fog.html" data-leave>
+    <span class="mark">INSIDE THE FOG</span>
+    <span class="line">Reading about the fog is one thing.<br>
+    There is a room where you can stand in it.</span>
+  </a>
+</main>
+
+<footer class="sea-floor">
+  <div class="closing">Still here. Somewhere still.</div>
+  <div class="credit">SOMEWHERE STILL · MSC INTERACTIVE DIGITAL MEDIA · GRIFFITH COLLEGE DUBLIN · N 53.34 W 6.26</div>
+</footer>
+
+<div id="veil" aria-hidden="true"></div>
+
+<script src="frame.js"></script>
+</body>
+</html>

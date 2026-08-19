@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Megan &middot; Somewhere Still</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="megan.css">
+<style id="ss-critical">
+html,body{background:#10182b;margin:0;}
+</style>
+</head>
+<body>
+<div id="ss-veil" aria-hidden="true"></div>
+
+<script src="core.js"></script>
+<script>
+window.MEGAN_AUTOBOOT = false;
+window.MEGAN_IMG_BASE = 'assets/img/';
+window.MEGAN_SND_BASE = 'assets/audio/';
+</script>
+<script src="megan.js"></script>
+<script>
+(function(){
+  window.__backToSea = function(){
+    Veil.drop('index.html', 900);
+  };
+  Veil.silentResume();
+  function start(){
+    Libs.ready([['p5','assets/lib/p5.min.js','https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js']], function(){
+      Veil.lift();
+      if (typeof window.initMeganThread === 'function') window.initMeganThread();
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>

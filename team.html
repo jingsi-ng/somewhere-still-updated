@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1200"/>
+<title>The Team · Somewhere Still</title>
+<meta name="description" content="Four makers, one boat. The helm, the chart desk, the masthead, the sounding."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="frame.css">
+</head>
+<body class="veiled p-team">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="inkStill" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+<header class="chrome">
+  <a class="return-sea" href="index.html#/sea" data-leave>&larr; return to the sea</a>
+  <span class="station">THE VESSEL · N 53.34 W 6.26</span>
+</header>
+
+<main class="page page-wide" style="padding-bottom:4vh;">
+  <span class="eyebrow">THE TEAM</span>
+  <h1 class="title ink">Four makers, one boat</h1>
+  <p class="subtitle">A small boat needs four things to stay pointed at something:
+  a hand on the wheel, a line on the chart, a light at the top, and an ear in the
+  dark. Each of us took one. Take a turn at any of them and watch the porthole:
+  the sea out there answers to whoever you are standing next to.</p>
+</main>
+
+<section class="stratum station">
+  <div class="crewphoto" data-frag="current" data-hint="drag"><img class="pinned" src="assets/team_chensee.jpg" alt="Chen See Ng"/></div>
+  <div class="who">
+    <span class="depth-tag" data-depth="400">STATION 01 · THE HELM</span>
+    <h2>Chen See Ng</h2>
+    <div class="role">Creative Lead &amp; Developer</div>
+    <p class="bio">Nobody watches the helm. You only notice it when the boat is
+    already somewhere. Chen See built the
+    underwater world you&rsquo;re standing in right now. She&rsquo;s drawn to interfaces
+    that don&rsquo;t explain themselves, the ones you have to feel your way through.
+    When something breaks, she talks to it out loud, usually along the lines of
+    &ldquo;why are you doing this again,&rdquo; followed by muttering at herself for
+    being careless.</p>
+  </div>
+</section>
+
+<section class="stratum station">
+  <div class="crewphoto" data-frag="thread" data-hint="flick"><img class="pinned" src="assets/team_elin.jpg" alt="Elin Kok Jia Yi"/></div>
+  <div class="who">
+    <span class="depth-tag" data-depth="1400">STATION 02 · THE CHART DESK</span>
+    <h2>Elin Kok Jia Yi</h2>
+    <div class="role">Story Creator and Narrative Structure</div>
+    <p class="bio">The chart is drawn before the water is crossed, and it is the
+    only reason anyone gets home. Elin is the story creator for Somewhere Still website. She is
+    responsible for the website&rsquo;s overall narrative structure, weaving together
+    the characters, memories and interactive experiences into a single story, telling
+    a story about love, loss and remembrance. She believes every memory deserves to be
+    heard, even the one slowly fading away.</p>
+  </div>
+</section>
+
+<section class="stratum station">
+  <div class="crewphoto" data-frag="light" data-hint="hold"><img class="pinned" src="assets/team_emily.jpg" alt="Emily Blum"/></div>
+  <div class="who">
+    <span class="depth-tag" data-depth="2400">STATION 03 · THE MASTHEAD</span>
+    <h2>Emily Blum</h2>
+    <div class="role">Concept Artist &amp; Illustrator</div>
+    <p class="bio">The light at the masthead is not for the one holding it. It is
+    so the rest of us can see. Emily is the concept artist for Somewhere Still. She develops the
+    sketches and visual concepts for the website&rsquo;s characters, environments, and
+    story moments, helping shape the project&rsquo;s overall artistic direction. When a
+    drawing is not working, she will stare at it for far too long before asking,
+    &ldquo;why do you look wrong?&rdquo; As if the sketch has an answer.</p>
+  </div>
+</section>
+
+<section class="stratum station">
+  <div class="crewphoto" data-frag="sound" data-hint="tap"><img class="pinned" src="assets/team_fatih.jpg" alt="Fatih Kulualp"/></div>
+  <div class="who">
+    <span class="depth-tag" data-depth="3400">STATION 04 · THE SOUNDING</span>
+    <h2>Fatih Kulualp</h2>
+    <div class="role">Music &amp; Documentation</div>
+    <p class="bio">Past the reach of any lamp, you find the bottom by listening
+    for it. Fatih created all audio for the project, from theme songs to UI sounds, and
+    production. He also handled the documentation and research. He believes memorable
+    melodies paired with emotional weight make for some good music, and prefers
+    maximalist compositions. He needs to cool down on philosophizing, according to
+    testimonials.</p>
+  </div>
+</section>
+
+<section class="allhands">
+  <div class="crewphoto crewphoto-all">
+    <img class="pinned-all" src="assets/team_all.jpg" alt="The four of us"/>
+  </div>
+  <div class="allhands-mark">ALL HANDS &middot; N 53.34 W 6.26</div>
+  <div class="allhands-line">Four makers, one boat.</div>
+</section>
+
+<footer class="sea-floor">
+  <div class="closing">Still here. Somewhere still.</div>
+  <div class="credit">SOMEWHERE STILL · MSC INTERACTIVE DIGITAL MEDIA · GRIFFITH COLLEGE DUBLIN · N 53.34 W 6.26</div>
+</footer>
+
+<div id="veil" aria-hidden="true"></div>
+
+<script src="frame.js"></script>
+</body>
+</html>
