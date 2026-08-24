@@ -1169,8 +1169,7 @@ addEventListener('resize',()=>{
         navlayerEl.classList.remove('visible');
         setTimeout(()=>{ navlayerEl.classList.remove('show'); window.stopNav();
           if(sinkingTo.storyKey && !ssLocked(sinkingTo.storyKey)){
-            if (SS_STILL_LOCKED) ssComingSoon(sinkingTo.text || 'This');
-            else Veil.drop('still.html#'+sinkingTo.storyKey, 700);
+            Veil.drop('still.html#'+sinkingTo.storyKey, 700);
           }
           sinkingTo=null;
         },900);
