@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Somewhere Still</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Somewhere Still &middot; Still Water</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=DM+Sans:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="still.css">
 </head>
-<body>
+<body class="still-on">
 
-<div id="ss-veil" style="position:fixed;inset:0;background:#000;z-index:99999;opacity:1"></div>
+<div id="sea"></div>
+<canvas id="snow"></canvas>
+<div id="caustics"></div>
 
-<div id="stillCaustic"></div>
+<main id="stage">
+  <div id="frameWrap"></div>
+  <p id="caption"></p>
+</main>
 
-<header id="stillHeader">
-  <h1 id="stillName"></h1>
-  <nav id="stillOthers"></nav>
-  <div id="stillSubtitle">The same memories, in the order they happened.</div>
-</header>
+<div id="chapter"></div>
+<div id="progress"><i></i></div>
 
-<main id="stillBook"></main>
+<nav id="arrows" aria-hidden="true">
+  <button id="up" type="button" aria-label="previous memory">
+    <svg viewBox="0 0 24 24"><path d="M12 5 L12 19 M6 11 L12 5 L18 11"/></svg>
+  </button>
+  <button id="down" type="button" aria-label="next memory">
+    <svg viewBox="0 0 24 24"><path d="M12 5 L12 19 M6 13 L12 19 L18 13"/></svg>
+  </button>
+</nav>
 
-<div id="stillTurnPrompt">click the left or right side to turn the page</div>
-<div id="stillDots"></div>
+<a id="back" href="index.html">back to the deep</a>
 
-<button id="stillReturn" type="button">back to the deep</button>
+<div id="hint">use the arrow keys, or wait</div>
 
 <script src="core.js"></script>
 <script src="still.js"></script>

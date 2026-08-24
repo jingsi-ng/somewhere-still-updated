@@ -501,7 +501,7 @@
   if (W.Ending) return;
 
   var ID = 'ss-ending';
-  var STILL_LOCKED = true;
+  var STILL_LOCKED = false;
 
   function build(key){
     var old = document.getElementById(ID);

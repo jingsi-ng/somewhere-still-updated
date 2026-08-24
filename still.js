@@ -1,761 +1,348 @@
 (function () {
   'use strict';
 
-  var ORDER = ['megan', 'thomas', 'margaret'];
+  var IMG_BASE = window.STILL_IMG_BASE || 'assets/img/';
+  var SND_BASE = window.STILL_SND_BASE || 'assets/audio/';
 
   var BOOKS = {
     margaret: {
       name: 'Margaret',
-      accent: '#B23A2E',
-      accentRgb: '178,58,46',
-      nodes: [
-        { id: 'm_academy', img: 'Margaret_w1_scene4_mother_2', label: 'MEMORY LINE 1', line: 'Her mother takes her to the dance academy for the first time.' },
-        { id: 'm_shoegift', img: 'Margaret_w1_scene7_shoegift', label: 'MEMORY LINE 1', line: 'Her mother gives her a pair of ballet shoes.' },
-        { id: 'm_stage', img: 'Margaret_w1_scene8_dancingonstage', label: 'MEMORY LINE 1', line: 'She dances, and is named Best Ballet Artist.' },
-        { id: 'm_wedding', img: 'margaret_wedding_margaret_01', label: 'MEMORY LINE 2', line: 'She marries Peter.' },
-        { id: 'm_infant', img: 'Margaret_w3_infant_crib_01', label: 'MEMORY LINE 2', line: 'Their daughter is born.' },
-        { id: 'm_reddoll', img: 'Margaret_w4_reddoll_gift_01', label: 'MEMORY LINE 2', line: 'She gives her daughter a rag doll in red shoes.' },
-        { id: 'm_bandaged', img: 'Margaret_w3_bandaged_daughter_01', label: 'MEMORY LINE 3', line: 'A car accident. Her daughter wakes with a scar.' },
-        { id: 'm_funeral', img: 'Margaret_w3_funeral_01_2', label: 'MEMORY LINE 3', line: 'Peter does not wake at all.' },
-        { id: 'm_bigshoes', img: 'Margaret_w4_oversized_shoes_01', label: 'MEMORY LINE 4', line: 'Her daughter puts on shoes far too large for her.' },
-        { id: 'm_podium', img: 'Margaret_w4_podium_ceremony_01', label: 'MEMORY LINE 4', line: 'Her daughter dances the ending she never finished.' },
-        { id: 'm_waving', img: 'Margaret_w5_daughter_waving', label: 'MEMORY LINE 5', line: 'She takes her daughter to the airport.' },
-        { id: 'm_videocall', img: 'Margaret_w5_videocall', label: 'MEMORY LINE 5', line: 'She practises rising onto her toes, and waits for the call.' }
+      tint: 'rgba(178,58,46,',
+      seas: [
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(104,160,196,.26) 0%, rgba(104,160,196,0) 62%), linear-gradient(180deg, #0b2740 0%, #0e3350 28%, #0a2338 66%, #05101c 100%)'
+      ],
+      scenes: [
+        { audio: 'still_Margaret__01.mp3',
+          imgs: ['Margaret_w1_scene4_mother_2', 'Margaret_w1_scene7_shoegift', 'Margaret_w1_scene8_dancingonstage'],
+          text: 'When Margaret was a little girl, her mother took her to a ballet school. She fell in love with dancing and dreamed of becoming a famous dancer. At fifteen she failed to qualify for a national competition, but with her mother\u2019s encouragement she refused to give up. Two years later, wearing the ballet shoes her mother had given her, she returned to the stage and won best dancer.' },
+        { audio: 'still_Margaret__02.mp3',
+          imgs: ['margaret_wedding_margaret_01', 'Margaret_w3_infant_crib_01', 'Margaret_w4_reddoll_gift_01'],
+          text: 'Years later Margaret married Peter. They promised to stay together for life. They had a daughter, and when she was five Margaret gave her a little doll wearing red shoes, to celebrate her courage on stage.' },
+        { audio: 'still_Margaret__03.mp3',
+          imgs: ['Margaret_w3_bandaged_daughter_01', 'Margaret_w3_funeral_01_2'],
+          text: 'Then everything changed. A car accident took Peter\u2019s life and left Margaret with a badly injured ankle. Her daughter survived but was left with a permanent scar. Margaret could no longer dance and was forced to leave the national dance team. The solo she had been preparing for a long time was never completed.' },
+        { audio: 'still_Margaret__04.mp3',
+          imgs: ['Margaret_w4_oversized_shoes_01', 'Margaret_w4_podium_ceremony_01'],
+          text: 'Margaret helped her daughter regain her confidence. At ten, her daughter put on Margaret\u2019s oversized ballet shoes and began dancing in front of the mirror. She wanted to return to the stage and finish the dance her mother never could. With Margaret\u2019s guidance she eventually became an accomplished dancer.' },
+        { audio: 'still_Margaret__05.mp3',
+          imgs: ['Margaret_w5_daughter_waving', 'Margaret_w5_videocall'],
+          text: 'At eighteen her daughter was accepted into a prestigious dance academy. Margaret took her to the airport and watched her leave. Her days became quieter, filled with housework, video calls, and one familiar routine. Every day Margaret still practised standing on her toes. Perhaps she was trying to remember the dancer she once was. Or perhaps she was holding on to the dream she had passed on. The red ballet shoes remained a memory of her mother, her daughter, and a dream that never truly disappeared.' }
       ]
     },
+
     megan: {
       name: 'Megan',
-      accent: '#8A8493',
-      accentRgb: '138,132,147',
-      nodes: [
-        { id: 'g_graduation', img: 'megan_flash_graduation_01', label: 'MEMORY LINE 1', line: 'Megan and Hans receive their award together.' },
-        { id: 'g_born', img: 'megan_awborn_main_01', label: 'MEMORY LINE 1', line: 'Born. A whale comes into the world.' },
-        { id: 'g_launch', img: 'megan_fill2_photo_launch_01', label: 'MEMORY LINE 2', line: 'They open the studio together.' },
-        { id: 'g_breadth', img: 'megan_awbreadth_main_01', label: 'MEMORY LINE 2', line: 'Breadth. Two figures watch a whale surface.' },
-        { id: 'g_argue', img: 'megan_flash_argue_01', label: 'MEMORY LINE 3', line: 'They argue in the hall. Hans leaves.' },
-        { id: 'g_alone', img: 'megan_flash_alone_studio_01', label: 'MEMORY LINE 3', line: 'She paints alone, beside an empty seat.' },
-        { id: 'g_calls', img: 'megan_awcalls_main_01', label: 'MEMORY LINE 3', line: 'Calls. A pod surfaces, seen from above.' },
-        { id: 'g_bedside', img: 'megan_flash_bedside_01', label: 'MEMORY LINE 5', line: 'She sits at his bedside.' },
-        { id: 'g_lastphoto', img: 'megan_flash_hospital_lastphoto', label: 'MEMORY LINE 5', line: 'The last photograph of the two of them.' },
-        { id: 'g_funeral', img: 'megan_flash_funeral_01', label: 'MEMORY LINE 5', line: 'Hans is buried.' },
-        { id: 'g_fall', img: 'megan_awfall_main_01', label: 'MEMORY LINE 5', line: 'Fall. A whale sinks, and feeds the floor.' },
-        { id: 'g_ending', img: 'megan_ending_megan_stick_01', label: 'NOW', line: 'The paintings are finished. The call does not connect.' }
+      tint: 'rgba(138,132,147,',
+      seas: [
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(104,160,196,.26) 0%, rgba(104,160,196,0) 62%), linear-gradient(180deg, #0b2740 0%, #0e3350 28%, #0a2338 66%, #05101c 100%)'
+      ],
+      scenes: [
+        { audio: 'still_Megan_01.mp3',
+          imgs: ['megan_flash_graduation_01', 'megan_fill2_photo_launch_01'],
+          text: 'Megan and Hans met at university and soon became close friends. After graduation they built an art company together, making their own work while helping other artists put on exhibitions.' },
+        { audio: 'still_Megan_02.mp3',
+          imgs: ['megan_awborn_main_01', 'megan_awbreadth_main_01', 'megan_flash_argue_01'],
+          text: 'For years they shared the same passion and the same dream. They worked on countless exhibitions together, and arguments became part of their friendship, until one disagreement changed everything. When Megan\u2019s artwork failed to become what she had imagined, the tension between them grew. Their differences became impossible to resolve.' },
+        { audio: 'still_Megan_03.mp3',
+          imgs: ['megan_flash_alone_studio_01', 'megan_awcalls_main_01'],
+          text: 'They eventually closed the company and started their own businesses. They built new teams and continued their lives separately. Their calls became less frequent. Then one day they stopped completely.' },
+        { audio: 'still_Megan_04.mp3',
+          imgs: ['megan_awfall_main_01', 'megan_ending_megan_stick_01'],
+          text: 'Years later Megan began preparing an exhibition called Our Big Whale. She calls him, but there is no answer. She keeps working on their unfinished idea, believing they will somehow complete it together. But her memories begin to blur. She cannot remember his ideas clearly any more, and the painting slowly becomes something different from what they once imagined.' },
+        { audio: 'still_Megan_05.mp3',
+          imgs: ['megan_flash_bedside_01', 'megan_flash_hospital_lastphoto', 'megan_flash_funeral_01'],
+          text: 'Later Megan learns that Hans had been suffering from cancer. She rushes to the hospital and finds him awake, but unable to speak. She stays beside him until the end. Hans had been gone for years, but inside Megan\u2019s memories he was still there.' }
       ]
     },
+
     thomas: {
       name: 'Thomas',
-      accent: '#D98324',
-      accentRgb: '217,131,36',
-      nodes: [
-        { id: 't_teaching', img: 'thomas_anchor_father_teaching_01', label: 'MEMORY LINE 1', line: 'His father teaches him to play.' },
-        { id: 't_stage', img: 'thomas_anchor_stage_father_01', label: 'MEMORY LINE 1', line: 'He plays on stage. His father watches from the hall.' },
-        { id: 't_bow', img: 'thomas_anchor_bow_01', label: 'MEMORY LINE 1', line: 'He bows. His father says he can do it better.' },
-        { id: 't_wife', img: 'thomas_anchor_wife_face_01', label: 'MEMORY LINE 2', line: 'He meets her. She tells him his music is good.' },
-        { id: 't_creating', img: 'thomas_anchor_creating_01', label: 'MEMORY LINE 2', line: 'They begin writing Our Story together.' },
-        { id: 't_concert', img: 'thomas_anchor_concert_wife_01', label: 'MEMORY LINE 2', line: 'They perform together.' },
-        { id: 't_pregnant', img: 'thomas_anchor_sea_pregnant_01', label: 'MEMORY LINE 2', line: 'He plays for her by the sea, before the child comes.' },
-        { id: 't_daughter', img: 'thomas_anchor_sea_daughter_01', label: 'MEMORY LINE 2', line: 'They bring their daughter to the shore at sunset.' },
-        { id: 't_leaving', img: 'thomas_anchor_leaving_hall_01', label: 'MEMORY LINE 3', line: 'They leave the concert hall together.' },
-        { id: 't_accident', img: 'thomas_anchor_accident_01', label: 'MEMORY LINE 3', line: 'A lorry runs the light.' },
-        { id: 't_funeral', img: 'thomas_anchor_funeral_01', label: 'MEMORY LINE 3', line: 'He plays at their funeral.' },
-        { id: 't_sea', img: 'thomas_walking_into_sea_05', label: 'MEMORY LINE 4', line: 'The score is never finished. He walks into the sea.' }
+      tint: 'rgba(217,131,36,',
+      seas: [
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(104,160,196,.26) 0%, rgba(104,160,196,0) 62%), linear-gradient(180deg, #0b2740 0%, #0e3350 28%, #0a2338 66%, #05101c 100%)',
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(120,150,180,.20) 0%, rgba(120,150,180,0) 62%), linear-gradient(180deg, #0a2038 0%, #0c2a44 28%, #081c2e 66%, #040c16 100%)',
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(96,124,152,.14) 0%, rgba(96,124,152,0) 62%), linear-gradient(180deg, #071828 0%, #091f32 28%, #061422 66%, #030810 100%)',
+        'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(78,100,124,.10) 0%, rgba(78,100,124,0) 62%), linear-gradient(180deg, #04101c 0%, #061626 28%, #040d18 66%, #01050a 100%)'
+      ],
+      scenes: [
+        { audio: 'still_Thomas_01.mp3',
+          imgs: ['thomas_anchor_father_teaching_01', 'thomas_anchor_stage_father_01', 'thomas_anchor_bow_01'],
+          text: 'Thomas began learning the harp as a boy. His father was strict. Every note had to follow the score perfectly. Even after a performance, Thomas only heard that he could do better than this. Those words pushed him onto the world stage, but they also made him believe he was never good enough.' },
+        { audio: 'still_Thomas_02.mp3',
+          imgs: ['thomas_anchor_wife_face_01', 'thomas_anchor_creating_01', 'thomas_anchor_sea_pregnant_01', 'thomas_anchor_sea_daughter_01'],
+          text: 'Later Thomas met his wife. Together they played the harp by the sea and wrote their own music. After their daughter was born they returned to the same place, playing together as the sun went down. The music became a symbol of their family.' },
+        { audio: 'still_Thomas_03.mp3',
+          imgs: ['thomas_anchor_leaving_hall_01', 'thomas_anchor_accident_01', 'thomas_anchor_funeral_01'],
+          text: 'One evening, after a performance, the family was driving home when a truck ran a red light. Thomas survived. His wife and daughter did not. Their shared score was damaged, leaving him with only fragments of the life they had made. At the funeral, Thomas played their final piece.' },
+        { audio: 'still_Thomas_04.mp3',
+          imgs: ['thomas_score_ourstory_chaos_01', 'thomas_harp_body_ruined_01', 'thomas_walking_into_sea_05'],
+          text: 'Years later Thomas was diagnosed with Alzheimer\u2019s disease. He tried to repair the old score and write one final chapter, but his memories were fading. His hands grew weaker. His temper became harder to control. Eventually he could no longer play. One thing remained clear: his love for his wife. Thomas returns to the sea where their story began. He sits beside the waves with the unfinished score beside him. For the first time he does not need to play perfectly. He simply listens to the waves, to the melody, and to the memory of the woman he loved.' }
       ]
     }
   };
 
-  var TARGETS = {
-    m_academy: 'margaret.html#w1',
-    m_shoegift: 'margaret.html#w1',
-    m_stage: 'margaret.html#w1',
-    m_wedding: 'margaret.html#w2',
-    m_infant: 'margaret.html#w2',
-    m_reddoll: 'margaret.html#w2',
-    m_bandaged: 'margaret.html#w3',
-    m_funeral: 'margaret.html#w3',
-    m_bigshoes: 'margaret.html#w4',
-    m_podium: 'margaret.html#w4',
-    m_waving: 'margaret.html#w5',
-    m_videocall: 'margaret.html#ending',
-    g_graduation: 'megan.html#/megan/graduation',
-    g_born: 'megan.html#/megan/studio/born',
-    g_launch: 'megan.html#/megan/gallery/fill1',
-    g_breadth: 'megan.html#/megan/studio/breadth',
-    g_argue: 'megan.html#/megan/gallery/fill2',
-    g_alone: 'megan.html#/megan/gallery/fill2',
-    g_calls: 'megan.html#/megan/studio/calls',
-    g_bedside: 'megan.html#/megan/gallery/fill3',
-    g_lastphoto: 'megan.html#/megan/gallery/fill3',
-    g_funeral: 'megan.html#/megan/studio/fall',
-    g_fall: 'megan.html#/megan/studio/fall',
-    g_ending: 'megan.html#/megan/ending',
-    t_teaching: 'thomas.html#stage1',
-    t_stage: 'thomas.html#stage1',
-    t_bow: 'thomas.html#stage1',
-    t_wife: 'thomas.html#stage2',
-    t_creating: 'thomas.html#stage2',
-    t_concert: 'thomas.html#stage2',
-    t_pregnant: 'thomas.html#stage2',
-    t_daughter: 'thomas.html#stage2',
-    t_leaving: 'thomas.html#stage3',
-    t_accident: 'thomas.html#stage3',
-    t_funeral: 'thomas.html#stage3',
-    t_sea: 'thomas.html#ending'
-  };
+  var ORDER = ['megan', 'thomas', 'margaret'];
 
-  var EXTS = ['.webp', '.png', '.jpg'];
-  var reduced = false;
-  try {
-    reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  } catch (eRM) {
-    reduced = false;
-  }
+  var key = (location.hash || '').replace(/^#\/?/, '').toLowerCase();
+  if (!BOOKS[key]) key = ORDER[0];
+  var book = BOOKS[key];
 
-  var bookEl, headerNameEl, othersEl, dotsEl, turnPromptEl, returnEl, veilEl;
-  var currentKey = null;
-  var pages = [];
-  var dots = [];
-  var page = 0;
-  var visited = {};
-  var turned = false;
-  var switching = false;
-  var animating = false;
-  var wheelLock = false;
-  var wheelTimer = null;
-  var navigating = false;
-  var ambience = null;
-  var ambienceTargetVol = 0.5;
-  var closingTimer = null;
+  var wrap = document.getElementById('frameWrap');
+  var capEl = document.getElementById('caption');
+  var chapEl = document.getElementById('chapter');
+  var barEl = document.querySelector('#progress i');
+  var upBtn = document.getElementById('up');
+  var downBtn = document.getElementById('down');
+  var seaEl = document.getElementById('sea');
+  var hintEl = document.getElementById('hint');
 
-  function navigate(href, ms) {
-    if (navigating) return;
-    navigating = true;
-    if (window.Veil && typeof window.Veil.drop === 'function') {
-      window.Veil.drop(href, ms);
-    } else {
-      window.location.href = href;
-    }
-  }
+  var idx = -1;
+  var audio = null;
+  var imgTimer = null;
+  var advTimer = null;
+  var cards = [];
+  var closing = false;
 
-  function liftVeil() {
-    if (window.Veil && typeof window.Veil.lift === 'function') {
-      window.Veil.lift();
-    } else if (veilEl) {
-      veilEl.classList.add('ss-veil-lift');
-      window.setTimeout(function () {
-        if (veilEl && veilEl.parentNode) veilEl.parentNode.removeChild(veilEl);
-      }, 1000);
-    }
-  }
+  function url(name) { return IMG_BASE + encodeURIComponent(name); }
 
-  function setCursorMode(m) {
-    if (window.Grammar && typeof window.Grammar.mode === 'function') {
-      window.Grammar.mode(m);
-    }
-  }
-
-  function resolveImage(base, onSrc, onFail) {
-    var i = 0;
-    function attempt() {
-      if (i >= EXTS.length) {
-        onFail();
-        return;
-      }
-      var src = 'assets/img/' + base + EXTS[i];
-      var probe = new Image();
-      probe.onload = function () { onSrc(src); };
-      probe.onerror = function () { i++; attempt(); };
-      probe.src = src;
-    }
-    attempt();
-  }
-
-  function vw() {
-    return Math.max(1, window.innerWidth || 1);
-  }
-
-  function buildHeader(key) {
-    headerNameEl.textContent = BOOKS[key].name;
-    othersEl.innerHTML = '';
-    for (var i = 0; i < ORDER.length; i++) {
-      var k = ORDER[i];
-      if (k === key) continue;
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'still-other';
-      b.textContent = BOOKS[k].name;
-      b.setAttribute('data-key', k);
-      b.addEventListener('click', onOtherName);
-      b.addEventListener('pointerenter', onNameEnter);
-      b.addEventListener('pointerleave', onNameLeave);
-      othersEl.appendChild(b);
-    }
-  }
-
-  function onNameEnter() {
-    setCursorMode('live');
-  }
-
-  function onNameLeave() {
-    setCursorMode('idle');
-  }
-
-  function onOtherName(e) {
-    var k = e.currentTarget.getAttribute('data-key');
-    if (k && k !== currentKey) switchBook(k);
-  }
-
-  function buildDots(key) {
-    dotsEl.innerHTML = '';
-    dots = [];
-    for (var i = 0; i < BOOKS[key].nodes.length; i++) {
-      var d = document.createElement('button');
-      d.type = 'button';
-      d.className = 'still-dot';
-      d.setAttribute('data-index', String(i));
-      d.addEventListener('click', onDot);
-      dotsEl.appendChild(d);
-      dots.push(d);
-    }
-  }
-
-  function onDot(e) {
-    var i = parseInt(e.currentTarget.getAttribute('data-index'), 10);
-    if (!isNaN(i)) goTo(i);
-  }
-
-  function buildBook(key, done) {
-    bookEl.innerHTML = '';
-    bookEl.className = 'book-' + key;
-    pages = [];
-    var nodes = BOOKS[key].nodes;
-    var firstSettled = false;
-    var firstResolve = function () {
-      if (firstSettled) return;
-      firstSettled = true;
-      if (done) done();
+  function makeCard(imgName) {
+    var d = document.createElement('div');
+    d.className = 'card ' + key;
+    var inner = document.createElement('div');
+    inner.className = 'inner';
+    var im = document.createElement('img');
+    im.alt = '';
+    im.decoding = 'async';
+    var tries = ['.webp', '.png', '.jpg'];
+    var t = 0;
+    im.onerror = function () {
+      t++;
+      if (t < tries.length) im.src = url(imgName + tries[t]);
     };
-    for (var i = 0; i < nodes.length; i++) {
-      (function (i) {
-        var node = nodes[i];
-        var page = document.createElement('section');
-        page.className = 'still-page';
-        page.setAttribute('data-id', node.id);
-        if (key === 'megan') page.classList.add('page-wipe');
-        if (key === 'margaret') page.classList.add('page-mirror');
-
-        var frame = document.createElement('figure');
-        frame.className = 'still-frame';
-        frame.setAttribute('data-id', node.id);
-
-        var label = document.createElement('div');
-        label.className = 'still-label';
-        label.textContent = node.label;
-
-        var caption = document.createElement('div');
-        caption.className = 'still-caption';
-        caption.textContent = node.line;
-
-        var open = document.createElement('div');
-        open.className = 'still-open';
-        open.textContent = 'open this memory';
-
-        page.appendChild(frame);
-        page.appendChild(label);
-        page.appendChild(caption);
-        page.appendChild(open);
-
-        frame.addEventListener('pointerenter', function () {
-          if (!switching) {
-            page.classList.add('page-hot');
-            setCursorMode('live');
-          }
-        });
-        frame.addEventListener('pointerleave', function () {
-          page.classList.remove('page-hot');
-        });
-        if (key === 'megan') attachWipe(frame);
-        if (key === 'margaret') attachMist(frame);
-
-        bookEl.appendChild(page);
-        pages.push(page);
-
-        resolveImage(node.img, function (src) {
-          var img = document.createElement('img');
-          img.alt = '';
-          img.draggable = false;
-          img.src = src;
-          frame.appendChild(img);
-          if (i === 0) firstResolve();
-        }, function () {
-          var fb = document.createElement('div');
-          fb.className = 'still-fallback';
-          frame.appendChild(fb);
-          if (i === 0) firstResolve();
-        });
-      })(i);
-    }
+    im.src = url(imgName + tries[0]);
+    inner.appendChild(im);
+    d.appendChild(inner);
+    return d;
   }
 
-  function attachWipe(frame) {
-    var haze = document.createElement('canvas');
-    haze.className = 'still-haze';
-    frame.appendChild(haze);
-    var wiped = false;
-    var sized = false;
-
-    var size = function () {
-      var r = frame.getBoundingClientRect();
-      if (!r.width || !r.height) return false;
-      var dpr = Math.min(2, window.devicePixelRatio || 1);
-      haze.width = Math.round(r.width * dpr);
-      haze.height = Math.round(r.height * dpr);
-      var g = haze.getContext('2d');
-      if (!g) return false;
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.fillStyle = 'rgba(196, 206, 216, 0.94)';
-      g.fillRect(0, 0, r.width, r.height);
-      sized = true;
-      return true;
-    };
-
-    var wipe = function (e) {
-      if (!sized && !size()) return;
-      var r = frame.getBoundingClientRect();
-      var g = haze.getContext('2d');
-      if (!g) return;
-      g.save();
-      g.globalCompositeOperation = 'destination-out';
-      var x = e.clientX - r.left, y = e.clientY - r.top;
-      var rad = Math.min(r.width, r.height) * 0.17;
-      var grad = g.createRadialGradient(x, y, 0, x, y, rad);
-      grad.addColorStop(0, 'rgba(0,0,0,1)');
-      grad.addColorStop(0.6, 'rgba(0,0,0,0.55)');
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      g.fillStyle = grad;
-      g.beginPath();
-      g.arc(x, y, rad, 0, 6.2832);
-      g.fill();
-      g.restore();
-      if (!wiped) {
-        wiped = true;
-        haze.classList.add('haze-touched');
-      }
-    };
-
-    frame.addEventListener('pointerenter', function () { if (!sized) size(); });
-    frame.addEventListener('pointermove', wipe);
-    window.addEventListener('resize', function () { sized = false; });
-
-    frame.__reveal = function () {
-      if (haze.classList.contains('haze-open')) return;
-      haze.classList.add('haze-open');
-    };
+  function splitSentences(text) {
+    var parts = text.match(/[^.!?]+[.!?]+["\u201d]?\s*/g) || [text];
+    return parts.map(function (s) { return s.trim(); }).filter(Boolean);
   }
 
-  function attachMist(frame) {
-    var mist = document.createElement('span');
-    mist.className = 'still-mist';
-    frame.appendChild(mist);
-    var clear = function () {
-      if (mist.classList.contains('mist-clear')) return;
-      mist.classList.add('mist-clear');
-    };
-    frame.addEventListener('pointerenter', clear);
-    frame.__reveal = clear;
-  }
-
-  function currentPage() { return page; }
-
-  function clampPage(i) {
-    if (i < 0) return 0;
-    if (i > pages.length - 1) return pages.length - 1;
-    return i;
-  }
-
-  function paint() {
-    var scroll = currentKey === 'thomas';
-    var step = scroll ? window.innerWidth * 0.62 : window.innerWidth;
-    for (var i = 0; i < pages.length; i++) {
-      var d = i - page;
-      var abs = Math.abs(d);
-      var el = pages[i];
-      var limit = scroll ? 2.4 : 1.02;
-      if (abs >= limit) {
-        el.style.visibility = 'hidden';
-        el.style.opacity = '0';
-        continue;
-      }
-      el.style.visibility = 'visible';
-      if (reduced) {
-        el.style.transform = 'translateX(' + (d * step) + 'px)';
-        el.style.opacity = abs < 0.5 ? '1' : '0';
-        continue;
-      }
-      if (scroll) {
-        var sc = 1 - Math.min(0.22, abs * 0.13);
-        el.style.transform = 'translateX(' + (d * step) + 'px) scale(' + sc.toFixed(3) + ')';
-        el.style.opacity = String(Math.max(0.16, 1 - abs * 0.52));
-        el.style.zIndex = String(40 - Math.round(abs * 10));
-      } else {
-        el.style.transform = 'translateX(' + (d * step) + 'px)';
-        el.style.opacity = abs < 0.02 ? '1' : '0';
-      }
-    }
-    updateDots();
-  }
-
-  function goTo(i, silent) {
-    var next = clampPage(i);
-    if (next === page) return;
-    page = next;
-    animating = true;
-    paint();
-    if (!silent) noteTurn();
-    window.setTimeout(function () { animating = false; }, 620);
-    settle(page);
-  }
-
-  function settle(p) {
-    markVisited(p);
-    revealCurrent();
-    updateReturn(p);
-  }
-
-  function updateReturn(p) {
-    if (!returnEl) return;
-    var last = p >= pages.length - 1;
-    returnEl.classList.toggle('return-glow', last);
-  }
-
-  function onBookClick(e) {
-    if (switching || navigating || animating) return;
-    if (e.target.closest && (e.target.closest('#stillDots') ||
-        e.target.closest('#stillReturn') || e.target.closest('#stillOthers'))) return;
-
-    var frame = e.target.closest ? e.target.closest('.still-frame') : null;
-    if (frame) {
-      var host = frame.closest('.still-page');
-      if (host && host === pages[page]) {
-        openMemory(host.getAttribute('data-id'));
-        return;
-      }
-    }
-    goTo(e.clientX < window.innerWidth / 2 ? page - 1 : page + 1);
-  }
-
-  function onWheel(e) {
-    if (switching || navigating) return;
-    e.preventDefault();
-    if (wheelLock) return;
-    wheelLock = true;
-    if (wheelTimer) window.clearTimeout(wheelTimer);
-    wheelTimer = window.setTimeout(function () { wheelLock = false; }, 420);
-    goTo(page + (e.deltaY > 0 ? 1 : -1));
-  }
-
-  function openMemory(id) {
-    var target = TARGETS[id];
-    if (target) navigate(target, 900);
-  }
-
-  function applyBookSkin(key) {
-    var b = document.body;
-    ['megan','thomas','margaret'].forEach(function (k) {
-      b.classList.toggle('book-' + k, k === key);
+  function paintCaption(scene) {
+    capEl.innerHTML = '';
+    scene._sent = splitSentences(scene.text);
+    scene._spans = scene._sent.map(function (s, i) {
+      var sp = document.createElement('span');
+      sp.textContent = (i ? ' ' : '') + s;
+      capEl.appendChild(sp);
+      return sp;
     });
   }
 
-  function applyAccent(key) {
-    applyBookSkin(key);
-    document.body.style.setProperty('--accent-rgb', BOOKS[key].accentRgb);
-    document.body.style.setProperty('--accent', BOOKS[key].accent);
-  }
-
-  function loadBook(key, done) {
-    currentKey = key;
-    if (!visited[key]) visited[key] = {};
-    page = 0;
-    animating = false;
-    applyAccent(key);
-    buildHeader(key);
-    buildDots(key);
-    buildBook(key, done);
-    markVisited(0);
-    if (closingTimer) {
-      window.clearTimeout(closingTimer);
-      closingTimer = null;
+  function stopScene() {
+    if (imgTimer) { clearInterval(imgTimer); imgTimer = null; }
+    if (advTimer) { clearTimeout(advTimer); advTimer = null; }
+    if (audio) {
+      try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+      audio = null;
     }
-    paint();
-    settle(0);
-    settle(0);
+    cards.forEach(function (c) {
+      c.classList.remove('on');
+      c.classList.add('past');
+      setTimeout(function () { if (c.parentNode) c.remove(); }, 1600);
+    });
+    cards = [];
   }
 
-  function switchBook(key) {
-    if (switching || navigating) return;
-    switching = true;
-    if (reduced) {
-      headerFadeSwap(key, 0);
+  function show(n) {
+    if (closing) return;
+    if (n < 0) n = 0;
+    if (n >= book.scenes.length) { finish(); return; }
+    if (n === idx) return;
+
+    stopScene();
+    idx = n;
+    var scene = book.scenes[n];
+
+    if (book.seas.length > 1) {
+      seaEl.style.background = book.seas[Math.min(n, book.seas.length - 1)];
+    }
+
+    chapEl.textContent = book.name + ' \u00b7 ' + (n + 1) + ' of ' + book.scenes.length;
+
+    scene.imgs.forEach(function (name) {
+      var c = makeCard(name);
+      wrap.appendChild(c);
+      cards.push(c);
+    });
+    var shown = 0;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { cards[0].classList.add('on'); });
+    });
+
+    paintCaption(scene);
+
+    upBtn.disabled = (n === 0);
+    downBtn.disabled = false;
+
+    audio = new Audio(SND_BASE + encodeURIComponent(scene.audio));
+    audio.preload = 'auto';
+
+    var started = false;
+    var kick = function () {
+      if (started) return;
+      started = true;
+      var pr = audio.play();
+      if (pr && pr['catch']) pr['catch'](function () {
+        started = false;
+        var retry = function () { if (audio) audio.play()['catch'](function () {}); };
+        window.addEventListener('pointerdown', retry, { once: true });
+        window.addEventListener('keydown', retry, { once: true });
+      });
+    };
+    if (audio.readyState >= 2) kick();
+    else {
+      audio.addEventListener('canplay', kick, { once: true });
+      audio.addEventListener('loadeddata', kick, { once: true });
+      audio.load();
+    }
+
+    var span = scene._spans;
+    var total = span.length;
+    var fallbackMs = Math.max(9000, scene.text.length * 62);
+
+    imgTimer = setInterval(function () {
+      var d = audio && isFinite(audio.duration) && audio.duration > 1
+        ? audio.duration * 1000 : fallbackMs;
+      var t = audio && audio.currentTime ? audio.currentTime * 1000 : 0;
+      var p = Math.max(0, Math.min(1, t / d));
+
+      barEl.style.width = (p * 100).toFixed(1) + '%';
+
+      var want = Math.min(total - 1, Math.floor(p * total + .18));
+      for (var i = 0; i <= want; i++) span[i].classList.add('on');
+
+      var slot = Math.min(cards.length - 1, Math.floor(p * cards.length + .04));
+      if (slot !== shown && cards[slot]) {
+        if (cards[shown]) {
+          cards[shown].classList.remove('on');
+          cards[shown].classList.add('past');
+        }
+        cards[slot].classList.add('on');
+        shown = slot;
+      }
+
+      if (p >= .999 && !advTimer) {
+        advTimer = setTimeout(function () { advTimer = null; show(idx + 1); }, 2200);
+      }
+    }, 120);
+  }
+
+  function finish() {
+    if (closing) return;
+    closing = true;
+    stopScene();
+    document.body.classList.add('closing');
+    chapEl.textContent = book.name;
+    capEl.innerHTML = '';
+    barEl.style.width = '100%';
+    upBtn.disabled = false;
+    downBtn.disabled = true;
+
+    var con = document.createElement('div');
+    con.id = 'constellation';
+    book.scenes.forEach(function (s) {
+      var c = makeCard(s.imgs[0]);
+      c.classList.remove('card');
+      c.className = 'cc card ' + key;
+      c.style.width = 'min(15vw,160px)';
+      c.style.height = 'min(19vw,196px)';
+      c.style.opacity = '.34';
+      c.style.transform = 'none';
+      c.style.filter = 'none';
+      con.appendChild(c);
+    });
+    document.body.appendChild(con);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { con.classList.add('on'); });
+    });
+  }
+
+  function back() {
+    if (closing) {
+      var con = document.getElementById('constellation');
+      if (con) con.remove();
+      document.body.classList.remove('closing');
+      closing = false;
+      idx = -1;
+      show(book.scenes.length - 1);
       return;
     }
-    bookEl.classList.add('book-out');
-    headerEl().classList.add('hdr-fade');
-    window.setTimeout(function () {
-      headerFadeSwap(key, 500);
-    }, 400);
+    show(idx - 1);
   }
 
-  function headerEl() {
-    return document.getElementById('stillHeader');
-  }
+  upBtn.addEventListener('click', back);
+  downBtn.addEventListener('click', function () { if (!closing) show(idx + 1); });
 
-  function headerFadeSwap(key, inMs) {
-    loadBook(key, function () {});
-    try {
-      window.history.replaceState(null, '', '#' + key);
-    } catch (eHS) {
-      window.location.hash = key;
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowUp') { e.preventDefault(); back(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); if (!closing) show(idx + 1); }
+  });
+
+  (function snow() {
+    var cv = document.getElementById('snow');
+    var cx = cv.getContext('2d');
+    var flakes = [];
+    var tint = book.tint;
+
+    function size() {
+      cv.width = innerWidth;
+      cv.height = innerHeight;
     }
-    bookEl.classList.remove('book-out');
-    if (inMs === 0) {
-      headerEl().classList.remove('hdr-fade');
-      switching = false;
-      return;
+    size();
+    window.addEventListener('resize', size);
+
+    for (var i = 0; i < 90; i++) {
+      flakes.push({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: .5 + Math.random() * 1.9,
+        v: .12 + Math.random() * .42,
+        d: Math.random() * 6.28,
+        a: .12 + Math.random() * .4,
+        tinted: Math.random() < .12
+      });
     }
-    bookEl.classList.add('book-in');
-    void bookEl.offsetWidth;
-    bookEl.classList.remove('book-in');
-    headerEl().classList.remove('hdr-fade');
-    window.setTimeout(function () {
-      switching = false;
-    }, inMs);
-  }
 
-  function markVisited(p) {
-    if (visited[currentKey]) visited[currentKey][p] = true;
-  }
-
-  function easeInOut(t) {
-    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-  }
-
-  var undertowT = 0;
-
-  function noteTurn() {
-    if (turned) return;
-    turned = true;
-    turnPromptEl.classList.add('prompt-gone');
-  }
-
-  var revealT = null;
-  function revealCurrent() {
-    if (revealT) window.clearTimeout(revealT);
-    var page = pages[currentPage()];
-    if (!page) return;
-    var frame = page.querySelector('.still-frame');
-    if (!frame || !frame.__reveal) return;
-    var wait = page.classList.contains('page-wipe') ? 2600 : 1100;
-    revealT = window.setTimeout(function () {
-      if (pages[currentPage()] === page) frame.__reveal();
-    }, wait);
-  }
-
-  function updateDots() {
-    var cur = currentPage();
-    for (var i = 0; i < dots.length; i++) {
-      dots[i].classList.toggle('dot-current', i === cur);
-      dots[i].classList.toggle('dot-visited', i !== cur && !!(visited[currentKey] && visited[currentKey][i]));
-    }
-  }
-
-
-  function breatheDots() {
-    if (reduced) return;
-    if (!(window.Grammar && typeof window.Grammar.breath === 'function')) return;
-    var cur = currentPage();
-    for (var i = 0; i < dots.length; i++) {
-      if (i === cur) {
-        dots[i].style.opacity = '1';
-        continue;
+    var t = 0;
+    (function loop() {
+      t += .006;
+      cx.clearRect(0, 0, cv.width, cv.height);
+      for (var i = 0; i < flakes.length; i++) {
+        var f = flakes[i];
+        f.y += f.v;
+        f.x += Math.sin(t + f.d) * .22;
+        if (f.y > cv.height + 8) { f.y = -8; f.x = Math.random() * cv.width; }
+        cx.beginPath();
+        cx.arc(f.x, f.y, f.r, 0, 6.2832);
+        cx.fillStyle = f.tinted
+          ? tint + (f.a * .8).toFixed(2) + ')'
+          : 'rgba(206,226,240,' + f.a.toFixed(2) + ')';
+        cx.fill();
       }
-      var b = window.Grammar.breath(i * 0.18);
-      dots[i].style.opacity = String(1 + (b - 0.5) * 0.1);
-    }
-  }
+      requestAnimationFrame(loop);
+    })();
+  })();
 
-  function stepBook(delta) {
-    var idx = ORDER.indexOf(currentKey);
-    for (var s = 1; s < ORDER.length; s++) {
-      var k = ORDER[(idx + delta * s + ORDER.length * s) % ORDER.length];
-      if (k !== currentKey) {
-        switchBook(k);
-        return;
-      }
-    }
-  }
+  document.documentElement.style.setProperty('--book-tint', book.tint + '1)');
 
-  function onKey(e) {
-    if (e.key === 'Escape') {
-      navigate('index.html', 900);
-      return;
-    }
-    if (switching || navigating) return;
-    var cur = currentPage();
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      goTo(cur - 1);
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      goTo(cur + 1);
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      var page = pages[cur];
-      if (page) openMemory(page.getAttribute('data-id'));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      stepBook(-1);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      stepBook(1);
-    } else if (e.key === 'Home') {
-      e.preventDefault();
-      goTo(0);
-    } else if (e.key === 'End') {
-      e.preventDefault();
-      goTo(pages.length - 1);
-    }
-  }
+  setTimeout(function () { hintEl.classList.add('on'); }, 2400);
+  setTimeout(function () { hintEl.classList.remove('on'); }, 9000);
 
-  function startAmbience() {
-    var srcs = ['assets/audio/still_ambience_01.mp3', 'assets/audio/still_ambience_01.m4a', 'assets/audio/still_ambience_01.wav'];
-    var i = 0;
-    function attempt() {
-      if (i >= srcs.length) return;
-      try {
-        var a = new Audio();
-        a.loop = true;
-        a.volume = 0;
-        a.addEventListener('canplaythrough', function () {
-          ambience = a;
-          playAmbience();
-        }, { once: true });
-        a.addEventListener('error', function () {
-          i++;
-          attempt();
-        }, { once: true });
-        a.src = srcs[i];
-        a.load();
-      } catch (eAU) {
-        i++;
-        attempt();
-      }
-    }
-    attempt();
-  }
+  if (window.Veil && Veil.silentResume) Veil.silentResume();
+  show(0);
+  if (window.Veil && Veil.lift) setTimeout(function () { Veil.lift(); }, 120);
 
-  function playAmbience() {
-    if (!ambience) return;
-    try {
-      var p = ambience.play();
-      if (p && typeof p.then === 'function') {
-        p.then(fadeAmbience).catch(function () {
-          var resume = function () {
-            document.removeEventListener('pointerdown', resume);
-            try {
-              ambience.play().then(fadeAmbience).catch(function () {});
-            } catch (eRP) {}
-          };
-          document.addEventListener('pointerdown', resume, { once: true });
-        });
-      } else {
-        fadeAmbience();
-      }
-    } catch (ePA) {}
-  }
-
-  function fadeAmbience() {
-    if (!ambience) return;
-    var start = performance.now();
-    var step = function () {
-      if (!ambience) return;
-      var t = (performance.now() - start) / 4000;
-      if (t >= 1) {
-        ambience.volume = ambienceTargetVol;
-        return;
-      }
-      ambience.volume = ambienceTargetVol * t;
-      window.requestAnimationFrame(step);
-    };
-    window.requestAnimationFrame(step);
-  }
-
-  var STILL_LOCKED = true;
-
-  function boot() {
-    if (STILL_LOCKED){
-      document.documentElement.classList.remove('still-on');
-      document.body.classList.remove('still-on');
-      document.body.innerHTML =
-        '<div id="still-soon">' +
-        '<p class="ss-soon-line">Still Water</p>' +
-        '<p class="ss-soon-sub">Not open yet.</p>' +
-        '<a class="ss-soon-back" href="index.html">back to the deep</a>' +
-        '</div>';
-      return;
-    }
-    document.documentElement.classList.add('still-on');
-    document.body.classList.add('still-on');
-    veilEl = document.getElementById('ss-veil');
-    bookEl = document.getElementById('stillBook');
-    headerNameEl = document.getElementById('stillName');
-    othersEl = document.getElementById('stillOthers');
-    dotsEl = document.getElementById('stillDots');
-    turnPromptEl = document.getElementById('stillTurnPrompt');
-    returnEl = document.getElementById('stillReturn');
-
-    if (window.Veil && typeof window.Veil.silentResume === 'function') {
-      window.Veil.silentResume();
-    }
-
-    var hash = (window.location.hash || '').replace('#', '');
-    var key = ORDER.indexOf(hash) !== -1 ? hash : 'megan';
-
-    if (window.Grammar && typeof window.Grammar.cursorOn === 'function') {
-      window.Grammar.cursorOn();
-    }
-    setCursorMode('idle');
-
-    returnEl.addEventListener('click', function () {
-      navigate('index.html', 900);
-    });
-    returnEl.addEventListener('pointerenter', onNameEnter);
-    returnEl.addEventListener('pointerleave', onNameLeave);
-
-    bookEl.addEventListener('click', onBookClick);
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('resize', function () { paint(); });
-
-    bookEl.addEventListener('pointerenter', function () {
-      setCursorMode('live');
-    });
-    bookEl.addEventListener('pointerleave', function () {
-      if (!pointerDown) setCursorMode('idle');
-    });
-
-    loadBook(key, function () {
-      liftVeil();
-      startAmbience();
-    });
-
-    try {
-      window.history.replaceState(null, '', '#' + key);
-    } catch (eBH) {}
-
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
 })();
