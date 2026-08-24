@@ -1386,7 +1386,7 @@ addEventListener('resize',()=>{
   window.initNav=function(){
     nresize(); if(!window.initNav._resizeBound){ window.initNav._resizeBound=true; addEventListener('resize',nresize); }
     if(!nsnow.length) for(let i=0;i<110;i++){ const p=nseed(); nsnow.push(p); }
-    navRunning=true; nt=0; rising=null; sinkingTo=null; threadsOpen=false;
+    navRunning=true; nt=0; rising=null; sinkingTo=null; threadsOpen=false; threadsExt=0;
     surfRings=[]; nextRingT=4; farBoatX=-0.4; hoverLamp=null; hoverChild=null;
     readWakes(); closeT=0;
     wake.margaret=threadDone('margaret'); wake.megan=threadDone('megan');
