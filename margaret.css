@@ -2563,25 +2563,16 @@ svg[data-asset].has-asset > * {
 }
 
 .cue-mark {
-  margin:0 0 13px;
+  margin:0 0 12px;
   font-family:'DM Sans',sans-serif;
   font-size:clamp(15px,1.35vw,18px);
-  line-height:1.5;
+  font-weight:400;
+  line-height:1.55;
   color:#2E3538;
 }
 
 .cue-mark:last-child {
   margin-bottom:0;
-}
-
-.cue-mark-key {
-  font-family:'DM Sans',sans-serif;
-  font-weight:600;
-  font-size:0.84em;
-  letter-spacing:.11em;
-  color:#B23A2E;
-  white-space:nowrap;
-  margin-right:2px;
 }
 
 #cuePanel.centred{

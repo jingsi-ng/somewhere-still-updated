@@ -6828,19 +6828,19 @@ function cuePanel(){
 }
 
 const WAVE_MARKS = {
-  1: [['REST THE CURSOR', 'on a place and wait for it to settle'],
-      ['HOLD SPACE', 'to lift her onto her toes'],
-      ['PRESS SPACE', 'again and again when she slips']],
-  2: [['CLICK', 'the door, the pieces, the things that wait'],
-      ['HOLD I D O', 'when she cannot say it'],
-      ['MOVE SLOWLY', 'she cannot follow anything fast']],
-  3: [['MOVE THE MOUSE', 'stay near her'],
-      ['HOLD', 'and keep holding'],
-      ['CLICK', 'what she is looking at']],
-  4: [['CLICK THE MIRROR', 'when the phone starts ringing'],
-      ['MOVE THE MOUSE', 'over a thing to look at it'],
-      ['WAIT', 'she is slower than you']],
-  5: [['CLICK', 'to open what arrives']]
+  1: ['Rest the cursor on a place and wait for it to settle.',
+      'Hold the space bar to lift her onto her toes.',
+      'Press it again and again when she slips.'],
+  2: ['Click the door, the pieces, the things that wait.',
+      'Hold the I, D and O keys when she cannot say it.',
+      'Move slowly. She cannot follow anything fast.'],
+  3: ['Move the mouse and stay near her.',
+      'Hold the button down, and keep holding.',
+      'Click what she is looking at.'],
+  4: ['Click the mirror when the phone starts ringing.',
+      'Move the mouse over a thing to look at it.',
+      'Wait. She is slower than you.'],
+  5: ['Click to open what arrives.']
 };
 
 function cueHome(){
@@ -6869,11 +6869,7 @@ function centredMarks(rows, seenKey, after){
   rows.forEach(r=>{
     const p = document.createElement('p');
     p.className = 'cue-mark';
-    const b = document.createElement('b');
-    b.className = 'cue-mark-key';
-    b.textContent = r[0];
-    p.appendChild(b);
-    p.appendChild(document.createTextNode(' ' + r[1]));
+    p.textContent = Array.isArray(r) ? r.join(' ') : r;
     wrap.appendChild(p);
   });
   words.appendChild(wrap);
@@ -6902,9 +6898,10 @@ function centredMarks(rows, seenKey, after){
 }
 
 function houseBrief(){
-  centredMarks([['DRAG', 'to look around the room'],
-                ['FIVE MIRRORS', 'each one holds a memory'],
-                ['CLICK ONE', 'to go inside it']], 'house');
+  centredMarks(['Hold the mouse button down and pull the room sideways.',
+                'The left and right arrow keys move it too.',
+                'Five mirrors are waiting. Each one holds a memory.',
+                'Click a mirror to go inside it.'], 'house');
 }
 
 function waveBrief(waveNum, after){

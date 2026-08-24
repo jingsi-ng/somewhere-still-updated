@@ -2145,6 +2145,7 @@ let s2={pushLatched:false,pushing:false,panning:false,heldObj:null,finalPlaythro
         establishing:false,estT:0};
 let s2Spring=0, s2SpringV=0;
 let s2PanX=0, s2PanTarget=0;
+const placedAt={};
 
 const STEM_KEY={wave:'stem_wave',child:'stem_child',harmony:'stem_harmony',melody:'stem_melody'};
 const S2_MEMS=[
@@ -2603,15 +2604,15 @@ function watchEnd(){
   if(watchOff){ clearTimeout(watchOff); watchOff=null; }
 }
 const MARKS = {
-  stage1: [['CLICK A STRING', 'it sounds the note'],
-           ['HOLD', 'the note rings on'],
-           ['KEEP UP', 'the score does not wait']],
-  stage2: [['DRAG AN OBJECT', 'onto the open book'],
-           ['DRAG THE ROOM', 'left or right to find the rest'],
-           ['ALL FOUR', 'they belong to the same song']],
-  stage3: [['CLICK A STRING', 'the drowned ones stay silent'],
-           ['KEEP PLAYING', 'even as it slips'],
-           ['NO TEMPO LEFT', 'just keep going']]
+  stage1: ['Click a string and it sounds the note.',
+           'Hold, and the note rings on.',
+           'Keep up. The score does not wait.'],
+  stage2: ['Drag an object onto the open book.',
+           'Drag the room left or right to find the rest.',
+           'All four belong to the same song.'],
+  stage3: ['Click a string. The drowned ones stay silent.',
+           'Keep playing, even as it slips.',
+           'There is no tempo left. Just keep going.']
 };
 
 function marksBrief(id, after){
@@ -2628,11 +2629,7 @@ function marksBrief(id, after){
     rows.forEach(r=>{
       const p=document.createElement('p');
       p.className='bf-mark';
-      const b=document.createElement('b');
-      b.className='bf-mark-key';
-      b.textContent=r[0];
-      p.appendChild(b);
-      p.appendChild(document.createTextNode(' '+r[1]));
+      p.textContent=Array.isArray(r)?r.join(' '):r;
       wrap.appendChild(p);
     });
     txt.appendChild(wrap);
@@ -2866,7 +2863,7 @@ function s2Pointer(type,e){
     const obj=el&&el.closest?el.closest('.tobj'):null;
     if(obj&&obj.dataset.state!=='placed'){
       if(e&&e.preventDefault) e.preventDefault();
-      s2.heldObj=obj; obj.classList.add('held');
+      s2.heldObj=obj; obj.classList.add('held'); obj.classList.remove('sunk');
       slipRelease(objToStem[obj.id]);
       if(obj.dataset.state==='floor') objHole(obj);
       fadeProx(obj.id,0);
@@ -2913,6 +2910,9 @@ function s2Pointer(type,e){
       }
       if(s2.pushLatched && mpy<innerHeight*0.40){
         obj.dataset.state='placed'; obj.classList.add('placed');
+        placedAt[objToStem[obj.id]]=t;
+        _st(()=>{ if(obj.dataset.state==='placed'||obj.dataset.state==='slipping')
+          obj.classList.add('sunk'); },520);
         fadeProx(obj.id,0);
         objHole(obj);
         goal('what to do','Drag all four objects onto the book. '+
@@ -2942,11 +2942,13 @@ function s2Pointer(type,e){
 const SLIP_FALL=0.115, SLIP_PUSH=0.52, SLIP_R=120, SLIP_SAVE=0.55;
 let slips=[];
 const slipK={};
+const SLIP_GRACE=9.5;
 function s2RandomFall(){
   if(thomasState.scene!=='stage2'||s2.finalPlaythroughActive||s2.done)return;
   if(thomasState.objects.placed.length<2)return;
   if(Math.random()<0.55)return;
-  const live=thomasState.objects.placed.filter(k=>!slips.some(s=>s.key===k));
+  const live=thomasState.objects.placed.filter(k=>
+    !slips.some(s=>s.key===k) && (t-(placedAt[k]||-99))>SLIP_GRACE);
   if(!live.length)return;
   s2Slip(live[0]);
 }
@@ -2975,13 +2977,15 @@ function stepSlips(){
     const push=d<SLIP_R?SLIP_PUSH*(1-d/SLIP_R):0;
     s.k=clamp(s.k+(SLIP_FALL-push)*dt,0,1);
     slipK[s.key]=s.k;
-    el.style.top=(s.y0+span*s.k)+'px';
+    el.style.top=s.y0+'px';
     const g=stems[s.key]&&stems[s.key].gain;
     if(g&&ctx){ try{ g.gain.setTargetAtTime(Math.max(0.0001,1-s.k),ctx.currentTime,0.09); }catch(e){} }
     if(s.k<=0.001){
       s.ok+=dt;
       if(s.ok>SLIP_SAVE){
         el.dataset.state='placed'; el.style.top=s.y0+'px';
+        el.classList.add('sunk');
+        placedAt[s.key]=t;
         if(g&&ctx){ try{
           g.gain.cancelScheduledValues(ctx.currentTime);
           g.gain.setValueAtTime(g.gain.value,ctx.currentTime);
@@ -2991,7 +2995,7 @@ function stepSlips(){
         continue;
       }
     }else s.ok=0;
-    if(s.k>=1) s2Fall(s.key);
+    if(s.k>=1){ el.classList.remove('sunk'); s2Fall(s.key); }
   }
 }
 const S2_DUCK_LINES=[['Daddy','5, 6, 7, 8',2600],['Daddy','No, do it again',3000]];
