@@ -166,7 +166,10 @@ const IMG_FILES = {
   gallery_mid  : 'megan_gallery_bg_mid_01.png',
   gallery_front: 'megan_gallery_bg_front_01.png',
   studio_back  : 'megan_studio_bg_back_01 2.png',
-  frame_blank  : 'megan_gallery_frame_blank_01.png',
+  frame_1      : 'megan_gallery_frame_01.webp',
+  frame_2      : 'megan_gallery_frame_02.webp',
+  frame_3      : 'megan_gallery_frame_03.webp',
+  frame_4      : 'megan_gallery_frame_04.webp',
   studio_mid   : 'megan_studio_bg_mid_01.png',
   studio_front : 'megan_studio_bg_front_01.png',
   aw_born      : 'megan_awborn_main_01.png',
@@ -2105,7 +2108,31 @@ function makeStudio(painting, opts){
       if (finished) return; finished = true;
       if (restPoll){ clearInterval(restPoll); restPoll = 0; }
       Sound.stopLoop('megan_studio_ambience.wav');
+      saveUserPainting();
       sealPainting();
+    }
+
+    function saveUserPainting(){
+      if (!userL || !userL.elt) return;
+      try {
+        const SW = Math.round(C.W * 0.5), SH = Math.round(C.H * 0.5);
+        const c = document.createElement('canvas');
+        c.width = SW; c.height = SH;
+        const cx2 = c.getContext('2d');
+        if (!cx2 || !cx2.drawImage) return;
+        cx2.fillStyle = '#E4E2DB';
+        cx2.fillRect(0, 0, SW, SH);
+        cx2.drawImage(userL.elt, 0, 0, SW, SH);
+        const data = c.toDataURL('image/jpeg', 0.82);
+        if (!data || data.length > 900000) return;
+        sessionStorage.setItem('megan_painting_' + painting, data);
+        let list = [];
+        try { list = JSON.parse(sessionStorage.getItem('megan_painting_list') || '[]'); }
+        catch(e){ list = []; }
+        if (!Array.isArray(list)) list = [];
+        if (list.indexOf(painting) < 0) list.push(painting);
+        sessionStorage.setItem('megan_painting_list', JSON.stringify(list));
+      } catch(e){}
     }
 
     function sealPainting(){
@@ -3074,7 +3101,7 @@ function buildGallery(host){
     el.style.left = f.x + '%';
     el.dataset.id = f.id;
     const cnv = document.createElement('canvas');
-    cnv.width = 308; cnv.height = 406;
+    cnv.width = 308; cnv.height = 178;
     el.appendChild(cnv);
     el.addEventListener('click', ()=>{
       if (!G.active || (G.mode !== 'entry' && G.mode !== 'pickFall')) return;
@@ -3254,7 +3281,7 @@ function syncFrames(){
     const lit = want !== null && id === want;
     const done = meganState.paintingsDone.includes(id);
     const art = done ? Img.el('aw_' + id) : null;
-    drawFrame(el.querySelector('canvas'), art, lit, G.mode === 'ending');
+    drawFrame(el.querySelector('canvas'), art, lit, G.mode === 'ending', el.dataset.frame);
     el.classList.toggle('empty', !done);
     el.classList.toggle('hung', done);
     el.classList.toggle('want', lit);
@@ -3264,7 +3291,7 @@ function applyFrameAspect(){
   if (!G || !G.FR) return false;
   for (const el of G.FR){
     const cnv = el.querySelector('canvas');
-    if (cnv.width !== 308 || cnv.height !== 406){ cnv.width = 308; cnv.height = 406; }
+    if (cnv.width !== 308 || cnv.height !== 178){ cnv.width = 308; cnv.height = 178; }
   }
   if (G.active) syncFrames();
   return false;
@@ -3272,7 +3299,7 @@ function applyFrameAspect(){
 function drawFrame(c, thumb, highlight, glow){
   const x = guardEllipses(c.getContext('2d'));
   const W = c.width, H = c.height;
-  const frameImg = Img.el('frame_blank');
+  const frameImg = Img.el(frameKey || 'frame_1');
   const mx = Math.round(W * .041), my = Math.round(H * .055);
   const aw = W - mx*2, ah = H - my*2;
   x.clearRect(0, 0, W, H);
@@ -4474,7 +4501,7 @@ function revealIntention(){
     const base = el.querySelector('canvas');
     cnv.width = base.width; cnv.height = base.height;
     cnv.className = 'intent';
-    drawFrame(cnv, original, false, true);
+    drawFrame(cnv, original, false, true, el.dataset.frame);
     el.appendChild(cnv);
     T.push(setTimeout(()=> cnv.classList.add('on'), 120 + i*260));
     T.push(setTimeout(()=> cnv.classList.remove('on'), 3400 + i*260));
@@ -4686,7 +4713,7 @@ function initMeganThread(mountEl){
   bootDOM(mountEl || document.body);
   buildSurfaceExit();
   for (const pd of BOOT.preDone) meganState.paintingsDone.push(pd);
-  const ready = ()=> ['gallery_back','gallery_mid','gallery_front','frame_blank']
+  const ready = ()=> ['gallery_back','gallery_mid','gallery_front','frame_1','frame_2','frame_3','frame_4']
     .every(k=> Img.ok(k));
   const veil = document.createElement('div');
   veil.id = 'meganBoot';
@@ -4710,7 +4737,7 @@ function initMeganThread(mountEl){
       return;
     }
     waited += 100;
-    ['gallery_back','gallery_mid','gallery_front','frame_blank'].forEach(k=> Img.el(k));
+        ['gallery_back','gallery_mid','gallery_front','frame_1','frame_2','frame_3','frame_4'].forEach(k=> Img.el(k));
     setTimeout(poll, 100);
   };
   poll();

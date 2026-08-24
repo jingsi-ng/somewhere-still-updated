@@ -2141,7 +2141,8 @@ const objToStem={ 'obj-wave':'wave','obj-pacifier':'child','obj-ring':'harmony',
 let s2={pushLatched:false,pushing:false,panning:false,heldObj:null,finalPlaythroughActive:false,
   objectsOut:false,echoTimer:null,recallOver:false,wrongStarted:false,
   photoFill:false,photoT0:0,tearing:false,tearT0:0,driftPhase:false,driftT0:0,
-        trueMixPlayed:false,done:false,dropTimer:0,burn:0,burnPhase:false};
+        trueMixPlayed:false,done:false,dropTimer:0,burn:0,burnPhase:false,
+        establishing:false,estT:0};
 let s2Spring=0, s2SpringV=0;
 let s2PanX=0, s2PanTarget=0;
 
@@ -2279,7 +2280,7 @@ function onPushDrag(dy){
   SCORE.open=clamp(SCORE.open+(-dy)*(1-resistance)*0.015,0,1);
   if(SCORE.open>=1){ s2.pushLatched=true; s2ScoreOpened(); }
 }
-const S2_OPEN_HOLD=11000;
+const S2_OPEN_HOLD=6800;
 function s2ScoreOpened(){
   Sound.play('book_open');
   hideCue(); goalClear();
@@ -2299,7 +2300,49 @@ function s2ScoreOpened(){
     s2RevealObjects();
   },S2_OPEN_HOLD+2600);
 }
-const FLOOR_U={'obj-wave':0.085,'obj-pacifier':0.395,'obj-ring':0.605,'obj-photo':0.915};
+const FLOOR_U={'obj-wave':0.145,'obj-pacifier':0.395,'obj-ring':0.605,'obj-photo':0.858};
+const REACH_R=96;
+const EST_HOLD=0.7, EST_SWEEP=3.4, EST_SETTLE=1.3;
+function s2Establish(){
+  if(thomasState.scene!=='stage2')return;
+  s2.establishing=true;
+  s2.estT=0;
+  s2PanTarget=-1;
+  s2PanX=-1;
+}
+function s2EstablishStop(){
+  if(!s2.establishing)return;
+  s2.establishing=false;
+  s2PanTarget=s2PanX;
+}
+function stepEstablish(dt){
+  s2.estT+=dt;
+  const t=s2.estT;
+  let p;
+  if(t<EST_HOLD) p=-1;
+  else if(t<EST_HOLD+EST_SWEEP){
+    const k=(t-EST_HOLD)/EST_SWEEP;
+    p=-1+2*(k*k*(3-2*k));
+  }
+  else if(t<EST_HOLD+EST_SWEEP+EST_SETTLE){
+    const k=(t-EST_HOLD-EST_SWEEP)/EST_SETTLE;
+    p=1-(k*k*(3-2*k));
+  }
+  else { s2.establishing=false; s2PanTarget=0; s2PanX=0; return; }
+  s2PanTarget=p;
+  s2PanX=p;
+}
+function overFloorObject(){
+  for(const id in FLOOR_U){
+    const el=$(id);
+    if(!el||el.style.display==='none')continue;
+    if(el.dataset.state!=='floor')continue;
+    const x=parseFloat(el.style.left), y=parseFloat(el.style.top);
+    if(!isFinite(x)||!isFinite(y))continue;
+    if(Math.abs(mpx-x)<REACH_R&&Math.abs(mpy-y)<REACH_R) return true;
+  }
+  return false;
+}
 const FLOOR_V={'obj-wave':0.905,'obj-pacifier':0.945,'obj-ring':0.905,'obj-photo':0.945};
 function floorPos(id){
   const p=Render.coverMap('bg_livingroom_sea',innerWidth,innerHeight,
@@ -2338,6 +2381,7 @@ function s2RevealObjects(){
       'so drag the room left or right to find them.',()=>{
         goal('what to do','Drag all four objects onto the book. 0 of 4 placed.');
         cue('drag all 4 objects onto the book');
+        s2Establish();
       }); },1400);
   s2CallLoop();
 }
@@ -2579,14 +2623,19 @@ function marksBrief(id, after){
   const txt=el.querySelector('.bf-txt');
   if(txt){
     txt.innerHTML='';
-    const dl=document.createElement('dl');
-    dl.className='bf-marks';
+    const wrap=document.createElement('div');
+    wrap.className='bf-marks';
     rows.forEach(r=>{
-      const dt=document.createElement('dt'); dt.textContent=r[0];
-      const dd=document.createElement('dd'); dd.textContent=r[1];
-      dl.appendChild(dt); dl.appendChild(dd);
+      const p=document.createElement('p');
+      p.className='bf-mark';
+      const b=document.createElement('b');
+      b.className='bf-mark-key';
+      b.textContent=r[0];
+      p.appendChild(b);
+      p.appendChild(document.createTextNode(' '+r[1]));
+      wrap.appendChild(p);
     });
-    txt.appendChild(dl);
+    txt.appendChild(wrap);
   }
   el.querySelector('.bf-go').textContent='click to continue';
   el.classList.add('on');
@@ -2606,7 +2655,7 @@ function marksBrief(id, after){
   const keyClose=(e)=>{ if(e.key===' '||e.key==='Enter') close(); };
   el.addEventListener('pointerdown',close);
   addEventListener('keydown',keyClose);
-  briefOff=setTimeout(close,26000);
+  briefOff=setTimeout(close,180000);
 }
 
 function brief(id,text,after){
@@ -2631,7 +2680,7 @@ function brief(id,text,after){
   const keyClose=(e)=>{ if(e.key===' '||e.key==='Enter') close(); };
   el.addEventListener('pointerdown',close);
   addEventListener('keydown',keyClose);
-  briefOff=setTimeout(close,26000);
+  briefOff=setTimeout(close,180000);
 }
 function hideCue(){
   const el=$('tcue'); if(el) el.classList.remove('on');
@@ -2812,6 +2861,7 @@ function liftStop(){
 function s2Pointer(type,e){
   if(thomasState.scene!=='stage2'||UI_BLOCK)return;
   if(type==='down'){
+    s2EstablishStop();
     const el=document.elementFromPoint(mpx,mpy);
     const obj=el&&el.closest?el.closest('.tobj'):null;
     if(obj&&obj.dataset.state!=='placed'){
@@ -3565,6 +3615,9 @@ function probeFootLine(){
 }
 const WALK_KEYS=['walk_01','walk_02','walk_03','walk_04','walk_05'];
 const SKY_T0=5000, SKY_GAP=4600;
+const SKY_W='min(56vw,760px)', SKY_LEFT=50, SKY_TOP=28;
+const SKY_HOLD=6200, SKY_GONE=9000;
+const SKY_REFLECT=false;
 const SKY_LAST=SKY_T0+(7-1)*SKY_GAP;
 const WALK_FRAME_S=0.42, WALK_DELAY=SKY_LAST/1000, WALK_TRAVEL=20;
 const WALK_STOP=0.55;
@@ -3633,8 +3686,8 @@ function beginEnding(){
   });
 
   const SKY_MASK='radial-gradient(ellipse 76% 72% at 50% 48%,#000 42%,transparent 100%)';
-  const skyBox=(left,top,z,extra)=>
-    'position:fixed;z-index:'+z+';width:min(30vw,380px);opacity:0;'+
+  const skyBox=(left,top,z,extra,w)=>
+    'position:fixed;z-index:'+z+';width:'+(w||SKY_W)+';opacity:0;'+
     'pointer-events:none;left:'+left+'%;top:'+top+'%;'+
     'transition:opacity 2.6s ease,transform 2.6s ease;'+extra;
   const skyImg=()=>
@@ -3673,7 +3726,7 @@ function beginEnding(){
 
       const d=document.createElement('div');
       d.className='sky-mem'; d.dataset.asset=m[0];
-      d.style.cssText=skyBox(m[2],m[3],45,'transform:translate(-50%,-50%) scale(0.96);');
+      d.style.cssText=skyBox(SKY_LEFT,SKY_TOP,45,'transform:translate(-50%,-50%) scale(0.96);');
       const im=skyNode(su,i);
       d.appendChild(im);
       host.appendChild(d);
@@ -3683,12 +3736,12 @@ function beginEnding(){
         if(Render.coverY&&A()&&A().has('bg_sea_sky'))
           hv=Render.coverY('bg_sea_sky',innerWidth,innerHeight,0,SEA_HORIZON_V)/innerHeight*100;
       }catch(e){}
-      const rt=2*hv-m[3];
+      const rt=2*hv-SKY_TOP;
       let r=null;
-      if(rt>hv+1 && rt<99){
+      if(SKY_REFLECT && rt>hv+1 && rt<99){
         r=document.createElement('div');
         r.className='sky-mem sky-ref'; r.dataset.asset=m[0];
-        r.style.cssText=skyBox((m[2]+(Math.random()-0.5)*3).toFixed(1),rt.toFixed(1),42,
+        r.style.cssText=skyBox((SKY_LEFT+(Math.random()-0.5)*3).toFixed(1),rt.toFixed(1),42,
           'transform:translate(-50%,-50%) scaleY(-1) scale(0.94);'+
           'filter:blur(1.6px) saturate(0.62) brightness(0.78);mix-blend-mode:screen;');
         r.appendChild(skyNode(su,i));
@@ -3698,8 +3751,8 @@ function beginEnding(){
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(!d.parentNode)return;
         if(!d.offsetHeight){
-          d.style.width='min(30vw,380px)';
-          im.style.height=(innerHeight*0.17).toFixed(0)+'px';
+          d.style.width=SKY_W;
+          im.style.height=(innerHeight*0.30).toFixed(0)+'px';
         }
         d.classList.add('on');
         d.style.opacity='1';
@@ -3707,8 +3760,8 @@ function beginEnding(){
         if(r){ r.classList.add('on'); r.style.opacity='0.2'; }
       }));
       setTimeout(()=>{ d.classList.remove('on'); d.style.opacity='0';
-        if(r){ r.classList.remove('on'); r.style.opacity='0'; } },9000);
-      setTimeout(()=>{ d.remove(); if(r) r.remove(); },12000);
+        if(r){ r.classList.remove('on'); r.style.opacity='0'; } },SKY_HOLD);
+      setTimeout(()=>{ d.remove(); if(r) r.remove(); },SKY_GONE);
     },SKY_T0+i*SKY_GAP);
   });
   setTimeout(()=>{ if(thomasState.scene==='ending') finishThread(); },
@@ -3889,7 +3942,8 @@ function updateDepthLayer(){
     p.translate(-p.width/2+(mpx/p.width-0.5)*-8, -p.height/2+(mpy/p.height-0.5)*-5);
     if(sc==='stage1'){ drawRoom(p); s1Idle(); }
     if(sc==='stage2'){
-      if(!s2.panning&&!s2.heldObj&&!s2.pushing){
+      if(s2.establishing) stepEstablish(dt);
+      if(!s2.panning&&!s2.heldObj&&!s2.pushing&&!s2.establishing&&!overFloorObject()){
         const edge=0.16;
         const u=mpx/innerWidth;
         if(u<edge) s2PanTarget=clamp(s2PanTarget+(1-u/edge)*dt*0.85,-1,1);

@@ -701,7 +701,7 @@ body.thomas-on.lucid #thomas-root #subs{
 #thomas-root #tbrief.on{
   opacity:1;
   pointer-events:auto;
-  cursor:none;
+  cursor:pointer;
 }
 
 #thomas-root #tbrief .bf-card{
@@ -740,10 +740,10 @@ body.thomas-on.lucid #thomas-root #subs{
 #thomas-root #tbrief .bf-go{
   margin-top:28px;
   font-family:var(--mono);
-  font-size:10px;
-  letter-spacing:0.3em;
+  font-size:12px;
+  letter-spacing:0.26em;
   text-transform:uppercase;
-  color:rgba(70,82,94,0.6);
+  color:rgba(52,64,76,0.92);
 }
 
 #carried{
@@ -783,28 +783,29 @@ body.thomas-on.lucid #thomas-root #subs{
 
 #thomas-root .bf-marks{
   margin:0;
-  display:grid;
-  grid-template-columns:auto 1fr;
-  column-gap:20px;
-  row-gap:11px;
-  align-items:baseline;
   text-align:left;
 }
 
-#thomas-root .bf-marks dt{
-  font-family:var(--mono);
-  font-weight:600;
-  font-size:13px;
-  letter-spacing:.13em;
-  color:#8A4E10;
-  white-space:nowrap;
-}
-
-#thomas-root .bf-marks dd{
-  margin:0;
+#thomas-root .bf-mark{
+  margin:0 0 13px;
   font-family:var(--lora),Georgia,serif;
   font-size:clamp(15px,1.35vw,19px);
+  line-height:1.5;
   color:#333B44;
+}
+
+#thomas-root .bf-mark:last-child{
+  margin-bottom:0;
+}
+
+#thomas-root .bf-mark-key{
+  font-family:var(--mono);
+  font-weight:600;
+  font-size:0.82em;
+  letter-spacing:.11em;
+  color:#8A4E10;
+  white-space:nowrap;
+  margin-right:2px;
 }
 
 #thomas-root #tbrief .bf-card{
