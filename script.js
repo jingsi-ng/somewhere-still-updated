@@ -778,11 +778,12 @@ addEventListener('resize',()=>{
   function navSetDiscovered(k){ try{sessionStorage.setItem('ss_discovered_'+k,'1');}catch(e){} }
 
   const SS_UNLOCKED = { 
-    margaret:true, megan:true, thomas:true, understanding:true, ourstory:true, team:true, fog:true 
+    margaret:true, megan:true, thomas:true, understanding:true, ourstory:true, team:true, fog:true, threads:true  
   };
   const SS_STILL_LOCKED = false;
   function ssLocked(key){ return !SS_UNLOCKED[key]; }
   function ssComingSoon(label){
+    return;
     let el = document.getElementById('ss-soon');
     if (!el){
       el = document.createElement('div');
