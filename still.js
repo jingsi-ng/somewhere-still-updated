@@ -342,7 +342,66 @@
   setTimeout(function () { hintEl.classList.remove('on'); }, 9000);
 
   if (window.Veil && Veil.silentResume) Veil.silentResume();
-  show(0);
+
+  function stillGatePaint(api){
+    api.exitMs = 240;
+    api.fadeMs = 700;
+    var COLS = ['#B23A2E', '#D98324', '#8A8493'];
+    return function (a) {
+      var g = a.ctx, W = a.w(), H = a.h(), t = a.t(), d = a.dpr;
+      g.setTransform(d, 0, 0, d, 0, 0);
+      g.fillStyle = '#05070a';
+      g.fillRect(0, 0, W, H);
+
+      var sink = a.leaving() ? a.since : 0;
+      var pull = Math.min(1, sink * 1.5);
+      var mx = a.mouse.on ? a.mouse.x : W / 2;
+      var my = a.mouse.on ? a.mouse.y : H / 2;
+      var cx = W / 2, cy = H / 2;
+
+      for (var s = 0; s < 3; s++) {
+        var base = cy + (s - 1) * Math.min(H * 0.13, 96);
+        g.strokeStyle = COLS[s];
+        g.lineWidth = 1.6;
+        g.globalAlpha = 0.34 + Math.sin(t * 0.7 + s * 2.1) * 0.14;
+        g.beginPath();
+        for (var x = 0; x <= W; x += 6) {
+          var w1 = Math.sin(x * 0.006 + t * (0.42 + s * 0.13) + s) * (16 + s * 5);
+          var w2 = Math.sin(x * 0.017 - t * 0.3 + s * 1.7) * 6;
+          var y = base + w1 + w2;
+          var dx = x - mx, dy = y - my;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 220) {
+            var f = (1 - dist / 220);
+            y -= dy * f * f * 0.42;
+          }
+          y += (cy - y) * pull;
+          if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
+        }
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+
+      if (sink > 0) {
+        var burst = Math.min(1, sink * 1.1);
+        var bg = g.createRadialGradient(cx, cy, 0, cx, cy, burst * Math.max(W, H) * 0.7);
+        bg.addColorStop(0, 'rgba(206,226,240,' + (0.5 * (1 - burst)).toFixed(3) + ')');
+        bg.addColorStop(1, 'rgba(206,226,240,0)');
+        g.fillStyle = bg;
+        g.fillRect(0, 0, W, H);
+      } else {
+        var pb = 0.5 + Math.sin(t * 1.3) * 0.5;
+        g.strokeStyle = 'rgba(206,226,240,' + (0.1 + pb * 0.16).toFixed(3) + ')';
+        g.lineWidth = 1;
+        g.beginPath();
+        g.arc(cx, cy, 26 + pb * 7, 0, 6.283);
+        g.stroke();
+      }
+    };
+  }
+
+  if (window.Veil && Veil.gate) Veil.gate(null, stillGatePaint, function () { show(0); });
+  else show(0);
   if (window.Veil && Veil.lift) setTimeout(function () { Veil.lift(); }, 120);
 
 })();

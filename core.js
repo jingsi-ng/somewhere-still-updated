@@ -73,10 +73,107 @@
     return n;
   }
 
+  function gateCSS(){
+    if (document.getElementById('ss-gate-css')) return;
+    var s = document.createElement('style');
+    s.id = 'ss-gate-css';
+    s.textContent =
+      '.ss-gate{position:fixed;inset:0;z-index:99998;cursor:pointer;opacity:0;' +
+      'transition:opacity 900ms ease;background:#05070a;overflow:hidden;' +
+      '-webkit-user-select:none;user-select:none}' +
+      '.ss-gate.ss-gate-in{opacity:1}' +
+      '.ss-gate.ss-gate-out{opacity:0;pointer-events:none}' +
+      '.ss-gate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}';
+    document.head.appendChild(s);
+  }
+
+  function gate(host, paint, onGo){
+    gateCSS();
+    var box = document.createElement('div');
+    box.className = 'ss-gate';
+    box.setAttribute('role','button');
+    box.setAttribute('tabindex','0');
+    box.setAttribute('aria-label','enter');
+
+    var cv = document.createElement('canvas');
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    function size(){
+      cv.width = Math.round(innerWidth * dpr);
+      cv.height = Math.round(innerHeight * dpr);
+    }
+    size();
+    box.appendChild(cv);
+    (host || document.body).appendChild(box);
+    requestAnimationFrame(function(){ box.classList.add('ss-gate-in'); });
+
+    var mouse = { x: innerWidth / 2, y: innerHeight / 2, on: false };
+    var onMove = function(e){ mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; };
+    box.addEventListener('pointermove', onMove);
+    window.addEventListener('resize', size);
+
+    var fired = false, raf = 0, t0 = performance.now();
+    var api = {
+      ctx: cv.getContext('2d'),
+      dpr: dpr,
+      mouse: mouse,
+      w: function(){ return innerWidth; },
+      h: function(){ return innerHeight; },
+      t: function(){ return (performance.now() - t0) / 1000; },
+      leaving: function(){ return fired; },
+      since: 0
+    };
+
+    var drawFn = (typeof paint === 'function') ? paint(api) : null;
+    var loop = function(){
+      if (drawFn){
+        api.since = fired ? (performance.now() - api._goAt) / 1000 : 0;
+        try { drawFn(api); } catch(e){}
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    var cleanup = function(){
+      cancelAnimationFrame(raf);
+      box.removeEventListener('pointermove', onMove);
+      window.removeEventListener('resize', size);
+      if (box.parentNode) box.parentNode.removeChild(box);
+    };
+
+    var go = function(){
+      if (fired) return;
+      fired = true;
+      api._goAt = performance.now();
+      box.removeEventListener('pointerdown', go);
+      box.removeEventListener('keydown', onKey);
+      try { if (window.SFX && SFX.unlock) SFX.unlock(); } catch(e){}
+      try { var C = window.__ssCtx; if (C && C.state === 'suspended') C.resume(); } catch(e){}
+      try { markAudioOk(); } catch(e){}
+      var hold = (api.exitMs == null) ? 620 : api.exitMs;
+      var fade = (api.fadeMs == null) ? 900 : api.fadeMs;
+      box.style.transitionDuration = fade + 'ms';
+      setTimeout(function(){ box.classList.add('ss-gate-out'); }, hold);
+      setTimeout(cleanup, hold + fade + 60);
+      if (onGo) onGo();
+    };
+    var onKey = function(e){
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        go();
+      }
+    };
+
+    box.addEventListener('pointerdown', go);
+    box.addEventListener('keydown', onKey);
+    try { box.focus(); } catch(e){}
+    return box;
+  }
+
   window.Veil = {
     ensure: ensure,
     lift: lift,
     drop: drop,
+    gate: gate,
     audioOk: audioOk,
     markAudioOk: markAudioOk,
     silentResume: silentResume,

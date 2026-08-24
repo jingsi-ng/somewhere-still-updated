@@ -5608,6 +5608,99 @@ function thomasReport(){
 }
 window.thomasReport=thomasReport;
 
+function thomasGatePaint(api){
+  api.exitMs = 560;
+  api.fadeMs = 800;
+  var rings = [];
+  var lastDrop = 0;
+  var lastX = null, lastY = null;
+  return function(a){
+    var g = a.ctx, W = a.w(), H = a.h(), t = a.t(), d = a.dpr;
+    g.setTransform(d, 0, 0, d, 0, 0);
+
+    var sink = a.leaving() ? a.since : 0;
+    var horizon = H * (0.44 + sink * 0.5);
+
+    var sky = g.createLinearGradient(0, 0, 0, horizon);
+    sky.addColorStop(0, '#0a1017');
+    sky.addColorStop(1, '#16232e');
+    g.fillStyle = sky;
+    g.fillRect(0, 0, W, horizon);
+
+    var sea = g.createLinearGradient(0, horizon, 0, H);
+    sea.addColorStop(0, '#16232e');
+    sea.addColorStop(1, '#04080c');
+    g.fillStyle = sea;
+    g.fillRect(0, horizon, W, H - horizon);
+
+    g.save();
+    g.beginPath();
+    g.rect(0, horizon, W, H - horizon);
+    g.clip();
+
+    for (var L = 0; L < 5; L++){
+      var yb = horizon + (H - horizon) * Math.pow((L + 1) / 5, 1.7);
+      g.strokeStyle = 'rgba(217,131,36,' + (0.05 + L * 0.018).toFixed(3) + ')';
+      g.lineWidth = 1;
+      g.beginPath();
+      for (var x = 0; x <= W; x += 8){
+        var yy = yb + Math.sin(x * 0.011 + t * (0.5 + L * 0.18)) * (2 + L * 1.6);
+        if (x === 0) g.moveTo(x, yy); else g.lineTo(x, yy);
+      }
+      g.stroke();
+    }
+
+    if (a.mouse.on && !a.leaving()){
+      var mx = a.mouse.x, my = a.mouse.y;
+      var moved = lastX == null ? 99 : Math.hypot(mx - lastX, my - lastY);
+      if (my > horizon && t - lastDrop > 0.11 && moved > 3){
+        rings.push({ x: mx, y: my, r: 2, a: 0.5 });
+        lastDrop = t;
+      }
+      lastX = mx; lastY = my;
+    }
+
+    if (sink > 0 && rings.length < 40){
+      var px = a.mouse.on ? a.mouse.x : W / 2;
+      var py = a.mouse.on ? Math.max(a.mouse.y, horizon + 20) : H * 0.66;
+      for (var b = 0; b < 3; b++) rings.push({ x: px, y: py, r: b * 26, a: 0.7 });
+    }
+
+    for (var i = rings.length - 1; i >= 0; i--){
+      var rg = rings[i];
+      rg.r += sink > 0 ? 7 : 1.9;
+      rg.a -= sink > 0 ? 0.008 : 0.0055;
+      if (rg.a <= 0){ rings.splice(i, 1); continue; }
+      g.strokeStyle = 'rgba(217,131,36,' + rg.a.toFixed(3) + ')';
+      g.lineWidth = 1.2;
+      g.beginPath();
+      g.ellipse(rg.x, rg.y, rg.r, rg.r * 0.3, 0, 0, 6.283);
+      g.stroke();
+    }
+    g.restore();
+
+    if (!a.leaving()){
+      var pb = 0.5 + Math.sin(t * 1.15) * 0.5;
+      var bx = W / 2, by = horizon + (H - horizon) * 0.42;
+      var bg = g.createRadialGradient(bx, by, 0, bx, by, 46 + pb * 22);
+      bg.addColorStop(0, 'rgba(217,131,36,' + (0.3 + pb * 0.28).toFixed(3) + ')');
+      bg.addColorStop(1, 'rgba(217,131,36,0)');
+      g.fillStyle = bg;
+      g.beginPath();
+      g.arc(bx, by, 46 + pb * 22, 0, 6.283);
+      g.fill();
+    } else {
+      var k = Math.min(1, sink * 1.05);
+      var hand = g.createRadialGradient(W * 0.5, H * 0.46, 0, W * 0.5, H * 0.46, Math.hypot(W, H) * 0.62);
+      hand.addColorStop(0, 'rgba(42,48,56,' + k.toFixed(3) + ')');
+      hand.addColorStop(0.62, 'rgba(22,26,32,' + k.toFixed(3) + ')');
+      hand.addColorStop(1, 'rgba(14,17,22,' + k.toFixed(3) + ')');
+      g.fillStyle = hand;
+      g.fillRect(0, 0, W, H);
+    }
+  };
+}
+
 function startThomas(){
   initAudio();
   _armAudio=()=>{
@@ -5630,7 +5723,13 @@ function startThomas(){
   boot();
   if(!ctx) initAudio();
   if(ctx && ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
-  setTimeout(()=>enterThomasFromGate(),80);
+  if(window.Veil && Veil.gate){
+    Veil.gate(null, thomasGatePaint, ()=>{
+      if(!ctx) initAudio();
+      if(ctx && ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
+      setTimeout(()=>enterThomasFromGate(),80);
+    });
+  } else setTimeout(()=>enterThomasFromGate(),80);
 }
 
 window.initThomasThread=function(mountEl){

@@ -425,16 +425,6 @@ body.megan-on {
   display:block;
 }
 
-#gWrap #gFront {
-  top:auto;
-  height:34%;
-  bottom:0;
-}
-
-#gWrap #gFront > canvas, #gFront > img {
-  object-position:center bottom;
-}
-
 .gframe {
   position:absolute;
   top:27%;
