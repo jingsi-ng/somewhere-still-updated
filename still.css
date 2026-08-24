@@ -78,8 +78,9 @@ body.still-on {
 }
 
 .card.megan.past {
-  transform:translateZ(0) scale(1.06);
-  filter:blur(24px) saturate(0.5);
+  transform:translateZ(0) scale(1.14);
+  filter:blur(30px) saturate(1.8) brightness(1.15);
+  transition:opacity 2600ms cubic-bezier(.7,0,.9,.4),transform 2600ms ease-out,filter 900ms ease-out;
 }
 
 @keyframes drift {
@@ -92,7 +93,6 @@ body.still-on {
   object-fit:cover; object-position:center;
 }
 
-/* ---------------- margaret : the mirror ---------------- */
 .card.margaret {
   width:min(30vw, 348px); height:min(37vw, 430px);
   padding:14px;
@@ -105,11 +105,13 @@ body.still-on {
     0 0 46px rgba(196,214,232,.16),
     inset 0 2px 3px rgba(255,255,255,.5);
 }
+
 .card.margaret .inner {
   position:relative; width:100%; height:100%; overflow:hidden;
   border-radius:min(13.6vw,158px) min(13.6vw,158px) 3px 3px;
   background:#243448;
 }
+
 .card.margaret .inner::after {
   content:''; position:absolute; inset:0; pointer-events:none;
   background:linear-gradient(116deg,
@@ -117,13 +119,12 @@ body.still-on {
     rgba(255,255,255,0) 46%);
 }
 
-/* ---------------- megan : the sunken canvas ---------------- */
 .card.megan {
-  width:min(46vw, 520px); height:min(30vw, 340px);
+  width:min(46vw, 520px); 
+  height:min(30vw, 340px);
   padding:15px;
   background:linear-gradient(158deg, #ece5d8 0%, #ded4c2 55%, #cfc4af 100%);
   box-shadow:0 28px 74px rgba(0,0,0,.56);
-  filter:drop-shadow(0 0 30px rgba(150,180,216,.16));
   -webkit-mask-image:
     radial-gradient(circle at 3% 6%, transparent 0 3px, #000 4px),
     radial-gradient(circle at 22% 1%, transparent 0 2px, #000 3px),
@@ -146,11 +147,15 @@ body.still-on {
     radial-gradient(circle at 2%  71%, transparent 0 8px,  #000 9px),
     linear-gradient(#000, #000);
   mask-composite:intersect;
+  transform:translateZ(0) scale(.94);
+  filter:drop-shadow(0 0 30px rgba(150,180,216,.16)) blur(26px) saturate(1.6) brightness(1.1);
 }
+
 .card.megan .inner {
   position:relative; width:100%; height:100%; overflow:hidden;
   background:#2b3a52;
 }
+
 .card.megan .inner::after {
   content:''; position:absolute; inset:-8%; pointer-events:none;
   background:radial-gradient(ellipse 64% 58% at 26% 30%,
@@ -159,12 +164,21 @@ body.still-on {
       rgba(176,200,228,.12) 0%, rgba(176,200,228,0) 72%);
   animation:fog 14s ease-in-out infinite;
 }
+
 @keyframes fog {
   0%,100% { transform:translate(0,0) scale(1); }
   50%     { transform:translate(3%,-2%) scale(1.06); }
 }
 
-/* ---------------- thomas : the drifting score ---------------- */
+.card.megan.past .inner {
+  animation:bleed 2600ms ease-out forwards;
+}
+
+@keyframes bleed {
+  0%   { transform:scale(1)    translateY(0); }
+  100% { transform:scale(1.18) translateY(-3%); }
+}
+
 .card.thomas {
   width:min(48vw, 540px); height:min(31vw, 350px);
   padding:26px 22px;
@@ -179,11 +193,13 @@ body.still-on {
     inset 0 0 44px rgba(122,82,22,.16);
   filter:drop-shadow(0 0 28px rgba(214,168,88,.14));
 }
+
 .card.thomas .inner {
   position:relative; width:100%; height:100%; overflow:hidden;
   background:#33302a;
   box-shadow:inset 0 0 20px rgba(140,96,30,.2);
 }
+
 .card.thomas .inner img { filter:sepia(.16) saturate(.94); }
 
 .card.thomas.past {
@@ -191,7 +207,6 @@ body.still-on {
   filter:blur(22px);
 }
 
-/* ---------------- caption ---------------- */
 #caption {
   margin-top:4.4vh;
   width:min(58vw, 620px);
@@ -210,7 +225,6 @@ body.still-on {
 }
 #caption span.on { opacity:1; }
 
-/* ---------------- chapter mark ---------------- */
 #chapter {
   position:fixed; left:0; right:0; top:5.2vh; z-index:7;
   text-align:center; pointer-events:none;
@@ -219,7 +233,6 @@ body.still-on {
   transition:opacity 900ms ease;
 }
 
-/* ---------------- progress ---------------- */
 #progress {
   position:fixed; left:0; right:0; bottom:0; height:2px; z-index:7;
   background:rgba(226,238,246,.09); pointer-events:none;
@@ -230,7 +243,6 @@ body.still-on {
   transition:width 240ms linear;
 }
 
-/* ---------------- arrows ---------------- */
 #arrows {
   position:fixed; right:3vw; top:50%; transform:translateY(-50%);
   z-index:8; display:flex; flex-direction:column; gap:16px;
@@ -246,7 +258,6 @@ body.still-on {
   stroke:rgba(228,240,248,.9); stroke-width:1.5;
   stroke-linecap:round; stroke-linejoin:round; }
 
-/* ---------------- back ---------------- */
 #back {
   position:fixed; right:2.6vw; bottom:3.4vh; z-index:9;
   padding:10px 22px; border-radius:999px;
@@ -262,7 +273,6 @@ body.still-on {
   background:rgba(226,238,246,.07);
 }
 
-/* ---------------- hint ---------------- */
 #hint {
   position:fixed; left:0; right:0; bottom:7vh; z-index:8;
   text-align:center; pointer-events:none;
@@ -272,7 +282,6 @@ body.still-on {
 }
 #hint.on { opacity:1; }
 
-/* ---------------- closing constellation ---------------- */
 body.closing #stage { justify-content:center; }
 #constellation {
   position:fixed; inset:0; z-index:6;

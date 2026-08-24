@@ -12,19 +12,19 @@
         'radial-gradient(ellipse 130% 70% at 50% -12%, rgba(104,160,196,.26) 0%, rgba(104,160,196,0) 62%), linear-gradient(180deg, #0b2740 0%, #0e3350 28%, #0a2338 66%, #05101c 100%)'
       ],
       scenes: [
-        { audio: 'still_Margaret__01.mp3',
+        { audio: 'still_Margaret_01.mp3',
           imgs: ['Margaret_w1_scene4_mother_2', 'Margaret_w1_scene7_shoegift', 'Margaret_w1_scene8_dancingonstage'],
           text: 'When Margaret was a little girl, her mother took her to a ballet school. She fell in love with dancing and dreamed of becoming a famous dancer. At fifteen she failed to qualify for a national competition, but with her mother\u2019s encouragement she refused to give up. Two years later, wearing the ballet shoes her mother had given her, she returned to the stage and won best dancer.' },
-        { audio: 'still_Margaret__02.mp3',
+        { audio: 'still_Margaret_02.mp3',
           imgs: ['margaret_wedding_margaret_01', 'Margaret_w3_infant_crib_01', 'Margaret_w4_reddoll_gift_01'],
           text: 'Years later Margaret married Peter. They promised to stay together for life. They had a daughter, and when she was five Margaret gave her a little doll wearing red shoes, to celebrate her courage on stage.' },
-        { audio: 'still_Margaret__03.mp3',
+        { audio: 'still_Margaret_03.mp3',
           imgs: ['Margaret_w3_bandaged_daughter_01', 'Margaret_w3_funeral_01_2'],
           text: 'Then everything changed. A car accident took Peter\u2019s life and left Margaret with a badly injured ankle. Her daughter survived but was left with a permanent scar. Margaret could no longer dance and was forced to leave the national dance team. The solo she had been preparing for a long time was never completed.' },
-        { audio: 'still_Margaret__04.mp3',
+        { audio: 'still_Margaret_04.mp3.mp3',
           imgs: ['Margaret_w4_oversized_shoes_01', 'Margaret_w4_podium_ceremony_01'],
           text: 'Margaret helped her daughter regain her confidence. At ten, her daughter put on Margaret\u2019s oversized ballet shoes and began dancing in front of the mirror. She wanted to return to the stage and finish the dance her mother never could. With Margaret\u2019s guidance she eventually became an accomplished dancer.' },
-        { audio: 'still_Margaret__05.mp3',
+        { audio: 'still_Margaret_05.mp3',
           imgs: ['Margaret_w5_daughter_waving', 'Margaret_w5_videocall'],
           text: 'At eighteen her daughter was accepted into a prestigious dance academy. Margaret took her to the airport and watched her leave. Her days became quieter, filled with housework, video calls, and one familiar routine. Every day Margaret still practised standing on her toes. Perhaps she was trying to remember the dancer she once was. Or perhaps she was holding on to the dream she had passed on. The red ballet shoes remained a memory of her mother, her daughter, and a dream that never truly disappeared.' }
       ]
