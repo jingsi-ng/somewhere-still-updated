@@ -6864,14 +6864,19 @@ function centredMarks(rows, seenKey, after){
   el.querySelector('.cue-glyph').innerHTML = '';
   el.querySelector('.cue-bar').style.display = 'none';
   words.innerHTML = '';
-  const dl = document.createElement('dl');
-  dl.className = 'cue-marks';
+  const wrap = document.createElement('div');
+  wrap.className = 'cue-marks';
   rows.forEach(r=>{
-    const dt = document.createElement('dt'); dt.textContent = r[0];
-    const dd = document.createElement('dd'); dd.textContent = r[1];
-    dl.appendChild(dt); dl.appendChild(dd);
+    const p = document.createElement('p');
+    p.className = 'cue-mark';
+    const b = document.createElement('b');
+    b.className = 'cue-mark-key';
+    b.textContent = r[0];
+    p.appendChild(b);
+    p.appendChild(document.createTextNode(' ' + r[1]));
+    wrap.appendChild(p);
   });
-  words.appendChild(dl);
+  words.appendChild(wrap);
   const go = el.querySelector('.cue-go');
   go.textContent = 'press space to begin';
   go.style.display = 'block';
@@ -6893,7 +6898,7 @@ function centredMarks(rows, seenKey, after){
   const key = (e)=>{ if (e.code === 'Space' || e.key === 'Enter'){ e.preventDefault(); close(); } };
   window.addEventListener('keydown', key);
   window.addEventListener('pointerdown', close);
-  const bail = setTimeout(close, 26000);
+  const bail = setTimeout(close, 180000);
 }
 
 function houseBrief(){

@@ -2116,8 +2116,6 @@ svg[data-asset].has-asset > * {
 
 #w3s3-xray { position:absolute; left:0; right:0; top:0; bottom:0; display:block;
   background:none; border:0; }
-  50%     { transform:scale(1.06); opacity:1; }
-}
 
 #w5s1 { background:#0a0908; }
 #w5s1-letter { position:absolute; left:50%; top:50%;
@@ -2561,28 +2559,29 @@ svg[data-asset].has-asset > * {
 
 .cue-marks {
   margin:0;
-  display:grid;
-  grid-template-columns:auto 1fr;
-  column-gap:22px;
-  row-gap:12px;
-  align-items:baseline;
   text-align:left;
 }
 
-.cue-marks dt {
-  font-family:'DM Sans',sans-serif;
-  font-weight:600;
-  font-size:13px;
-  letter-spacing:.13em;
-  color:#B23A2E;
-  white-space:nowrap;
-}
-
-.cue-marks dd {
-  margin:0;
+.cue-mark {
+  margin:0 0 13px;
   font-family:'DM Sans',sans-serif;
   font-size:clamp(15px,1.35vw,18px);
+  line-height:1.5;
   color:#2E3538;
+}
+
+.cue-mark:last-child {
+  margin-bottom:0;
+}
+
+.cue-mark-key {
+  font-family:'DM Sans',sans-serif;
+  font-weight:600;
+  font-size:0.84em;
+  letter-spacing:.11em;
+  color:#B23A2E;
+  white-space:nowrap;
+  margin-right:2px;
 }
 
 #cuePanel.centred{
@@ -2633,6 +2632,4 @@ svg[data-asset].has-asset > * {
   align-items:flex-start;
   justify-content:flex-start;
   padding:4.4vh 0 0 3.4vw;
-}
-
 }
