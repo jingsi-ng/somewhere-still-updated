@@ -3273,6 +3273,23 @@ function nextUnpainted(){
     if (!meganState.paintingsDone.includes(id)) return id;
   return null;
 }
+const USER_ART_ON = true;
+const userArtCache = {};
+function userArt(id){
+  if (!USER_ART_ON) return null;
+  const hit = userArtCache[id];
+  if (hit === false) return null;
+  if (hit) return (hit.complete && hit.naturalWidth > 0) ? hit : null;
+  let data = null;
+  try { data = sessionStorage.getItem('megan_painting_' + id); } catch(e){ data = null; }
+  if (!data) return null;
+  const im = new Image();
+  userArtCache[id] = im;
+  im.onload = ()=>{ try { if (G && G.active) syncFrames(); } catch(e){} };
+  im.onerror = ()=>{ userArtCache[id] = false; };
+  im.src = data;
+  return (im.complete && im.naturalWidth > 0) ? im : null;
+}
 function syncFrames(){
   if (!G || !G.FR) return;
   const want = nextUnpainted();
@@ -3280,7 +3297,7 @@ function syncFrames(){
     const id = el.dataset.id;
     const lit = want !== null && id === want;
     const done = meganState.paintingsDone.includes(id);
-    const art = done ? Img.el('aw_' + id) : null;
+    const art = done ? (userArt(id) || Img.el('aw_' + id)) : null;
     drawFrame(el.querySelector('canvas'), art, lit, G.mode === 'ending', el.dataset.frame);
     el.classList.toggle('empty', !done);
     el.classList.toggle('hung', done);
