@@ -777,8 +777,10 @@ addEventListener('resize',()=>{
   function navGetDiscovered(k){ try{return sessionStorage.getItem('ss_discovered_'+k)==='1';}catch(e){return false;} }
   function navSetDiscovered(k){ try{sessionStorage.setItem('ss_discovered_'+k,'1');}catch(e){} }
 
-  const SS_UNLOCKED = { margaret:true, megan:true, thomas:true, understanding:true, ourstory:true, team:true, fog:true };
-  const SS_STILL_LOCKED = true;
+  const SS_UNLOCKED = { 
+    margaret:true, megan:true, thomas:true, understanding:true, ourstory:true, team:true, fog:true 
+  };
+  const SS_STILL_LOCKED = false;
   function ssLocked(key){ return !SS_UNLOCKED[key]; }
   function ssComingSoon(label){
     let el = document.getElementById('ss-soon');
