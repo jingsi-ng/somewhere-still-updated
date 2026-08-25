@@ -3089,8 +3089,8 @@ function buildGallery(host){
   wrap.append(back, mid, front);
 
   const FR = [
-    { id:'born',    x:26, frame:'frame_1' }, { id:'breadth', x:42, frame:'frame_2' },
-    { id:'calls',   x:58, frame:'frame_3' }, { id:'fall',    x:74, frame:'frame_4' },
+    { id:'born',    x:20, frame:'frame_1' }, { id:'breadth', x:40, frame:'frame_2' },
+    { id:'calls',   x:60, frame:'frame_3' }, { id:'fall',    x:80, frame:'frame_4' },
   ].map(f=>{
     const el = document.createElement('div');
     el.className = 'gframe';
