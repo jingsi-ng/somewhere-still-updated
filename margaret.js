@@ -142,6 +142,14 @@ function margaretGatePaint(api){
   };
 }
 
+window.SS_PRELOAD = [
+  'assets/audio/' + encodeURIComponent('start Margaret - 1.1.m4a'),
+  'assets/audio/' + encodeURIComponent('Start voice -2.2.m4a'),
+  'assets/img/Margaret_w1_corridor_bg.webp',
+  'assets/img/Margaret_w1__corridor_mg.webp',
+  'assets/img/Margaret_w1__corridor_fg.webp'
+];
+
 window.__margaretEnter = function(){
   var run = function(){ __margaretRun(); };
   if (window.Veil && Veil.gate) Veil.gate(null, margaretGatePaint, run);
@@ -1285,7 +1293,7 @@ function openLikeAFlower(){
       if (launched){ clearInterval(poll); return; }
       if (ready.readyState >= 2){ clearInterval(poll); launch(); }
     }, 250);
-    setTimeout(()=>{ clearInterval(poll); launch(); }, 12000);
+    setTimeout(()=>{ clearInterval(poll); launch(); }, 4500);
     try { ready.load(); } catch(e){}
   }
 }

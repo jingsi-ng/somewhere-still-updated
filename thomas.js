@@ -5748,6 +5748,13 @@ function thomasReport(){
 }
 window.thomasReport=thomasReport;
 
+window.SS_PRELOAD = [
+  'assets/img/thomas_anchor_sea_daughter_01.webp',
+  'assets/img/thomas_anchor_concert_wife_01.webp',
+  'assets/img/thomas_bg_practice_01.webp',
+  'assets/img/thomas_score_ourstory_closed_01.webp'
+];
+
 function thomasGatePaint(api){
   api.exitMs = 640;
   api.fadeMs = 820;

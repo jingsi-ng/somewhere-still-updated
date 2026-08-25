@@ -296,6 +296,10 @@ const DECLINE_LOOP = null;
 
 const AudioBank = (function(){
   const pool = {}, loops = {};
+  const PRELOAD_FULL = {
+    'megan_entry_vo_diagnosis.wav': 1,
+    'megan_gallery_ambience.wav': 1
+  };
   function candidates(name){
     const out = [];
     const push = (n)=>{ if (n && out.indexOf(n) < 0) out.push(n); };
@@ -320,7 +324,7 @@ const AudioBank = (function(){
       const cands = candidates(name);
       let i = 0;
       a = new Audio();
-      a.preload = 'metadata';
+      a.preload = PRELOAD_FULL[name] ? 'auto' : 'metadata';
       a.addEventListener('error', ()=>{
         i++;
         if (i < cands.length){ try { a.src = SND_BASE + encodeURI(cands[i]); a.load(); } catch(e){} }
@@ -403,6 +407,14 @@ try {
   window.addEventListener('pointerdown', _unlock, true);
 } catch(e){}
 
+window.SS_PRELOAD = [
+  'assets/audio/' + encodeURIComponent('doctor_ based on the changes....m4a'),
+  'assets/img/megan_bg_back_01.webp',
+  'assets/img/megan_bg_mid_01.webp',
+  'assets/img/megan_bg_front_01.webp'
+];
+
+const VO_BUFFER_GRACE = 3200;
 const Sound = {
   depth: 1,
   _vt: [],
@@ -470,8 +482,19 @@ const Sound = {
         (clip.to - (clip.from || 0)) * 1000 + 120);
       this._vt.push({ cancel: ()=> clearTimeout(hardCut) });
     }
-    timer = setTimeout(finishVO, est);
+    timer = setTimeout(finishVO, est + VO_BUFFER_GRACE);
     if (cut){ this._vt.push(finishVO); }
+    if (a && a.addEventListener){
+      a.addEventListener('playing', ()=>{
+        if (done) return;
+        clearTimeout(timer);
+        const left = cut ? (clip.to - (a.currentTime || 0)) * 1000 + 260
+                         : (isFinite(a.duration) && a.duration
+                              ? (a.duration - (a.currentTime || 0)) * 1000 + 320
+                              : est);
+        timer = setTimeout(finishVO, Math.max(1200, left));
+      }, { once:true });
+    }
     const useDur = (d)=>{
       if (cut) return true;
       if (done || !isFinite(d) || !d) return false;
@@ -508,8 +531,10 @@ function showLine(speaker, text){
   if (PAINTING_SCENES.indexOf(_current) > -1) return;
   const host = document.getElementById('meganSub');
   if (!host) return;
+  const inStudio = (_current || '').indexOf('studio_') === 0;
   host.style.top = 'auto';
-  host.style.bottom = ((_current || '').indexOf('studio_') === 0) ? '11%' : '4%';
+  host.style.bottom = inStudio ? '11%' : '4%';
+  host.classList.toggle('panelled', inStudio);
   host.style.zIndex = '90';
   const linger = subLinger();
   Array.prototype.slice.call(host.children).forEach(el=>{

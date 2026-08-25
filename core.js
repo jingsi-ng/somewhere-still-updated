@@ -118,6 +118,26 @@
     (host || document.body).appendChild(box);
     requestAnimationFrame(function(){ box.classList.add('ss-gate-in'); });
 
+    try {
+      var pre = window.SS_PRELOAD;
+      if (pre && pre.length){
+        for (var pi = 0; pi < pre.length; pi++){
+          var u = pre[pi];
+          if (!u) continue;
+          if (/\.(mp3|m4a|wav|ogg)$/i.test(u)){
+            var pa = new Audio();
+            pa.preload = 'auto';
+            pa.src = u;
+            try { pa.load(); } catch(e){}
+          } else {
+            var pim = new Image();
+            pim.decoding = 'async';
+            pim.src = u;
+          }
+        }
+      }
+    } catch(e){}
+
     var mouse = { x: innerWidth / 2, y: innerHeight / 2, on: false };
     var onMove = function(e){ mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; };
     box.addEventListener('pointermove', onMove);
