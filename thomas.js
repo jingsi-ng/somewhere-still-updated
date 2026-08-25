@@ -2604,14 +2604,14 @@ function watchEnd(){
   if(watchOff){ clearTimeout(watchOff); watchOff=null; }
 }
 const MARKS = {
-  stage1: ['Click a string and it sounds the note.',
-           'Hold, and the note rings on.',
-           'Keep up. The score does not wait.'],
+  stage1: ['Sweep your hand across the strings to play them.',
+           'Any string will do. There is no wrong one.',
+           'Keep sweeping. The score does not wait.'],
   stage2: ['Drag an object onto the open book.',
            'Drag the room left or right to find the rest.',
            'All four belong to the same song.'],
-  stage3: ['Click a string. The drowned ones stay silent.',
-           'Keep playing, even as it slips.',
+  stage3: ['Sweep across the lit string to play it.',
+           'The drowned ones stay silent. Keep sweeping anyway.',
            'There is no tempo left. Just keep going.']
 };
 

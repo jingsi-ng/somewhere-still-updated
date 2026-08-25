@@ -6835,7 +6835,7 @@ const WAVE_MARKS = {
       'Hold the I, D and O keys when she cannot say it.',
       'Move slowly. She cannot follow anything fast.'],
   3: ['Move the mouse and stay near her.',
-      'Hold the button down, and keep holding.',
+      'Hold the mouse button and pull downward.',
       'Click what she is looking at.'],
   4: ['Click the mirror when the phone starts ringing.',
       'Move the mouse over a thing to look at it.',
@@ -6878,9 +6878,11 @@ function centredMarks(rows, seenKey, after){
   go.style.display = 'block';
   requestAnimationFrame(()=> el.classList.add('on'));
 
+  centredMarks._open = true;
   let done = false;
   const close = ()=>{
     if (done) return; done = true;
+    centredMarks._open = false;
     window.removeEventListener('keydown', key);
     window.removeEventListener('pointerdown', close);
     clearTimeout(bail);
@@ -6890,6 +6892,8 @@ function centredMarks(rows, seenKey, after){
       setTimeout(()=>{ words.innerHTML = ''; }, 700);
     }, 900);
     if (after) after();
+    const deferred = centredMarks._deferred;
+    if (deferred){ centredMarks._deferred = null; setTimeout(deferred, 950); }
   };
   const key = (e)=>{ if (e.code === 'Space' || e.key === 'Enter'){ e.preventDefault(); close(); } };
   window.addEventListener('keydown', key);
@@ -6980,6 +6984,7 @@ function cueBeat(){
 }
 
 function cueClear(){
+  if (centredMarks._open){ centredMarks._deferred = cueClear; return; }
   if (window.Mode) Mode.watch();
   cueHome();
   cueLive = false;
@@ -7058,11 +7063,11 @@ function inviteToDance(){
   window.dispatchEvent(new CustomEvent('margaretInvite'));
   setTimeout(()=>{
     centredMarks(cameraAllowed()
-      ? [['RAISE YOUR HAND', 'to the camera, or move the mouse'],
-         ['MOVE SLOWLY', 'she follows where you lead'],
-         ['KEEP GOING', 'until the music ends']]
-      : [['MOVE THE MOUSE', 'slowly, and she will follow'],
-         ['KEEP GOING', 'until the music ends']], 'ending');
+      ? ['Raise your hand to the camera, or move the mouse.',
+         'Move slowly. She follows where you lead.',
+         'Keep going until the music ends.']
+      : ['Move the mouse slowly and she will follow.',
+         'Keep going until the music ends.'], 'ending');
   }, 900);
   setTimeout(()=> endingLine('she is waiting for someone to lead', 3200), 1400);
   setTimeout(()=>{
@@ -7116,23 +7121,39 @@ const GestureDrive = { stream:null, hands:null, hands2:null, video:null, preview
   engaged:false, metOnce:false, mouseDriven:false, smooth:null, lastSeen:0,
   _readyP:null, _teardown:null, _nudge:null, _act:0 };
 
+const MP_LOCAL = 'assets/lib/mediapipe/';
 const MP_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
-let MP_BASE = MP_CDN;
+let MP_BASE = MP_LOCAL;
+
+function loadHandsFrom(base){
+  return new Promise(res => {
+    const sc = document.createElement('script');
+    sc.src = base + 'hands.js';
+    if (base === MP_CDN) sc.crossOrigin = 'anonymous';
+    sc.onload = ()=> res(!!window.Hands);
+    sc.onerror = ()=>{ sc.remove(); res(false); };
+    document.head.appendChild(sc);
+  });
+}
 
 function loadMediaPipeHands(){
   if (window.Hands){ window.SS_MP = 'already loaded'; return Promise.resolve(true); }
-  return new Promise(res => {
-    const sc = document.createElement('script');
-    sc.src = MP_CDN + 'hands.js';
-    sc.crossOrigin = 'anonymous';
-    sc.onload = ()=>{
+  if (loadMediaPipeHands._p) return loadMediaPipeHands._p;
+  loadMediaPipeHands._p = (async ()=>{
+    if (await loadHandsFrom(MP_LOCAL)){
+      MP_BASE = MP_LOCAL;
+      window.SS_MP = 'local';
+      return true;
+    }
+    if (await loadHandsFrom(MP_CDN)){
       MP_BASE = MP_CDN;
-      window.SS_MP = window.Hands ? 'cdn' : 'cdn loaded but Hands missing';
-      res(!!window.Hands);
-    };
-    sc.onerror = ()=>{ window.SS_MP = 'cdn unreachable'; res(false); };
-    document.head.appendChild(sc);
-  });
+      window.SS_MP = 'cdn fallback';
+      return true;
+    }
+    window.SS_MP = 'unreachable from ' + MP_LOCAL + ' and the cdn';
+    return false;
+  })();
+  return loadMediaPipeHands._p;
 }
 
 function cameraAllowed(){

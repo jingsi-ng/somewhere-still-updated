@@ -428,8 +428,8 @@ body.megan-on {
 .gframe {
   position:absolute;
   top:27%;
-  width:min(10.5vw,150px);
-  height:min(6.1vw,87px);
+  width:15.5vw;
+  height:9vw;
   transform:translateX(-50%);
   cursor:pointer;
   transition:transform .3s ease, box-shadow .3s ease;

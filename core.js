@@ -83,7 +83,14 @@
       '-webkit-user-select:none;user-select:none}' +
       '.ss-gate.ss-gate-in{opacity:1}' +
       '.ss-gate.ss-gate-out{opacity:0;pointer-events:none}' +
-      '.ss-gate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}';
+      '.ss-gate canvas{position:absolute;inset:0;width:100%;height:100%;display:block}' +
+      '.ss-gate-say{position:absolute;left:0;right:0;bottom:11vh;text-align:center;' +
+      'pointer-events:none;font-family:Lora,Georgia,serif;font-style:italic;' +
+      'font-size:clamp(15px,1.5vw,20px);letter-spacing:.03em;color:rgba(238,244,248,.88);' +
+      'text-shadow:0 2px 14px rgba(0,0,0,.85);opacity:0;transition:opacity 1.4s ease}' +
+      '.ss-gate.ss-gate-in .ss-gate-say{opacity:1}' +
+      '.ss-gate.ss-gate-out .ss-gate-say{opacity:0}' +
+      '@media (prefers-reduced-motion: reduce){.ss-gate-say{transition:none}}';
     document.head.appendChild(s);
   }
 
@@ -95,6 +102,10 @@
     box.setAttribute('tabindex','0');
     box.setAttribute('aria-label','enter');
 
+    var say = document.createElement('div');
+    say.className = 'ss-gate-say';
+    say.textContent = 'Click anywhere to begin.';
+
     var cv = document.createElement('canvas');
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     function size(){
@@ -103,6 +114,7 @@
     }
     size();
     box.appendChild(cv);
+    box.appendChild(say);
     (host || document.body).appendChild(box);
     requestAnimationFrame(function(){ box.classList.add('ss-gate-in'); });
 
