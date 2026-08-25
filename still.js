@@ -21,7 +21,7 @@
         { audio: 'still_Margaret_03.mp3',
           imgs: ['Margaret_w3_bandaged_daughter_01', 'Margaret_w3_funeral_01_2'],
           text: 'Then everything changed. A car accident took Peter\u2019s life and left Margaret with a badly injured ankle. Her daughter survived but was left with a permanent scar. Margaret could no longer dance and was forced to leave the national dance team. The solo she had been preparing for a long time was never completed.' },
-        { audio: 'still_Margaret_04.mp3.mp3',
+        { audio: 'still_Margaret_04.mp3',
           imgs: ['Margaret_w4_oversized_shoes_01', 'Margaret_w4_podium_ceremony_01'],
           text: 'Margaret helped her daughter regain her confidence. At ten, her daughter put on Margaret\u2019s oversized ballet shoes and began dancing in front of the mirror. She wanted to return to the stage and finish the dance her mother never could. With Margaret\u2019s guidance she eventually became an accomplished dancer.' },
         { audio: 'still_Margaret_05.mp3',

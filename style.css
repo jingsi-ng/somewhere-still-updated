@@ -333,12 +333,12 @@ html.frozen {
 .hero-form {
   font-family: 'DM Sans', sans-serif;
   font-size: clamp(12px, 1.05vw, 14px);
-  line-height: 1.75;
+  line-height: 1.85;
   letter-spacing: 0.02em;
   color: var(--ui);
-  opacity: 0.44;
-  max-width: 46ch;
-  margin: -34px auto 46px;
+  opacity: 0.42;
+  max-width: 68ch;
+  margin: -28px auto 42px;
   animation: breathe 7s ease-in-out infinite;
 }
 

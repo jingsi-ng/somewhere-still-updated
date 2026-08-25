@@ -630,7 +630,7 @@
     var go = document.createElement('button');
     go.type = 'button';
     go.className = 'ss-ending-go';
-    go.textContent = 'see what really happened';
+    go.textContent = 'the whole of it, in order';
     go.addEventListener('click', function(){
       close(wrap);
       if (W.Veil && W.Veil.drop) W.Veil.drop('still.html#' + key, 900);

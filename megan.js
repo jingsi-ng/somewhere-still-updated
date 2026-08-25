@@ -162,9 +162,9 @@ const ENTRY_DOCTOR = {
 };
 
 const IMG_FILES = {
-  gallery_back : 'megan_gallery_bg_back_01.png',
-  gallery_mid  : 'megan_gallery_bg_mid_01.png',
-  gallery_front: 'megan_gallery_bg_front_01.png',
+  gallery_back : 'megan_bg_back_01.webp',
+  gallery_mid  : 'megan_bg_mid_01.webp',
+  gallery_front: 'megan_bg_front_01.webp',
   studio_back  : 'megan_studio_bg_back_01 2.png',
   frame_1      : 'megan_gallery_frame_01.webp',
   frame_2      : 'megan_gallery_frame_02.webp',
@@ -3093,13 +3093,14 @@ function buildGallery(host){
   wrap.append(back, mid, front);
 
   const FR = [
-    { id:'born',    x:26 }, { id:'breadth', x:42 },
-    { id:'calls',   x:58 }, { id:'fall',    x:74 },
+    { id:'born',    x:26, frame:'frame_1' }, { id:'breadth', x:42, frame:'frame_2' },
+    { id:'calls',   x:58, frame:'frame_3' }, { id:'fall',    x:74, frame:'frame_4' },
   ].map(f=>{
     const el = document.createElement('div');
     el.className = 'gframe';
     el.style.left = f.x + '%';
     el.dataset.id = f.id;
+    el.dataset.frame = f.frame;
     const cnv = document.createElement('canvas');
     cnv.width = 308; cnv.height = 178;
     el.appendChild(cnv);
@@ -3313,7 +3314,7 @@ function applyFrameAspect(){
   if (G.active) syncFrames();
   return false;
 }
-function drawFrame(c, thumb, highlight, glow){
+function drawFrame(c, thumb, highlight, glow, frameKey){
   const x = guardEllipses(c.getContext('2d'));
   const W = c.width, H = c.height;
   const frameImg = Img.el(frameKey || 'frame_1');
@@ -4217,12 +4218,14 @@ SCENES.studio_alone = {
       const d = document.createElement('div');
       d.className = 'slayer';
       d.id = 'thresh_' + k;
-      d.style.cssText = (k === 'front' ? 'position:absolute;left:0;right:0;bottom:0;height:42%;'
-                                       : 'position:absolute;inset:0;')
+      d.style.cssText = 'position:absolute;inset:0;'
         + 'z-index:' + (i+1) + ';opacity:0;transition:opacity 1.6s ease';
       const im = document.createElement('img');
       im.src = url; im.alt = '';
-      if (k === 'front') im.style.objectPosition = 'center bottom';
+      if (k === 'front'){
+        im.style.objectFit = 'contain';
+        im.style.objectPosition = 'center bottom';
+      }
       d.appendChild(im);
       ov.appendChild(d);
       setTimeout(()=>{ d.style.opacity = '1'; }, 40 + i*140);

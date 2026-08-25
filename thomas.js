@@ -3043,7 +3043,7 @@ function s2Fall(key){
     vy+=1.4; y+=vy;
     if(y>innerHeight*0.82){ y=innerHeight*0.82; clearInterval(g2); }
     obj.style.top=y+'px'; },16);
-  cue('hold it',{hold:4200});
+  cue("oh no, it's dropped. drag it back.",{hold:5600});
 }
 const S2_RECALL_MS=54000;
 function s2CheckComplete(){
@@ -3399,8 +3399,22 @@ function s3Sfx(ph){
   playBuf(x[0],{gain:x[2]*(0.7+Math.random()*0.6),bus:'sfx',
     rate:lerp(x[3][0],x[3][1],Math.random())});
 }
+const S3_KEEP=['keep going','it is still there','do not stop',
+               'play on','stay with it','a little longer'];
+const S3_KEEP_EVERY=34;
+let s3KeepAt=0, s3KeepI=0;
+function s3KeepAlive(){
+  if(thomasState.scene!=='stage3')return;
+  if(s3.inPhoto||s3.collapsing||UI_BLOCK||MEM_LOCK)return;
+  if(t-s3KeepAt<S3_KEEP_EVERY)return;
+  const el=$('tcue');
+  if(el&&el.classList.contains('on'))return;
+  s3KeepAt=t;
+  cue(S3_KEEP[s3KeepI++%S3_KEEP.length],{hold:3600});
+}
 function s3BeatTick(){
   if(thomasState.scene!=='stage3'||!SCRATCH_ENABLED||s3.inPhoto)return;
+  s3KeepAlive();
   const ph=s3Phase();
   if(ph!==s3.phase){
     s3.phase=ph;
@@ -3409,8 +3423,8 @@ function s3BeatTick(){
       s3.memShown=ph-1;
       s3HitMemory();
     }
-    if(ph===1) _st(()=>{ if(thomasState.scene==='stage3')
-      cue('keep going'); },2200);
+    if(ph===1) _st(()=>{ if(thomasState.scene==='stage3'){
+      cue('keep going'); s3KeepAt=t; } },2200);
   }
   s3.beatCount++;
   const REPLAY_EVERY=Math.max(4,Math.round(16/beatScale()));
@@ -3623,8 +3637,10 @@ const SKY_W='min(56vw,760px)', SKY_LEFT=50, SKY_TOP=28;
 const SKY_HOLD=6200, SKY_GONE=9000;
 const SKY_REFLECT=false;
 const SKY_LAST=SKY_T0+(7-1)*SKY_GAP;
-const WALK_FRAME_S=0.42, WALK_DELAY=SKY_LAST/1000, WALK_TRAVEL=20;
-const WALK_STOP=0.55;
+const WALK_FRAME_S=0.42, WALK_DELAY=SKY_LAST/1000, WALK_TRAVEL=15;
+const WALK_STOP=0.40;
+const WALK_FADE_AT=0.72;
+const WALK_END_MS=(WALK_DELAY+WALK_TRAVEL*WALK_FADE_AT)*1000;
 const WALK_SCALE0=0.52, WALK_SCALE1=0.30;
 const WALK_SUB0=0.10, WALK_SUB1=0.62, WALK_SUB_MAX=0.20;
 let endingT0=0, endingOn=false, endWakes=[], lastWake=0;
@@ -3664,7 +3680,7 @@ function beginEnding(){
   bursts.length=0; ebNext=t+2.5;
   goalClear(); hideCue();
   { const wel=$('twatch'); if(wel) wel.classList.add('low-left'); }
-  watch((WALK_DELAY+WALK_TRAVEL)*1000+6000,'let it play. just watch.');
+  watch(WALK_END_MS,'let it play. just watch.');
   clearWeave(); memDim(false); hideFlashback(); spotlightOn(false);
   $('whitefade').style.opacity=0;
   $('blackfade').style.opacity=0;
@@ -3689,23 +3705,32 @@ function beginEnding(){
       SKY_T0+v[0]*SKY_GAP+1500);
   });
 
-  const SKY_MASK='radial-gradient(ellipse 76% 72% at 50% 48%,#000 42%,transparent 100%)';
+  const SKY_MASKS=[
+    'radial-gradient(ellipse 78% 70% at 48% 46%,#000 38%,transparent 100%)',
+    'radial-gradient(ellipse 70% 78% at 54% 52%,#000 34%,transparent 96%)',
+    'radial-gradient(ellipse 82% 64% at 46% 50%,#000 44%,transparent 100%)',
+    'radial-gradient(ellipse 66% 74% at 52% 44%,#000 30%,transparent 92%)',
+    'radial-gradient(ellipse 76% 82% at 50% 54%,#000 40%,transparent 98%)',
+    'radial-gradient(ellipse 86% 68% at 44% 48%,#000 36%,transparent 100%)',
+    'radial-gradient(ellipse 72% 76% at 56% 46%,#000 42%,transparent 94%)'
+  ];
+  const skyMaskFor=(i)=>SKY_MASKS[i%SKY_MASKS.length];
   const skyBox=(left,top,z,extra,w)=>
     'position:fixed;z-index:'+z+';width:'+(w||SKY_W)+';opacity:0;'+
     'pointer-events:none;left:'+left+'%;top:'+top+'%;'+
     'transition:opacity 2.6s ease,transform 2.6s ease;'+extra;
-  const skyImg=()=>
+  const skyImg=(i)=>
     'display:block;width:100%;height:auto;min-height:11vh;object-fit:cover;'+
-    '-webkit-mask-image:'+SKY_MASK+';mask-image:'+SKY_MASK+';';
+    '-webkit-mask-image:'+skyMaskFor(i)+';mask-image:'+skyMaskFor(i)+';';
   const skyFallback=(i)=>
     'display:block;width:100%;min-height:11vh;height:17vh;'+
     'background:linear-gradient('+(120+i*30)+'deg,#F2D8A8 0%,#E8A868 40%,#8FC4DE 100%);'+
-    '-webkit-mask-image:'+SKY_MASK+';mask-image:'+SKY_MASK+';';
+    '-webkit-mask-image:'+skyMaskFor(i)+';mask-image:'+skyMaskFor(i)+';';
   const skyNode=(bgSrc,i)=>{
     if(bgSrc){
       const el=document.createElement('img');
       el.className='sm-img'; el.alt='';
-      el.style.cssText=skyImg();
+      el.style.cssText=skyImg(i);
       el.onerror=()=>{
         const f=document.createElement('i');
         f.className='sm-img'; f.style.cssText=skyFallback(i);
@@ -3769,7 +3794,7 @@ function beginEnding(){
     },SKY_T0+i*SKY_GAP);
   });
   setTimeout(()=>{ if(thomasState.scene==='ending') finishThread(); },
-    (WALK_DELAY+WALK_TRAVEL)*1000+6000);
+    WALK_END_MS);
 }
 let closeT0=0, closeOn=false;
 function finishThread(){
