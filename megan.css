@@ -55,7 +55,7 @@ body.megan-on {
 #meganSub {
   position:fixed;
   left:50%;
-  bottom:9%;
+  bottom:4%;
   transform:translateX(-50%);
   max-width:72%;
   text-align:center;
@@ -63,6 +63,11 @@ body.megan-on {
   pointer-events:none;
   opacity:0;
   transition:opacity .5s ease;
+  padding:14px 34px 16px;
+  border-radius:8px;
+  background:rgba(14,20,34,.62);
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
 }
 
 #meganSub.on {
@@ -427,6 +432,7 @@ body.megan-on {
   position:absolute;
   inset:0;
   will-change:transform;
+  pointer-events:none;
 }
 
 .glayer > canvas, .glayer > img {
@@ -514,6 +520,7 @@ body.megan-on {
 
 .gframe {
   position:absolute;
+  pointer-events:auto;
   top:20%;
   width:14vw;
   height:8.1vw;
@@ -542,6 +549,31 @@ body.megan-on {
     rgba(255,246,224,0) 80%);
 }
 
+.gframe .hang {
+  position:absolute;
+  left:50%;
+  bottom:100%;
+  width:1px;
+  height:2.9vw;
+  margin-left:-.5px;
+  background:rgba(52,66,92,.44);
+  pointer-events:none;
+}
+
+.gframe .hang i { display:none; }
+
+.gframe .hang b {
+  position:absolute;
+  left:50%;
+  top:0;
+  width:7px;
+  height:7px;
+  margin:-4px 0 0 -3.5px;
+  border-radius:50%;
+  background:radial-gradient(circle at 34% 30%, #9aa8bd, #4a5670);
+  box-shadow:0 1px 2px rgba(10,18,34,.55);
+}
+
 @media (prefers-reduced-motion: reduce){
   .gframe::before { opacity:.8; }
 }
@@ -566,14 +598,22 @@ body.megan-on {
   z-index:6;
 }
 
+.gframe.want::before {
+  background:radial-gradient(ellipse 46% 52% at 50% 78%,
+    rgba(255,232,176,.72) 0%,
+    rgba(255,232,176,.44) 32%,
+    rgba(255,232,176,.18) 58%,
+    rgba(255,232,176,0) 82%);
+}
+
 @keyframes frameWant {
   0%, 100% {
-    box-shadow:0 0 18px rgba(226,238,255,.45);
+    box-shadow:0 0 0 1px rgba(158,124,54,.34), 0 6px 22px rgba(120,88,28,.34);
     transform:translateX(-50%) scale(1);
   }
   50% {
-    box-shadow:0 0 52px rgba(226,238,255,.95), 0 0 96px rgba(190,205,235,.5);
-    transform:translateX(-50%) scale(1.045);
+    box-shadow:0 0 0 2px rgba(198,158,72,.62), 0 10px 40px rgba(140,102,32,.46);
+    transform:translateX(-50%) scale(1.05);
   }
 }
 
@@ -588,7 +628,7 @@ body.megan-on {
 }
 
 @media (prefers-reduced-motion: reduce){
-  .gframe.want { animation:none; box-shadow:0 0 40px rgba(226,238,255,.8); }
+  .gframe.want { animation:none; box-shadow:0 0 0 2px rgba(198,158,72,.62), 0 10px 40px rgba(140,102,32,.46); }
 }
 
 #gWrap.endingGlow .gframe {
@@ -663,7 +703,7 @@ body.megan-on {
 
 #s_front {
   top:auto;
-  height:80%;
+  height:54%;
   bottom:0;
 }
 
@@ -1144,4 +1184,29 @@ body.megan-on {
 @media (prefers-reduced-motion: reduce) {
   #endDrift { animation:none; }
   #app.drifting { animation:none; }
+}
+
+#studioGo {
+  margin:30px auto 0;
+  display:block;
+  width:max-content;
+  padding:15px 40px 17px;
+  cursor:pointer;
+  font:400 16px/1 Georgia,'Times New Roman',serif;
+  letter-spacing:.05em;
+  color:#3b3524;
+  background:#d2cab1;
+  border-radius:58% 42% 50% 50% / 62% 55% 45% 38%;
+  box-shadow:0 2px 0 rgba(27,42,74,.06) inset;
+  transition:background-color .5s ease, transform .5s cubic-bezier(.3,.7,.3,1), border-radius .9s ease;
+}
+
+#studioGo:hover {
+  background:#e0dcc1;
+  transform:translateY(-2px) rotate(-.6deg);
+  border-radius:46% 54% 58% 42% / 52% 44% 56% 48%;
+}
+
+@media (prefers-reduced-motion: reduce){
+  #studioGo, #studioGo:hover { transition:none; transform:none; }
 }

@@ -3100,6 +3100,10 @@ function buildGallery(host){
     const cnv = document.createElement('canvas');
     cnv.width = 308; cnv.height = 178;
     el.appendChild(cnv);
+    const hang = document.createElement('div');
+    hang.className = 'hang';
+    hang.innerHTML = '<b></b>';
+    el.appendChild(hang);
     el.addEventListener('click', ()=>{
       if (!G.active || (G.mode !== 'entry' && G.mode !== 'pickFall')) return;
       if (G.mode === 'entry' && SCENES.gallery_entry._lockFrames){
@@ -3107,7 +3111,8 @@ function buildGallery(host){
         return;
       }
       const want = nextUnpainted();
-      if (!want || f.id !== want) return;
+      if (!want) return;
+      if (f.id !== want){ scheduleHint('not that one. the lit frame is waiting.', 0); return; }
       onFramePicked(want);
     });
     mid.appendChild(el);
@@ -4132,14 +4137,14 @@ SCENES.studio_alone = {
     const ov = document.createElement('div');
     ov.id = 'studioThreshold';
     ov.style.cssText = 'position:fixed;inset:0;z-index:70;background:#e6dabf;overflow:hidden;cursor:pointer';
-    ['back','mid','front'].forEach((k, i)=>{
+    ['back','front'].forEach((k, i)=>{
       const url = Img.url('studio_' + k);
       if (!url) return;
       const d = document.createElement('div');
       d.className = 'slayer';
       d.id = 'thresh_' + k;
       d.style.cssText = (k === 'front'
-          ? 'position:absolute;left:0;right:0;bottom:0;height:80%;'
+          ? 'position:absolute;left:0;right:0;top:auto;bottom:0;height:54%;'
           : 'position:absolute;inset:0;')
         + 'z-index:' + (i+1) + ';opacity:0;transition:opacity 1.6s ease';
       const im = document.createElement('img');
@@ -4154,19 +4159,19 @@ SCENES.studio_alone = {
       + 'background:radial-gradient(74% 70% at 76% 56%,rgba(255,251,240,.9) 0%,rgba(255,251,240,.66) 48%,rgba(255,251,240,0) 80%)';
     ov.appendChild(plate);
     const card = document.createElement('div');
-    card.style.cssText = 'position:absolute;left:50%;top:17%;transform:translateX(-50%);'
+    card.style.cssText = 'position:absolute;left:50%;top:26%;transform:translateX(-50%);'
       + 'width:min(46vw,600px);z-index:9;opacity:0;'
       + 'transition:opacity 1.8s ease;color:rgba(27,42,74,.96);text-align:center;'
-      + 'font:400 17px/1.9 Georgia,serif';
+      + 'font:400 17px/1.9 Georgia,serif;'
+      + 'padding:26px 34px 30px;border-radius:10px;'
+      + 'background:rgba(255,251,240,.72);'
+      + '-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);'
+      + 'box-shadow:0 10px 34px rgba(74,60,32,.12)';
     card.innerHTML = '<div style="font:500 10px/1 system-ui;letter-spacing:.28em;text-transform:uppercase;'
       + 'color:rgba(27,42,74,.62);margin-bottom:18px">her studio</div>'
-      + 'She cannot finish the whale on her own.<br><br>'
       + 'Her brushes and her colours are on the table.<br><br>'
       + '<span style="opacity:.82">Paint over the whale she left behind.</span>'
-      + '<div id="studioGo" style="margin-top:30px;display:inline-block;padding:12px 30px;'
-      + 'border:1px solid rgba(27,42,74,.42);border-radius:999px;cursor:pointer;'
-      + 'font:400 15px/1 Georgia,serif;letter-spacing:.06em;color:rgba(27,42,74,.9);'
-      + 'transition:background-color .4s ease,border-color .4s ease">I am ready</div>';
+      + '<div id="studioGo">I am ready</div>';
     ov.appendChild(card);
     setTimeout(()=>{ plate.style.opacity = '1'; }, 1300);
     setTimeout(()=>{ card.style.opacity = '1'; }, 1500);
