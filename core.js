@@ -686,19 +686,21 @@
   if (W.Level) return;
 
   var MASTER = 0.9;
-  var DUCK = { vo: 1.0, music: 1.0, amb: 1.0, sfx: 1.0 };
+  var DUCK = { vo: 1.0, music: 0.62, amb: 0.78, sfx: 0.9 };
   var seen = [];
 
   var VO_HINT = /(\bvo\b|voice|_line|line\.|says?\b|narrat|doctor|\bmc[_ ]|megan|margaret|thomas|hans|peter|mama|kid|wife|daddy|priest|pastor|father|elin|congratulation|you did it|nurse|announc|dedication|where.?s the red|do it again|start again|again!|no stop|great job|yes i do|never be hers|5,6,7,8|\.m4a$)/i;
   var MUSIC_HINT = /(music|song|theme|melody|bgm|\bscore\b|ourstory|our story|etude|elegy|harmony|stem_|plunge|waltz|lullab|piano|strings? together)/i;
-  var AMB_HINT = /(ambien|ambient|\bamb\b|room tone|room \+|room sound|empty room|\btone\b|sea wave|ocean|oceanfloor|rain|wind|descent|floor_arrival|house_base|gallery ambience|living room)/i;
+  var AMB_HINT = /(ambien|ambient|\bamb\b|room tone|room \+|room sound|empty room|\btone\b|[_\- ]sea\b|sea wave|ocean|oceanfloor|rain|wind|descent|floor_arrival|house_base|gallery ambience|living room)/i;
+  var VO_STRONG = /(\bvo\b|voice|_line|line\.|narrat|vow|says?\b|\.m4a$)/i;
 
   function kindOf(name){
     if (!name) return 'sfx';
     var n = String(name);
-    if (VO_HINT.test(n)) return 'vo';
+    if (VO_STRONG.test(n)) return 'vo';
     if (MUSIC_HINT.test(n)) return 'music';
     if (AMB_HINT.test(n)) return 'amb';
+    if (VO_HINT.test(n)) return 'vo';
     return 'sfx';
   }
 

@@ -772,7 +772,6 @@ addEventListener('resize',()=>{
 
   function threadDone(k){ try{ return sessionStorage.getItem(k+'_complete')==='true'; }catch(e){ return false; } }
   function doneCount(){ return (threadDone('margaret')?1:0)+(threadDone('megan')?1:0)+(threadDone('thomas')?1:0); }
-  function bottleSent(){ try{ return sessionStorage.getItem('ss_bottle_sent')==='1'; }catch(e){ return false; } }
 
   function navGetDiscovered(k){ try{return sessionStorage.getItem('ss_discovered_'+k)==='1';}catch(e){return false;} }
   function navSetDiscovered(k){ try{sessionStorage.setItem('ss_discovered_'+k,'1');}catch(e){} }
@@ -803,11 +802,6 @@ addEventListener('resize',()=>{
   }
 
   const wake={ margaret:false, megan:false, thomas:false, n:0 };
-  let bottle=null, bottleHover=false, bottleUI=null;
-
-  function spawnBottle(){
-    bottle={ x:0.18, y:0, bob:Math.random()*6.28, drift:0.0055, gone:false, born:nt };
-  }
 
   function drawWake(yOff){
     if(!wake.n) return;
@@ -847,36 +841,6 @@ addEventListener('resize',()=>{
         nctx.beginPath(); nctx.arc(px,py,(1.4+sd*2.6)*U,0,Math.PI*2); nctx.fill();
       }
     }
-  }
-
-  function drawBottle(yOff){
-    if(!bottle||bottle.gone) return;
-    bottle.x+=bottle.drift*0.016;
-    if(bottle.x>0.94) bottle.x=0.06;
-    bottle.bob+=0.014;
-    const bx=bottle.x*nW;
-    const by=surfY(bx)+yOff-3*U+Math.sin(bottle.bob)*3.4*U;
-    const tilt=Math.sin(bottle.bob*0.7)*0.22;
-    const age=Math.min(1,(nt-(bottle.born||0))/2.6);
-    const rise=(1-age)*(1-age)*nH*0.13;
-    const arrive=age<1?(1+Math.sin(age*Math.PI)*0.85):1;
-    const glow=(bottleHover?1:0.55)*arrive;
-    nctx.save();
-    nctx.translate(bx,by+rise); nctx.rotate(tilt);
-    const g=nctx.createRadialGradient(0,0,0,0,0,26*U);
-    g.addColorStop(0,`rgba(214,232,240,${(0.16*glow).toFixed(3)})`);
-    g.addColorStop(1,'rgba(214,232,240,0)');
-    nctx.fillStyle=g; nctx.beginPath(); nctx.arc(0,0,26*U,0,Math.PI*2); nctx.fill();
-    nctx.strokeStyle=`rgba(206,226,234,${(0.52*glow).toFixed(3)})`;
-    nctx.lineWidth=1.3*U;
-    nctx.beginPath();
-    nctx.moveTo(-9*U,-3.4*U); nctx.lineTo(5*U,-3.4*U); nctx.lineTo(9*U,-1.8*U);
-    nctx.lineTo(9*U,1.8*U); nctx.lineTo(5*U,3.4*U); nctx.lineTo(-9*U,3.4*U);
-    nctx.closePath(); nctx.stroke();
-    nctx.fillStyle=`rgba(226,214,180,${(0.40*glow).toFixed(3)})`;
-    nctx.fillRect(-6*U,-2.2*U,7*U,4.4*U);
-    nctx.restore();
-    bottle.sx=bx; bottle.sy=by;
   }
 
   const LAMPS=[
@@ -1257,7 +1221,6 @@ addEventListener('resize',()=>{
     }
 
     drawWake(yOff);
-    drawBottle(yOff);
     LAMPS.forEach((l,i)=>{
       const tgt=(hoverLamp===l)?1:0;
       l.glow+=(tgt-l.glow)*0.08;
@@ -1275,61 +1238,8 @@ addEventListener('resize',()=>{
     navRAF=requestAnimationFrame(navDraw);
   }
 
-  function openBottle(){
-    if(bottleUI) return;
-    const d=document.createElement('div');
-    d.id='ss-bottle';
-    d.innerHTML='<div class="bcard">'
-      +'<div class="btitle">a bottle, for whoever finds it</div>'
-      +'<textarea maxlength="180" rows="3" placeholder="say the thing you never said"></textarea>'
-      +'<button type="button">let it go</button>'
-      +'<div class="bnote"></div></div>';
-    document.body.appendChild(d);
-    bottleUI=d;
-    requestAnimationFrame(()=>d.classList.add('on'));
-    const ta=d.querySelector('textarea');
-    setTimeout(()=>{ try{ ta.focus(); }catch(e){} },420);
-    d.addEventListener('click',e=>{ if(e.target===d) closeBottle(); });
-    d.querySelector('button').addEventListener('click',()=>{
-      const txt=(ta.value||'').trim();
-      try{
-        sessionStorage.setItem('ss_bottle_sent','1');
-        if(txt) sessionStorage.setItem('ss_bottle_text',txt);
-      }catch(e){}
-      const pool=[
-        'I still set two cups out. It has been four years.',
-        'She called me by her sister&rsquo;s name for a whole summer. I answered to it.',
-        'Thank you for saying it for me.',
-        'Thank you for remembering me.',
-        'I loved you. I just didn&rsquo;t know how to say it.',
-        'He forgot the word for water. He never forgot to hold my hand.',
-        'We danced in the kitchen. She led. She always led.'
-      ];
-      const got=pool[Math.floor(Math.random()*pool.length)];
-      d.querySelector('.bcard').innerHTML=
-        '<div class="btitle">the sea gave one back</div>'
-        +'<div class="bgot">&ldquo;'+got+'&rdquo;</div>'
-        +'<div class="bnote">yours is out there now</div>';
-      if(bottle) bottle.gone=true;
-      if(window.SFX) SFX.play('plunge_rise');
-      setTimeout(closeBottle,6200);
-    });
-  }
-  function closeBottle(){
-    if(!bottleUI) return;
-    const d=bottleUI; bottleUI=null;
-    d.classList.remove('on');
-    setTimeout(()=>{ if(d.parentNode) d.parentNode.removeChild(d); },700);
-  }
-
   function pick(cx,cy){
     hoverLamp=null; hoverChild=null;
-    bottleHover=false;
-    if(bottle&&!bottle.gone&&bottle.sx!=null){
-      if(Math.hypot(cx-bottle.sx,cy-bottle.sy)<30*U){
-        bottleHover=true; navCanvas.style.cursor='pointer'; return;
-      }
-    }
     for(const l of LAMPS){
       if(Math.hypot(cx-l.lx,cy-l.ly)<34*U){ hoverLamp=l; break; }
     }
@@ -1338,7 +1248,7 @@ addEventListener('resize',()=>{
         if(c.cx!=null && Math.hypot(cx-c.cx,cy-c.cy)<24*U*threadsExt){ hoverChild=c; hoverLamp=null; break; }
       }
     }
-    const hot=!!(hoverLamp||hoverChild||bottleHover);
+    const hot=!!(hoverLamp||hoverChild);
     navCanvas.style.cursor=hot?'pointer':'default';
     if(window.Grammar) Grammar.mode(hot?'live':'idle');
   }
@@ -1351,7 +1261,6 @@ addEventListener('resize',()=>{
   function navHandleLeave(){ hoverLamp=null; hoverChild=null; }
   function navHandleClick(){
     if(rising||sinkingTo) return;
-    if(bottleHover&&bottle&&!bottle.gone){ openBottle(); return; }
     if(hoverChild){
       if(ssLocked(hoverChild.storyKey)){ ssComingSoon(hoverChild.text); return; }
       navSetDiscovered('threads');
@@ -1391,8 +1300,6 @@ addEventListener('resize',()=>{
     readWakes(); closeT=0;
     wake.margaret=threadDone('margaret'); wake.megan=threadDone('megan');
     wake.thomas=threadDone('thomas'); wake.n=doneCount();
-    bottle=null; bottleHover=false;
-    if(wake.n>=3 && !bottleSent()) spawnBottle();
     LAMPS.forEach(l=>{ l.glow=0; });
     CHILDREN.forEach(c=>{ c.glow=0; });
     navCanvas.addEventListener('mousemove',navHandleMove);
