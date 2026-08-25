@@ -633,6 +633,10 @@ const AUDIO = {
   w2s2_sorry:     { file:'Wave 2 scene 2 doctor line.m4a', vol:0.90, off:0.00 },
 };
 
+const EAGER = {
+  entry_line1: 1, entry_line2: 1, entry_plunge: 1,
+  house_amb: 1, mirror_hum: 1
+};
 const SFX = (function(){
   const cache = new Map();
   let unlocked = false;
@@ -643,7 +647,7 @@ const SFX = (function(){
     if (cache.has(key)) return cache.get(key);
 
     const a = new Audio();
-    a.preload = 'auto';
+    a.preload = EAGER[key] ? 'auto' : 'none';
     a.crossOrigin = 'anonymous';
     a.src = AUDIO_BASE + encodeURIComponent(d.file);
 
@@ -670,13 +674,13 @@ const SFX = (function(){
 
   const live = new Set();
   function warmAll(){
-    const first = ['entry_line1','entry_line2','entry_plunge'];
-    const keys = first.filter(k => AUDIO[k]).concat(Object.keys(AUDIO).filter(k => first.indexOf(k) < 0));
-    let i = 0;
-    (function batch(){
-      for (let n = 0; n < 6 && i < keys.length; n++, i++) base(keys[i]);
-      if (i < keys.length) setTimeout(batch, 250);
-    })();
+    Object.keys(EAGER).filter(k => AUDIO[k]).forEach(base);
+  }
+  function pull(a){
+    if (!a || a.dataset.pulled === '1') return a;
+    a.dataset.pulled = '1';
+    try{ a.preload = 'auto'; a.load(); }catch(e){}
+    return a;
   }
 
   return {
@@ -690,7 +694,7 @@ const SFX = (function(){
       if (!unlocked) return null;
       const d = AUDIO[key];
       if (!d) return null;
-      const b = base(key);
+      const b = pull(base(key));
       if (!b) return null;
       const busy = !d.loop && !b.paused && b.currentTime > 0 && !b.ended;
       const a = busy ? b.cloneNode() : b;
@@ -728,7 +732,7 @@ const SFX = (function(){
 
     prime(key){
       if (!AUDIO[key]) return null;
-      return base(key);
+      return pull(base(key));
     },
 
     src(key){
@@ -737,10 +741,7 @@ const SFX = (function(){
     },
 
     warm(key){
-      const a = base(key);
-      if (!a) return null;
-      try{ a.preload = 'auto'; a.load(); }catch(e){}
-      return a;
+      return pull(base(key));
     },
 
     stop(key){
@@ -1761,8 +1762,21 @@ function bindMirrors(){
   });
 }
 
+function warmWave(n){
+  if (!SFX || !SFX.warm) return 0;
+  const pre = 'w' + n;
+  let hit = 0;
+  Object.keys(AUDIO).forEach(k=>{
+    if (k.indexOf(pre) !== 0) return;
+    SFX.warm(k); hit++;
+  });
+  return hit;
+}
+
 function enterWave(mirrorEl, waveNum){
   houseActive = false;
+  warmWave(waveNum);
+  if (waveNum < 5) setTimeout(()=> warmWave(waveNum + 1), 9000);
   const hm = $('houseMarks'); if (hm) hm.classList.remove('on');
   cueClear();
   ['w1s2-hint','w1s3-hint','endingHint'].forEach(id=>{
