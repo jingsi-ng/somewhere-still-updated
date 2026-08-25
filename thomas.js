@@ -771,7 +771,6 @@ const AUDIO = {
   voices_together  : 'Voicelines At The Same Time Wife, Father, Child .mp3',
   ending_destroyed : 'Ending Destroyed (Chaotic).mp3',
   strings_all_snap : 'All Strings Snap.mp3',
-  etude            : 'Father\'s Etude (Upbeat).mp3',
   note_C           : 'Harp Note C.mp3',
   note_Cs          : 'Harp Note C sharp.mp3',
   note_D           : 'Harp Note D.mp3',
@@ -1927,7 +1926,7 @@ function replayUserMelody(gain,startMs,targetMs){
   }
   return rt;
 }
-let s1={idx:0,open:false,done:false,playedThrough:false,rec:[],recT0:0,etude:null,said:{}};
+let s1={idx:0,open:false,done:false,playedThrough:false,rec:[],recT0:0,said:{}};
 const WIPE_PHRASE_OPEN=[3,5,7,9,11,13,16];
 const WIPE_PHRASE_FALL=[16,13,11,9,7,5,3];
 
@@ -2047,32 +2046,15 @@ function beginStage1(){
   thomasState.scene='stage1';
   thomasState.score.mode='father';
   thomasState.accord=accordAt('stage1',0);
-  loadAudio(['s1_bed','etude','applause','applause_dying','room_empty','room_to_beach','voices_together'])
+  loadAudio(['s1_bed','applause','applause_dying','room_empty','room_to_beach','voices_together'])
     .then(()=>{ if(thomasState.scene!=='stage1')return;
-      loopBuf('s1_bed','s1_bed',{gain:0.40,bus:'amb',fade:2.5});
-      s1.etude=playBuf('etude',{gain:0.5,bus:'music',fade:1.4}); });
+      loopBuf('s1_bed','s1_bed',{gain:0.40,bus:'amb',fade:2.5}); });
   Render.stageAssets('stage1').then(()=>{
     if(thomasState.scene!=='stage1')return;
     if(window.__p5inst) buildStrings(window.__p5inst);
   });
   setTimeout(()=>{ VO('Daddy','5, 6, 7, 8',2600); },5200);
-  setTimeout(()=>{
-    if(s1.etude){ try{
-      const T=ctx.currentTime;
-      s1.etude.gain.gain.cancelScheduledValues(T);
-      s1.etude.gain.gain.setValueAtTime(s1.etude.gain.gain.value,T);
-      s1.etude.gain.gain.linearRampToValueAtTime(0.0001,T+2.4);
-      s1.etude.src.stop(T+2.6);
-    }catch(e){} s1.etude=null; }
-    const bed=loops['s1_bed'];
-    if(bed){ try{
-      const T=ctx.currentTime;
-      bed.gain.gain.cancelScheduledValues(T);
-      bed.gain.gain.setValueAtTime(bed.gain.gain.value,T);
-      bed.gain.gain.linearRampToValueAtTime(0.24,T+2.4);
-    }catch(e){} }
-    nextEtudeStep();
-  },8600);
+  setTimeout(nextEtudeStep,8600);
 
   setTimeout(()=>{ if(thomasState.scene!=='stage1')return;
     brief('s1','His father is teaching him. Sweep your hand across the harp strings to play a note. '+
