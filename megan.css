@@ -950,25 +950,17 @@ body.megan-on {
 
 #meganPrimer .pm-marks {
   margin:0;
-  display:grid;
-  grid-template-columns:auto 1fr;
-  column-gap:20px;
-  row-gap:12px;
-  align-items:baseline;
   text-align:left;
 }
 
-#meganPrimer .pm-marks dt {
-  font:600 13px/1.4 system-ui, sans-serif;
-  letter-spacing:.13em;
-  color:#5A4250;
-  white-space:nowrap;
+#meganPrimer .pm-mark {
+  margin:0 0 12px;
+  font:400 17px/1.55 Georgia,'Times New Roman',serif;
+  color:#1b2233;
 }
 
-#meganPrimer .pm-marks dd {
-  margin:0;
-  font:400 17px/1.5 Georgia,'Times New Roman',serif;
-  color:#1b2233;
+#meganPrimer .pm-mark:last-child {
+  margin-bottom:0;
 }
 
 #watchBars .wm-label {

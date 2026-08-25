@@ -623,12 +623,12 @@ function showPrimer(done){
   ov.id = 'meganPrimer';
   ov.innerHTML = '<div class="card">'
     + '<h4>her studio</h4>'
-    + '<dl class="pm-marks">'
-    + '<dt>PICK A BRUSH</dt><dd>and a colour from her palette</dd>'
-    + '<dt>PRESS AND DRAG</dt><dd>the paint follows your hand</dd>'
-    + '<dt>USE THE CLOTH</dt><dd>to wipe part of it away</dd>'
-    + '<dt>WHEN SHE STOPS</dt><dd>her pen is on the table</dd>'
-    + '</dl>'
+    + '<div class="pm-marks">'
+    + '<p class="pm-mark">Pick a brush and a colour from her palette.</p>'
+    + '<p class="pm-mark">Press and drag. The paint follows your hand.</p>'
+    + '<p class="pm-mark">Use the cloth to wipe part of it away.</p>'
+    + '<p class="pm-mark">She stops when her pen is on the table.</p>'
+    + '</div>'
     + '<div class="go">click anywhere to begin</div>'
     + '</div>';
   host.appendChild(ov);
@@ -640,7 +640,7 @@ function showPrimer(done){
     setTimeout(()=>{ if (ov.parentNode) ov.remove(); done && done(); }, 850);
   };
   ov.addEventListener('click', go);
-  SCENES.studio_born._primerT = setTimeout(go, 16000);
+  SCENES.studio_born._primerT = setTimeout(go, 180000);
 }
 
 function transitionCanvas(){
@@ -4263,7 +4263,7 @@ SCENES.studio_alone = {
       });
     };
     ov.addEventListener('click', go);
-    SCENES.studio_alone._t1 = setTimeout(go, 14000);
+    SCENES.studio_alone._t1 = setTimeout(go, 180000);
     SCENES.studio_alone._go = go;
   },
   exit(){

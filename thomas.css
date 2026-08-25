@@ -881,15 +881,6 @@ body.thomas-on.lucid #thomas-root #subs{
   letter-spacing:0.32em;
 }
 
-#thomas-root .bf-marks dt{
-  color:#8A4E10;
-  font-weight:500;
-}
-
-#thomas-root .bf-marks dd{
-  color:#2A2016;
-}
-
 #thomas-root #twatch .wb-line.drift i{
   width:38%;
   animation:tWatchDrift 3.4s ease-in-out infinite;

@@ -374,6 +374,9 @@ body.p-understanding{
   inset:0;
   z-index:-1;
   background:linear-gradient(148deg, rgba(38,58,70,0.50) 0%, rgba(20,34,44,0.66) 52%, rgba(12,22,30,0.72) 100%);
+  -webkit-clip-path:polygon(
+    5% 12%, 23% 3%, 47% 8%, 68% 1%, 88% 9%, 97% 26%,
+    93% 48%, 99% 68%, 86% 86%, 63% 94%, 41% 89%, 19% 97%, 6% 79%, 2% 52%, 8% 31%);
   clip-path:polygon(
     5% 12%, 23% 3%, 47% 8%, 68% 1%, 88% 9%, 97% 26%,
     93% 48%, 99% 68%, 86% 86%, 63% 94%, 41% 89%, 19% 97%, 6% 79%, 2% 52%, 8% 31%);
@@ -909,6 +912,7 @@ body.p-story .chrome{
   color:rgba(44,28,12,0.92);
   border-bottom:1px solid rgba(96,70,44,0.30);
   background:linear-gradient(180deg, rgba(236,226,204,0.72), rgba(236,226,204,0) 100%);
+  -webkit-backdrop-filter:blur(0.5px);
   backdrop-filter:blur(0.5px);
 }
 
