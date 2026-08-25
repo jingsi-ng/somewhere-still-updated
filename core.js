@@ -118,25 +118,36 @@
     (host || document.body).appendChild(box);
     requestAnimationFrame(function(){ box.classList.add('ss-gate-in'); });
 
+    var need = 0, got = 0, readyAt = 0;
+    var settle = function(){
+      got++;
+      if (got >= need && !readyAt) readyAt = performance.now();
+    };
     try {
       var pre = window.SS_PRELOAD;
       if (pre && pre.length){
+        need = pre.length;
         for (var pi = 0; pi < pre.length; pi++){
           var u = pre[pi];
-          if (!u) continue;
+          if (!u){ settle(); continue; }
           if (/\.(mp3|m4a|wav|ogg)$/i.test(u)){
             var pa = new Audio();
             pa.preload = 'auto';
+            pa.addEventListener('canplaythrough', settle, { once:true });
+            pa.addEventListener('error', settle, { once:true });
             pa.src = u;
             try { pa.load(); } catch(e){}
           } else {
             var pim = new Image();
             pim.decoding = 'async';
+            pim.onload = settle;
+            pim.onerror = settle;
             pim.src = u;
           }
         }
       }
-    } catch(e){}
+    } catch(e){ need = 0; }
+    if (!need) readyAt = performance.now();
 
     var mouse = { x: innerWidth / 2, y: innerHeight / 2, on: false };
     var onMove = function(e){ mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; };
@@ -156,8 +167,16 @@
     };
 
     api.hold = 0;
+    api.ready = need ? 0 : 1;
+    var LOAD_CAP = 14000;
+    var t0load = performance.now();
     var drawFn = (typeof paint === 'function') ? paint(api) : null;
     var loop = function(){
+      if (need){
+        var byCount = got / need;
+        var byTime = (performance.now() - t0load) / LOAD_CAP;
+        api.ready = Math.min(1, Math.max(byCount, byTime));
+      }
       if (drawFn){
         api.since = fired ? (performance.now() - api._goAt) / 1000 : 0;
         try { drawFn(api); } catch(e){}
@@ -192,7 +211,7 @@
     var onKey = function(e){
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
         e.preventDefault();
-        go();
+        if (api.ready >= 1) go();
       }
     };
 
@@ -216,6 +235,7 @@
       api.hold = 0;
     };
     var onDown = function(e){
+      if (api.ready < 1) return;
       if (api.holdMs) holdStart(e); else go();
     };
 
@@ -224,7 +244,17 @@
     box.addEventListener('pointercancel', holdStop);
     box.addEventListener('pointerleave', holdStop);
     box.addEventListener('keydown', onKey);
-    if (api.say) say.textContent = api.say;
+    var readySay = api.say || 'Click anywhere to begin.';
+    if (need){
+      say.textContent = api.loadSay || 'Gathering the memories.';
+      var watchReady = setInterval(function(){
+        if (api.ready < 1) return;
+        clearInterval(watchReady);
+        say.textContent = readySay;
+      }, 120);
+    } else {
+      say.textContent = readySay;
+    }
     try { box.focus(); } catch(e){}
     return box;
   }

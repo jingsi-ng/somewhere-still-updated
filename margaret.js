@@ -21,6 +21,7 @@ function restoreLanding(){
 function margaretGatePaint(api){
   api.exitMs = 560;
   api.fadeMs = 1300;
+  api.loadSay = 'She is still remembering.';
   var wipes = [];
   var cracks = [];
   var lastX = null, lastY = null;
@@ -139,16 +140,38 @@ function margaretGatePaint(api){
       g.ellipse(cx, cy, mw / 2 + 6 + pulse * 4, mh / 2 + 6 + pulse * 4, 0, 0, 6.283);
       g.stroke();
     }
+
+    var rd = a.ready == null ? 1 : a.ready;
+    if (rd < 1){
+      var ly = H * 0.82, lw = Math.min(W * 0.36, 420), lx = W / 2 - lw / 2;
+      g.strokeStyle = 'rgba(178,58,46,0.16)';
+      g.lineWidth = 1;
+      g.beginPath(); g.moveTo(lx, ly); g.lineTo(lx + lw, ly); g.stroke();
+      g.strokeStyle = 'rgba(178,58,46,0.82)';
+      g.lineWidth = 1.6;
+      g.beginPath();
+      for (var q = 0; q <= 48; q++){
+        var u = q / 48;
+        if (u > rd) break;
+        var xx = lx + lw * u;
+        var yy = ly + Math.sin(u * 26 + t * 2.2) * 2.4 * (1 - u * 0.4);
+        if (q === 0) g.moveTo(xx, yy); else g.lineTo(xx, yy);
+      }
+      g.stroke();
+    }
   };
 }
 
-window.SS_PRELOAD = [
-  'assets/audio/' + encodeURIComponent('start Margaret - 1.1.m4a'),
-  'assets/audio/' + encodeURIComponent('Start voice -2.2.m4a'),
-  'assets/img/Margaret_w1_corridor_bg.webp',
-  'assets/img/Margaret_w1__corridor_mg.webp',
-  'assets/img/Margaret_w1__corridor_fg.webp'
-];
+window.SS_PRELOAD = (function(){
+  var A = 'assets/audio/', I = 'assets/img/';
+  var au = ['start Margaret - 1.1.m4a','Start voice -2.2.m4a'];
+  var im = ['Margaret_w1_corridor_bg','Margaret_w1__corridor_mg','Margaret_w1__corridor_fg',
+            'Margaret_w1_scene2_mirror1','Margaret_w1_scene2_mirror2','Margaret_w1_scene2_mirror3',
+            'Margaret_mirrorN_whole_01','Margaret_mirrorN_whole_02','Margaret_mirrorN_whole_03',
+            'Margaret_mirrorN_whole_04','Margaret_mirrorN_whole_05'];
+  return au.map(function(f){ return A + encodeURIComponent(f); })
+    .concat(im.map(function(f){ return I + f + '.webp'; }));
+})();
 
 window.__margaretEnter = function(){
   var run = function(){ __margaretRun(); };

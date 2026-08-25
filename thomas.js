@@ -5730,16 +5730,18 @@ function thomasReport(){
 }
 window.thomasReport=thomasReport;
 
-window.SS_PRELOAD = [
-  'assets/img/thomas_anchor_sea_daughter_01.webp',
-  'assets/img/thomas_anchor_concert_wife_01.webp',
-  'assets/img/thomas_bg_practice_01.webp',
-  'assets/img/thomas_score_ourstory_closed_01.webp'
-];
+window.SS_PRELOAD = (function(){
+  var I = 'assets/img/';
+  return ['thomas_bg_practice_01','thomas_score_father_01','thomas_score_ourstory_closed_01',
+          'thomas_anchor_father_teaching_01','thomas_anchor_stage_father_01',
+          'thomas_anchor_bow_01','thomas_anchor_sea_daughter_01','thomas_anchor_concert_wife_01']
+    .map(function(f){ return I + f + '.webp'; });
+})();
 
 function thomasGatePaint(api){
   api.exitMs = 640;
   api.fadeMs = 820;
+  api.loadSay = 'He is still finding the notes.';
   var LINES = 5;
   var notes = [];
   var motes = [];
@@ -5840,6 +5842,30 @@ function thomasGatePaint(api){
       rg.addColorStop(1, 'rgba(240,196,124,0)');
       g.fillStyle = rg;
       g.fillRect(0, 0, W, H);
+    }
+
+    var rd = a.ready == null ? 1 : a.ready;
+    if (rd < 1){
+      var slots = 8;
+      var lit = Math.floor(rd * slots + 0.001);
+      for (var q = 0; q < slots; q++){
+        var lx = W * (0.32 + (q / (slots - 1)) * 0.36);
+        var ln = q % LINES;
+        var ly = mid + (ln - (LINES - 1) / 2) * gap;
+        var on = q < lit;
+        g.fillStyle = on ? 'rgba(240,196,124,0.86)' : 'rgba(217,131,36,0.14)';
+        g.beginPath();
+        g.ellipse(lx, ly, 4.4, 3.2, -0.4, 0, 6.283);
+        g.fill();
+        if (on){
+          g.strokeStyle = 'rgba(240,196,124,0.6)';
+          g.lineWidth = 1.2;
+          g.beginPath();
+          g.moveTo(lx + 4.2, ly - 1.2);
+          g.lineTo(lx + 4.2, ly - 15);
+          g.stroke();
+        }
+      }
     }
   };
 }

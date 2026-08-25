@@ -422,6 +422,7 @@
     api.fadeMs = 1100;
     api.holdMs = 1400;
     api.say = 'Hold to dive into the memories. Or press enter.';
+    api.loadSay = 'The water is still settling.';
     var BLOBS = [
       { c: '178,58,46',   u: 0.38, v: 0.60, r: 0.40, sp: 0.052, ph: 0.0 },
       { c: '217,131,36',  u: 0.58, v: 0.66, r: 0.36, sp: 0.041, ph: 2.3 },
@@ -438,6 +439,7 @@
       var dive = Math.min(1, sink / 0.9);
       var hold = a.hold || 0;
       var charge = hold * hold;
+      var rd = a.ready == null ? 1 : a.ready;
 
       g.fillStyle = '#0a1128';
       g.fillRect(0, 0, W, H);
@@ -447,7 +449,8 @@
         var b = BLOBS[i];
         var wob = Math.sin(t * b.sp * 6.283 + b.ph);
         var wob2 = Math.cos(t * b.sp * 4.1 + b.ph);
-        var cx = W * b.u + wob * spread * 0.045;
+        var apart = (1 - rd) * 0.26;
+        var cx = W * (b.u + (b.u - 0.48) * apart * 4) + wob * spread * 0.045;
         var cy = H * b.v + wob2 * spread * 0.03;
         var rad = spread * b.r * (1 + wob * 0.07 + charge * 0.55)
                 * (1 + dive * 14);
@@ -508,6 +511,18 @@
           x += g.measureText(ch).width + sp;
         }
         g.restore();
+      }
+
+      if (rd < 1) {
+        var wx = W / 2, wy = H * 0.62, wr = spread * 0.11;
+        g.strokeStyle = 'rgba(226,238,248,0.14)';
+        g.lineWidth = 1.2;
+        g.beginPath(); g.arc(wx, wy, wr, 0, 6.283); g.stroke();
+        g.strokeStyle = 'rgba(226,238,248,0.42)';
+        g.lineWidth = 1.6;
+        g.beginPath();
+        g.arc(wx, wy, wr, -1.5708, -1.5708 + 6.283 * rd);
+        g.stroke();
       }
 
       if (hold > 0 && !a.leaving()) {

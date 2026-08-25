@@ -407,12 +407,15 @@ try {
   window.addEventListener('pointerdown', _unlock, true);
 } catch(e){}
 
-window.SS_PRELOAD = [
-  'assets/audio/' + encodeURIComponent('doctor_ based on the changes....m4a'),
-  'assets/img/megan_bg_back_01.webp',
-  'assets/img/megan_bg_mid_01.webp',
-  'assets/img/megan_bg_front_01.webp'
-];
+window.SS_PRELOAD = (function(){
+  var A = 'assets/audio/', I = 'assets/img/';
+  return [A + encodeURIComponent('doctor_ based on the changes....m4a')]
+    .concat(['megan_bg_back_01','megan_bg_mid_01','megan_bg_front_01',
+             'megan_gallery_frame_01','megan_gallery_frame_02',
+             'megan_gallery_frame_03','megan_gallery_frame_04',
+             'megan_studio_bg_back_01 2','megan_studio_bg_front_01']
+      .map(function(f){ return I + encodeURIComponent(f) + '.webp'; }));
+})();
 
 const VO_BUFFER_GRACE = 3200;
 const Sound = {
@@ -4468,6 +4471,7 @@ function runDedication(){
 function meganGatePaint(api){
   api.exitMs = 820;
   api.fadeMs = 700;
+  api.loadSay = 'She is still mixing the colours.';
   var strokes = [];
   var lastX = null, lastY = null, lastT = 0;
   var HUES = ['#8A8493', '#6E7F8D', '#A08E7A', '#5E6B76', '#8E7B86'];
@@ -4573,6 +4577,24 @@ function meganGatePaint(api){
       g.closePath();
       g.fill();
       g.restore();
+    }
+
+    var rd = a.ready == null ? 1 : a.ready;
+    if (rd < 1){
+      var by = H * 0.84, bw = Math.min(W * 0.34, 400), bx = W / 2 - bw / 2;
+      g.fillStyle = 'rgba(138,132,147,0.14)';
+      g.fillRect(bx, by, bw, 3);
+      var seg = 26;
+      for (var q = 0; q < seg; q++){
+        var u = q / seg;
+        if (u > rd) break;
+        var edge = Math.min(1, (rd - u) * 7);
+        var hh = 3 + Math.sin(u * 19 + t * 1.4) * 2.2;
+        g.fillStyle = HUES[q % HUES.length];
+        g.globalAlpha = 0.5 * edge;
+        g.fillRect(bx + bw * u, by - hh * 0.4, bw / seg + 1, 3 + hh * 0.5);
+      }
+      g.globalAlpha = 1;
     }
   };
 }
