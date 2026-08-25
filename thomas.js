@@ -2521,6 +2521,7 @@ function s2VoiceLoop(){
 }
 const weaveEls=[];
 let cueTimer=null, cueOff=null;
+let cueSticky=false;
 function cue(text,opts){
   if(window.Mode){ if(text) Mode.act(); else Mode.watch(); }
   opts=opts||{};
@@ -2551,6 +2552,8 @@ function cue(text,opts){
     if(k<1) cueTimer=requestAnimationFrame(tick); else cueTimer=null;
   };
   cueTimer=requestAnimationFrame(tick);
+  if(opts.sticky){ cueSticky=true; return; }
+  cueSticky=false;
   cueOff=setTimeout(()=>{
     el.classList.remove('on');
     cueOff=null;
@@ -2679,7 +2682,9 @@ function brief(id,text,after){
   addEventListener('keydown',keyClose);
   briefOff=setTimeout(close,180000);
 }
-function hideCue(){
+function hideCue(force){
+  if(cueSticky && !force) return;
+  cueSticky=false;
   const el=$('tcue'); if(el) el.classList.remove('on');
   if(cueTimer){ cancelAnimationFrame(cueTimer); cueTimer=null; }
   if(cueOff){ clearTimeout(cueOff); cueOff=null; }
@@ -2864,6 +2869,8 @@ function s2Pointer(type,e){
     if(obj&&obj.dataset.state!=='placed'){
       if(e&&e.preventDefault) e.preventDefault();
       s2.heldObj=obj; obj.classList.add('held'); obj.classList.remove('sunk');
+      obj.dataset.surfacing=''; obj.style.transform='';
+      if(cueSticky) hideCue(true);
       slipRelease(objToStem[obj.id]);
       if(obj.dataset.state==='floor') objHole(obj);
       fadeProx(obj.id,0);
@@ -2912,7 +2919,7 @@ function s2Pointer(type,e){
         obj.dataset.state='placed'; obj.classList.add('placed');
         placedAt[objToStem[obj.id]]=t;
         _st(()=>{ if(obj.dataset.state==='placed'||obj.dataset.state==='slipping')
-          obj.classList.add('sunk'); },520);
+          { obj.style.transform=''; obj.classList.add('sunk'); } },520);
         fadeProx(obj.id,0);
         objHole(obj);
         goal('what to do','Drag all four objects onto the book. '+
@@ -2995,7 +3002,7 @@ function stepSlips(){
         continue;
       }
     }else s.ok=0;
-    if(s.k>=1){ el.classList.remove('sunk'); s2Fall(s.key); }
+    if(s.k>=1) s2Surface(s.key);
   }
 }
 const S2_DUCK_LINES=[['Daddy','5, 6, 7, 8',2600],['Daddy','No, do it again',3000]];
@@ -3028,6 +3035,20 @@ function traumaDuck(){
   const l=S2_DUCK_LINES[duckN++%S2_DUCK_LINES.length];
   _st(()=>{ if(thomasState.scene==='stage2'&&!s2.done) VO(l[0],l[1],l[2]); },420);
 }
+const SURFACE_MS=560;
+function s2Surface(key){
+  const obj=$(stems[key].obj);
+  if(!obj){ s2Fall(key); return; }
+  if(obj.dataset.surfacing==='1') return;
+  obj.dataset.surfacing='1';
+  slipRelease(key);
+  obj.style.transform='';
+  obj.classList.remove('sunk');
+  _st(()=>{
+    obj.dataset.surfacing='';
+    s2Fall(key);
+  },SURFACE_MS);
+}
 function s2Fall(key){
   slipRelease(key);
   traumaDuck();
@@ -3036,14 +3057,30 @@ function s2Fall(key){
   dropStem(key);
   Sound.play('obj_fall');
   const obj=$(stems[key].obj); if(!obj)return;
-  obj.dataset.state='floor'; obj.classList.remove('placed');
+  obj.dataset.state='floor'; obj.classList.remove('placed','sunk');
   let vy=0, y=parseFloat(obj.style.top)||0;
+  let x=parseFloat(obj.style.left)||innerWidth*0.5;
+  const seed=(objToStem[obj.id]||'').length+key.length;
+  let vx=((seed%2)?1:-1)*(0.5+((seed*37)%60)/100);
+  let rot=0, vr=vx*0.9;
   const g2=setInterval(()=>{
     if(thomasState.scene!=='stage2'){ clearInterval(g2); return; }
     vy+=1.4; y+=vy;
-    if(y>innerHeight*0.82){ y=innerHeight*0.82; clearInterval(g2); }
-    obj.style.top=y+'px'; },16);
-  cue("oh no, it's dropped. drag it back.",{hold:5600});
+    x+=vx; vx*=0.985;
+    rot+=vr; vr*=0.97;
+    if(y>innerHeight*0.82){
+      y=innerHeight*0.82;
+      obj.style.top=y+'px';
+      obj.style.left=clamp(x,innerWidth*0.06,innerWidth*0.94)+'px';
+      obj.style.transform='translate(-50%,-50%) rotate('+(rot*0.5).toFixed(1)+'deg)';
+      clearInterval(g2);
+      Sound.play('obj_land');
+      return;
+    }
+    obj.style.top=y+'px';
+    obj.style.left=clamp(x,innerWidth*0.06,innerWidth*0.94)+'px';
+    obj.style.transform='translate(-50%,-50%) rotate('+rot.toFixed(1)+'deg)'; },16);
+  cue("oh no, it's dropped. drag it back.",{sticky:true});
 }
 const S2_RECALL_MS=54000;
 function s2CheckComplete(){
@@ -3706,13 +3743,33 @@ function beginEnding(){
   });
 
   const SKY_MASKS=[
-    'radial-gradient(ellipse 78% 70% at 48% 46%,#000 38%,transparent 100%)',
-    'radial-gradient(ellipse 70% 78% at 54% 52%,#000 34%,transparent 96%)',
-    'radial-gradient(ellipse 82% 64% at 46% 50%,#000 44%,transparent 100%)',
-    'radial-gradient(ellipse 66% 74% at 52% 44%,#000 30%,transparent 92%)',
-    'radial-gradient(ellipse 76% 82% at 50% 54%,#000 40%,transparent 98%)',
-    'radial-gradient(ellipse 86% 68% at 44% 48%,#000 36%,transparent 100%)',
-    'radial-gradient(ellipse 72% 76% at 56% 46%,#000 42%,transparent 94%)'
+    'radial-gradient(ellipse 40% 36% at 42% 40%,#000 34%,transparent 100%),'
+   +'radial-gradient(ellipse 36% 40% at 58% 52%,#000 30%,transparent 100%),'
+   +'radial-gradient(ellipse 44% 30% at 50% 62%,#000 26%,transparent 100%)',
+
+    'radial-gradient(ellipse 34% 34% at 54% 40%,#000 30%,transparent 100%),'
+   +'radial-gradient(ellipse 42% 34% at 44% 56%,#000 34%,transparent 100%),'
+   +'radial-gradient(ellipse 32% 38% at 62% 60%,#000 24%,transparent 100%)',
+
+    'radial-gradient(ellipse 44% 32% at 48% 44%,#000 36%,transparent 100%),'
+   +'radial-gradient(ellipse 34% 42% at 60% 50%,#000 28%,transparent 100%),'
+   +'radial-gradient(ellipse 32% 34% at 40% 58%,#000 30%,transparent 100%)',
+
+    'radial-gradient(ellipse 34% 32% at 46% 40%,#000 28%,transparent 100%),'
+   +'radial-gradient(ellipse 42% 36% at 56% 56%,#000 32%,transparent 100%),'
+   +'radial-gradient(ellipse 30% 32% at 38% 52%,#000 26%,transparent 100%)',
+
+    'radial-gradient(ellipse 42% 38% at 52% 42%,#000 32%,transparent 100%),'
+   +'radial-gradient(ellipse 34% 36% at 40% 54%,#000 26%,transparent 100%),'
+   +'radial-gradient(ellipse 38% 30% at 60% 62%,#000 30%,transparent 100%)',
+
+    'radial-gradient(ellipse 40% 34% at 44% 46%,#000 34%,transparent 100%),'
+   +'radial-gradient(ellipse 36% 42% at 58% 44%,#000 28%,transparent 100%),'
+   +'radial-gradient(ellipse 42% 32% at 50% 60%,#000 32%,transparent 100%)',
+
+    'radial-gradient(ellipse 38% 36% at 50% 38%,#000 30%,transparent 100%),'
+   +'radial-gradient(ellipse 38% 34% at 44% 54%,#000 34%,transparent 100%),'
+   +'radial-gradient(ellipse 32% 40% at 62% 50%,#000 24%,transparent 100%)'
   ];
   const skyMaskFor=(i)=>SKY_MASKS[i%SKY_MASKS.length];
   const skyBox=(left,top,z,extra,w)=>
@@ -5545,7 +5602,7 @@ function resetThomasState(){
   waterY=1e9;
   DRIFT_OVERRIDE=null; SCRATCH_ENABLED=false; WATER_PAUSED=false;
   closeOn=false; closeT0=0;
-  UI_BLOCK=false; briefDone={};
+  UI_BLOCK=false; briefDone={}; cueSticky=false;
   if(briefOff){ clearTimeout(briefOff); briefOff=null; }
   watchEnd();
   scratchLayer=null;
@@ -5692,93 +5749,107 @@ function thomasReport(){
 window.thomasReport=thomasReport;
 
 function thomasGatePaint(api){
-  api.exitMs = 560;
-  api.fadeMs = 800;
-  var rings = [];
-  var lastDrop = 0;
-  var lastX = null, lastY = null;
+  api.exitMs = 640;
+  api.fadeMs = 820;
+  var LINES = 5;
+  var notes = [];
+  var motes = [];
+  for (var m = 0; m < 30; m++){
+    motes.push({ x: Math.random(), y: Math.random(),
+                 r: 0.5 + Math.random() * 1.6,
+                 rise: 0.010 + Math.random() * 0.022,
+                 ph: Math.random() * 6.283 });
+  }
+  var lastT = 0, lastDrop = -9;
   return function(a){
     var g = a.ctx, W = a.w(), H = a.h(), t = a.t(), d = a.dpr;
+    var dt = Math.min(0.05, t - lastT); lastT = t;
     g.setTransform(d, 0, 0, d, 0, 0);
 
     var sink = a.leaving() ? a.since : 0;
-    var horizon = H * (0.44 + sink * 0.5);
+    var flat = Math.min(1, sink * 1.6);
 
-    var sky = g.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, '#0a1017');
-    sky.addColorStop(1, '#16232e');
-    g.fillStyle = sky;
-    g.fillRect(0, 0, W, horizon);
+    var bg = g.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0c1620');
+    bg.addColorStop(0.52, '#0a1119');
+    bg.addColorStop(1, '#04080c');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, W, H);
 
-    var sea = g.createLinearGradient(0, horizon, 0, H);
-    sea.addColorStop(0, '#16232e');
-    sea.addColorStop(1, '#04080c');
-    g.fillStyle = sea;
-    g.fillRect(0, horizon, W, H - horizon);
+    for (var i = 0; i < motes.length; i++){
+      var p = motes[i];
+      p.y -= p.rise * dt;
+      if (p.y < -0.03){ p.y = 1.03; p.x = Math.random(); }
+      var px = (p.x + Math.sin(t * 0.4 + p.ph) * 0.008) * W;
+      var py = p.y * H;
+      g.fillStyle = 'rgba(217,131,36,' + (0.05 + Math.sin(t + p.ph) * 0.03).toFixed(3) + ')';
+      g.beginPath(); g.arc(px, py, p.r, 0, 6.283); g.fill();
+    }
 
-    g.save();
-    g.beginPath();
-    g.rect(0, horizon, W, H - horizon);
-    g.clip();
+    var mid = H * 0.5;
+    var gap = Math.min(34, H * 0.052);
+    var mx = a.mouse.on ? a.mouse.x : -999;
+    var my = a.mouse.on ? a.mouse.y : -999;
 
-    for (var L = 0; L < 5; L++){
-      var yb = horizon + (H - horizon) * Math.pow((L + 1) / 5, 1.7);
-      g.strokeStyle = 'rgba(217,131,36,' + (0.05 + L * 0.018).toFixed(3) + ')';
-      g.lineWidth = 1;
+    if (a.mouse.on && !a.leaving() && t - lastDrop > 0.26){
+      for (var L = 0; L < LINES; L++){
+        var ly = mid + (L - (LINES - 1) / 2) * gap;
+        if (Math.abs(my - ly) < gap * 0.62){
+          notes.push({ x: mx, line: L, born: t, amp: 1 });
+          lastDrop = t;
+          break;
+        }
+      }
+    }
+
+    for (var n = notes.length - 1; n >= 0; n--){
+      if (t - notes[n].born > 3.4) notes.splice(n, 1);
+    }
+
+    for (var L2 = 0; L2 < LINES; L2++){
+      var baseY = mid + (L2 - (LINES - 1) / 2) * gap * (1 - flat * 0.9);
+      var swell = (1 - flat) * (3.4 + L2 * 0.9);
+      g.strokeStyle = 'rgba(217,131,36,' + (0.30 - flat * 0.2).toFixed(3) + ')';
+      g.lineWidth = 1.15;
       g.beginPath();
-      for (var x = 0; x <= W; x += 8){
-        var yy = yb + Math.sin(x * 0.011 + t * (0.5 + L * 0.18)) * (2 + L * 1.6);
-        if (x === 0) g.moveTo(x, yy); else g.lineTo(x, yy);
+      for (var x = 0; x <= W; x += 6){
+        var y = baseY
+              + Math.sin(x * 0.0042 + t * (0.30 + L2 * 0.05)) * swell
+              + Math.sin(x * 0.0115 - t * 0.22 + L2) * swell * 0.4;
+        for (var q = 0; q < notes.length; q++){
+          var nt = notes[q];
+          if (nt.line !== L2) continue;
+          var age = t - nt.born;
+          var reach = age * 240;
+          var dd = Math.abs(x - nt.x);
+          var band = Math.exp(-Math.pow((dd - reach) / 90, 2));
+          y -= band * 15 * Math.max(0, 1 - age / 3.4) * Math.sin(age * 7);
+        }
+        if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
       }
       g.stroke();
     }
 
-    if (a.mouse.on && !a.leaving()){
-      var mx = a.mouse.x, my = a.mouse.y;
-      var moved = lastX == null ? 99 : Math.hypot(mx - lastX, my - lastY);
-      if (my > horizon && t - lastDrop > 0.11 && moved > 3){
-        rings.push({ x: mx, y: my, r: 2, a: 0.5 });
-        lastDrop = t;
-      }
-      lastX = mx; lastY = my;
+    for (var q2 = 0; q2 < notes.length; q2++){
+      var nn = notes[q2];
+      var ag = t - nn.born;
+      var al = Math.max(0, 1 - ag / 3.4);
+      var ny = mid + (nn.line - (LINES - 1) / 2) * gap * (1 - flat * 0.9);
+      var rgn = g.createRadialGradient(nn.x, ny, 0, nn.x, ny, 26 * al + 6);
+      rgn.addColorStop(0, 'rgba(240,196,124,' + (al * 0.5).toFixed(3) + ')');
+      rgn.addColorStop(1, 'rgba(240,196,124,0)');
+      g.fillStyle = rgn;
+      g.beginPath(); g.arc(nn.x, ny, 26 * al + 6, 0, 6.283); g.fill();
+      g.fillStyle = 'rgba(244,208,148,' + (al * 0.82).toFixed(3) + ')';
+      g.beginPath(); g.ellipse(nn.x, ny, 4.6, 3.4, -0.4, 0, 6.283); g.fill();
     }
 
-    if (sink > 0 && rings.length < 40){
-      var px = a.mouse.on ? a.mouse.x : W / 2;
-      var py = a.mouse.on ? Math.max(a.mouse.y, horizon + 20) : H * 0.66;
-      for (var b = 0; b < 3; b++) rings.push({ x: px, y: py, r: b * 26, a: 0.7 });
-    }
-
-    for (var i = rings.length - 1; i >= 0; i--){
-      var rg = rings[i];
-      rg.r += sink > 0 ? 7 : 1.9;
-      rg.a -= sink > 0 ? 0.008 : 0.0055;
-      if (rg.a <= 0){ rings.splice(i, 1); continue; }
-      g.strokeStyle = 'rgba(217,131,36,' + rg.a.toFixed(3) + ')';
-      g.lineWidth = 1.2;
-      g.beginPath();
-      g.ellipse(rg.x, rg.y, rg.r, rg.r * 0.3, 0, 0, 6.283);
-      g.stroke();
-    }
-    g.restore();
-
-    if (!a.leaving()){
-      var pb = 0.5 + Math.sin(t * 1.15) * 0.5;
-      var bx = W / 2, by = horizon + (H - horizon) * 0.42;
-      var bg = g.createRadialGradient(bx, by, 0, bx, by, 46 + pb * 22);
-      bg.addColorStop(0, 'rgba(217,131,36,' + (0.3 + pb * 0.28).toFixed(3) + ')');
-      bg.addColorStop(1, 'rgba(217,131,36,0)');
-      g.fillStyle = bg;
-      g.beginPath();
-      g.arc(bx, by, 46 + pb * 22, 0, 6.283);
-      g.fill();
-    } else {
-      var k = Math.min(1, sink * 1.05);
-      var hand = g.createRadialGradient(W * 0.5, H * 0.46, 0, W * 0.5, H * 0.46, Math.hypot(W, H) * 0.62);
-      hand.addColorStop(0, 'rgba(42,48,56,' + k.toFixed(3) + ')');
-      hand.addColorStop(0.62, 'rgba(22,26,32,' + k.toFixed(3) + ')');
-      hand.addColorStop(1, 'rgba(14,17,22,' + k.toFixed(3) + ')');
-      g.fillStyle = hand;
+    if (sink > 0){
+      var burst = Math.min(1, sink * 1.2);
+      var rg = g.createRadialGradient(W / 2, mid, 0, W / 2, mid, burst * Math.max(W, H) * 0.75);
+      rg.addColorStop(0, 'rgba(240,196,124,' + (0.4 * (1 - burst)).toFixed(3) + ')');
+      rg.addColorStop(1, 'rgba(240,196,124,0)');
+      g.fillStyle = rg;
       g.fillRect(0, 0, W, H);
     }
   };

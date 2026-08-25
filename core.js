@@ -135,6 +135,7 @@
       since: 0
     };
 
+    api.hold = 0;
     var drawFn = (typeof paint === 'function') ? paint(api) : null;
     var loop = function(){
       if (drawFn){
@@ -175,8 +176,35 @@
       }
     };
 
-    box.addEventListener('pointerdown', go);
+    var holdAt = 0, holdRaf = 0;
+    var holdStep = function(){
+      if (fired) return;
+      var ms = api.holdMs || 0;
+      api.hold = Math.min(1, (performance.now() - holdAt) / ms);
+      if (api.hold >= 1){ holdRaf = 0; go(); return; }
+      holdRaf = requestAnimationFrame(holdStep);
+    };
+    var holdStart = function(e){
+      if (fired || !api.holdMs) return;
+      if (e && e.preventDefault) e.preventDefault();
+      holdAt = performance.now();
+      api.hold = 0;
+      if (!holdRaf) holdRaf = requestAnimationFrame(holdStep);
+    };
+    var holdStop = function(){
+      if (holdRaf){ cancelAnimationFrame(holdRaf); holdRaf = 0; }
+      api.hold = 0;
+    };
+    var onDown = function(e){
+      if (api.holdMs) holdStart(e); else go();
+    };
+
+    box.addEventListener('pointerdown', onDown);
+    box.addEventListener('pointerup', holdStop);
+    box.addEventListener('pointercancel', holdStop);
+    box.addEventListener('pointerleave', holdStop);
     box.addEventListener('keydown', onKey);
+    if (api.say) say.textContent = api.say;
     try { box.focus(); } catch(e){}
     return box;
   }

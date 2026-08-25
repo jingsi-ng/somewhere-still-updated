@@ -65,6 +65,31 @@ body.still-on {
   filter:blur(14px);
   will-change:transform, opacity, filter;
 }
+
+.card.margaret {
+  transform:translateZ(0) scale(.94) translateY(16vh);
+  filter:blur(5px) brightness(.72);
+  transition:opacity 1900ms ease,
+             transform 1900ms cubic-bezier(.16,.78,.3,1),
+             filter 1900ms ease;
+}
+
+.card.megan {
+  transform:translateZ(0) scale(1.03);
+  filter:blur(30px) saturate(1.7);
+  transition:opacity 2100ms ease,
+             transform 2400ms cubic-bezier(.3,.7,.3,1),
+             filter 2400ms cubic-bezier(.3,.7,.3,1);
+}
+
+.card.thomas {
+  transform:translateZ(0) scale(.97) translateX(46vw) rotate(4deg);
+  filter:blur(3px);
+  transition:opacity 1500ms ease,
+             transform 2600ms cubic-bezier(.22,.68,.26,1),
+             filter 1800ms ease;
+}
+
 .card.on {
   opacity:1;
   transform:translateZ(0) scale(1);
@@ -75,6 +100,49 @@ body.still-on {
   opacity:0;
   transform:translateZ(0) scale(1.9) translateY(-14vh);
   filter:blur(26px);
+}
+
+.card.margaret.past {
+  opacity:0;
+  transform:translateZ(0) scale(1.06);
+  filter:blur(3px) brightness(1.3);
+  transition:opacity 1100ms cubic-bezier(.7,0,.9,.4),
+             transform 1100ms ease-in,
+             filter 400ms ease-out;
+}
+
+.card.margaret.past .inner::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+  opacity:0;
+  background:
+    linear-gradient(114deg, transparent calc(50% - 1px), rgba(238,246,252,.92) calc(50% - 1px),
+      rgba(238,246,252,.92) calc(50% + 1px), transparent calc(50% + 1px)) 22% 0 / 46% 100% no-repeat,
+    linear-gradient(64deg, transparent calc(50% - .8px), rgba(226,238,248,.72) calc(50% - .8px),
+      rgba(226,238,248,.72) calc(50% + .8px), transparent calc(50% + .8px)) 68% 0 / 40% 100% no-repeat,
+    linear-gradient(96deg, transparent calc(50% - .6px), rgba(214,230,244,.6) calc(50% - .6px),
+      rgba(214,230,244,.6) calc(50% + .6px), transparent calc(50% + .6px)) 44% 0 / 62% 100% no-repeat;
+  animation:crack 1100ms ease-out forwards;
+}
+
+@keyframes crack {
+  0%   { opacity:0; }
+  14%  { opacity:1; }
+  46%  { opacity:1; }
+  100% { opacity:0; }
+}
+
+.card.margaret.past .inner {
+  animation:shatter 1100ms cubic-bezier(.5,0,.85,.4) forwards;
+}
+
+@keyframes shatter {
+  0%   { transform:scale(1) rotate(0deg); filter:none; }
+  16%  { transform:scale(1.012) rotate(.3deg); }
+  100% { transform:scale(1.16) rotate(-1.4deg); filter:blur(9px) brightness(1.5); }
 }
 
 .card.megan.past {
@@ -157,8 +225,7 @@ body.still-on {
     radial-gradient(circle at 2%  71%, transparent 0 8px,  #000 9px),
     linear-gradient(#000, #000);
   mask-composite:intersect;
-  transform:translateZ(0) scale(.94);
-  filter:drop-shadow(0 0 30px rgba(150,180,216,.16)) blur(26px) saturate(1.6) brightness(1.1);
+  filter:drop-shadow(0 0 30px rgba(150,180,216,.16));
 }
 
 .card.megan .inner {
@@ -312,4 +379,6 @@ body.closing #stage { justify-content:center; }
 @media (prefers-reduced-motion: reduce) {
   .card.on, #constellation .cc { animation:none; }
   #caustics { animation:none; }
+  .card.margaret, .card.megan, .card.thomas { transform:translateZ(0) scale(.96); filter:none; }
+  .card.margaret.past .inner, .card.margaret.past .inner::before { animation:none; }
 }

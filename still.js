@@ -13,13 +13,13 @@
       ],
       scenes: [
         { audio: 'still_Margaret_01.mp3',
-          imgs: ['Margaret_w1_scene4_mother_2', 'Margaret_w1_scene7_shoegift', 'Margaret_w1_scene8_dancingonstage'],
+          imgs: ['Margaret_w1_scene4_mother_2', 'Margaret_w1_scene6_crying', 'Margaret_w1_scene7_shoegift', 'Margaret_w1_scene8_dancingonstage'],
           text: 'When Margaret was a little girl, her mother took her to a ballet school. She fell in love with dancing and dreamed of becoming a famous dancer. At fifteen she failed to qualify for a national competition, but with her mother\u2019s encouragement she refused to give up. Two years later, wearing the ballet shoes her mother had given her, she returned to the stage and won best dancer.' },
         { audio: 'still_Margaret_02.mp3',
           imgs: ['margaret_wedding_margaret_01', 'Margaret_w3_infant_crib_01', 'Margaret_w4_reddoll_gift_01'],
           text: 'Years later Margaret married Peter. They promised to stay together for life. They had a daughter, and when she was five Margaret gave her a little doll wearing red shoes, to celebrate her courage on stage.' },
         { audio: 'still_Margaret_03.mp3',
-          imgs: ['Margaret_w3_bandaged_daughter_01', 'Margaret_w3_funeral_01_2'],
+          imgs: ['margaret_w5_crash_01', 'Margaret_w3_funeral_01_2', 'Margaret_w3_bandaged_daughter_01'],
           text: 'Then everything changed. A car accident took Peter\u2019s life and left Margaret with a badly injured ankle. Her daughter survived but was left with a permanent scar. Margaret could no longer dance and was forced to leave the national dance team. The solo she had been preparing for a long time was never completed.' },
         { audio: 'still_Margaret_04.mp3',
           imgs: ['Margaret_w4_oversized_shoes_01', 'Margaret_w4_podium_ceremony_01'],
@@ -38,7 +38,7 @@
       ],
       scenes: [
         { audio: 'still_Megan_01.mp3',
-          imgs: ['megan_flash_graduation_01', 'megan_fill2_photo_launch_01'],
+          imgs: ['megan_flash_couple_01', 'megan_flash_graduation_01', 'megan_fill2_photo_launch_01'],
           text: 'Megan and Hans met at university and soon became close friends. After graduation they built an art company together, making their own work while helping other artists put on exhibitions.' },
         { audio: 'still_Megan_02.mp3',
           imgs: ['megan_awborn_main_01', 'megan_awbreadth_main_01', 'megan_flash_argue_01'],
@@ -304,17 +304,86 @@
     size();
     window.addEventListener('resize', size);
 
-    for (var i = 0; i < 90; i++) {
+    for (var i = 0; i < 76; i++) {
       flakes.push({
         x: Math.random() * innerWidth,
         y: Math.random() * innerHeight,
         r: .5 + Math.random() * 1.9,
         v: .12 + Math.random() * .42,
         d: Math.random() * 6.28,
-        a: .12 + Math.random() * .4,
-        tinted: Math.random() < .12
+        a: .12 + Math.random() * .4
       });
     }
+
+    var motifs = [];
+    for (var j = 0; j < 11; j++) {
+      motifs.push({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        d: Math.random() * 6.28,
+        s: .5 + Math.random() * .9,
+        v: .10 + Math.random() * .30,
+        a: .16 + Math.random() * .3,
+        sp: .5 + Math.random() * .8
+      });
+    }
+
+    function thread(m, al) {
+      var len = 26 + m.s * 30;
+      cx.strokeStyle = tint + al.toFixed(2) + ')';
+      cx.lineWidth = .8 + m.s * .5;
+      cx.beginPath();
+      for (var q = 0; q <= 14; q++) {
+        var u = q / 14;
+        var xx = m.x + Math.sin(t * m.sp * 3 + m.d + u * 3.1) * (5 + m.s * 5);
+        var yy = m.y + (u - .5) * len;
+        if (q === 0) cx.moveTo(xx, yy); else cx.lineTo(xx, yy);
+      }
+      cx.stroke();
+    }
+
+    function bloom(m, al) {
+      var rr = 12 + m.s * 20;
+      var pulse = 1 + Math.sin(t * m.sp * 4 + m.d) * .16;
+      var gr = cx.createRadialGradient(m.x, m.y, 0, m.x, m.y, rr * pulse);
+      gr.addColorStop(0, tint + (al * .9).toFixed(2) + ')');
+      gr.addColorStop(1, tint + '0)');
+      cx.fillStyle = gr;
+      cx.beginPath();
+      cx.ellipse(m.x, m.y, rr * pulse, rr * pulse * .72, 0, 0, 6.2832);
+      cx.fill();
+      cx.strokeStyle = tint + (al * .5).toFixed(2) + ')';
+      cx.lineWidth = .9;
+      for (var q2 = 0; q2 < 3; q2++) {
+        cx.beginPath();
+        cx.moveTo(m.x + (q2 - 1) * rr * .34, m.y + rr * .5);
+        cx.quadraticCurveTo(
+          m.x + (q2 - 1) * rr * .34 + Math.sin(t * m.sp * 3 + q2) * 7,
+          m.y + rr * .95,
+          m.x + (q2 - 1) * rr * .34, m.y + rr * 1.4);
+        cx.stroke();
+      }
+    }
+
+    function noteMark(m, al) {
+      var sc = .7 + m.s * .7;
+      cx.save();
+      cx.translate(m.x, m.y);
+      cx.rotate(Math.sin(t * m.sp * 2 + m.d) * .5);
+      cx.fillStyle = tint + al.toFixed(2) + ')';
+      cx.beginPath();
+      cx.ellipse(0, 0, 5.2 * sc, 3.8 * sc, -.42, 0, 6.2832);
+      cx.fill();
+      cx.strokeStyle = tint + (al * .8).toFixed(2) + ')';
+      cx.lineWidth = 1.3 * sc;
+      cx.beginPath();
+      cx.moveTo(4.4 * sc, -1.4 * sc);
+      cx.lineTo(4.4 * sc, -15 * sc);
+      cx.stroke();
+      cx.restore();
+    }
+
+    var drawMotif = key === 'margaret' ? thread : (key === 'megan' ? bloom : noteMark);
 
     var t = 0;
     (function loop() {
@@ -327,10 +396,15 @@
         if (f.y > cv.height + 8) { f.y = -8; f.x = Math.random() * cv.width; }
         cx.beginPath();
         cx.arc(f.x, f.y, f.r, 0, 6.2832);
-        cx.fillStyle = f.tinted
-          ? tint + (f.a * .8).toFixed(2) + ')'
-          : 'rgba(206,226,240,' + f.a.toFixed(2) + ')';
+        cx.fillStyle = 'rgba(206,226,240,' + f.a.toFixed(2) + ')';
         cx.fill();
+      }
+      for (var j2 = 0; j2 < motifs.length; j2++) {
+        var m = motifs[j2];
+        m.y += m.v;
+        m.x += Math.sin(t * .7 + m.d) * .34;
+        if (m.y > cv.height + 60) { m.y = -60; m.x = Math.random() * cv.width; }
+        drawMotif(m, m.a * (.6 + Math.sin(t * 1.4 + m.d) * .4));
       }
       requestAnimationFrame(loop);
     })();
@@ -344,103 +418,110 @@
   if (window.Veil && Veil.silentResume) Veil.silentResume();
 
   function stillGatePaint(api){
-    api.exitMs = 240;
-    api.fadeMs = 900;
-    var COLS = ['#B23A2E', '#D98324', '#8A8493'];
-    var motes = [];
-    for (var m = 0; m < 46; m++){
-      motes.push({
-        x: Math.random(), y: Math.random(),
-        r: 0.6 + Math.random() * 1.9,
-        rise: 0.008 + Math.random() * 0.026,
-        sway: 0.4 + Math.random() * 1.6,
-        ph: Math.random() * 6.283,
-        c: COLS[m % 3],
-        a: 0.16 + Math.random() * 0.4
-      });
-    }
-    var last = 0;
+    api.exitMs = 900;
+    api.fadeMs = 1100;
+    api.holdMs = 1400;
+    api.say = 'Hold to dive into the memories. Or press enter.';
+    var BLOBS = [
+      { c: '178,58,46',   u: 0.38, v: 0.60, r: 0.40, sp: 0.052, ph: 0.0 },
+      { c: '217,131,36',  u: 0.58, v: 0.66, r: 0.36, sp: 0.041, ph: 2.3 },
+      { c: '138,132,147', u: 0.48, v: 0.54, r: 0.44, sp: 0.033, ph: 4.4 }
+    ];
+    var trail = [];
+    var lastT = 0, lastX = null, lastY = null;
     return function (a) {
       var g = a.ctx, W = a.w(), H = a.h(), t = a.t(), d = a.dpr;
-      var dt = Math.min(0.05, t - last); last = t;
+      var dt = Math.min(0.05, t - lastT); lastT = t;
       g.setTransform(d, 0, 0, d, 0, 0);
 
-      var deep = g.createLinearGradient(0, 0, 0, H);
-      deep.addColorStop(0, '#0b2740');
-      deep.addColorStop(0.34, '#0a2135');
-      deep.addColorStop(1, '#04080e');
-      g.fillStyle = deep;
+      var sink = a.leaving() ? a.since : 0;
+      var dive = Math.min(1, sink / 0.9);
+      var hold = a.hold || 0;
+      var charge = hold * hold;
+
+      g.fillStyle = '#0a1128';
       g.fillRect(0, 0, W, H);
 
-      var sink = a.leaving() ? a.since : 0;
-      var pull = Math.min(1, sink * 1.5);
-      var cx = W / 2, cy = H / 2;
-      var mx = a.mouse.on ? a.mouse.x : cx;
-      var my = a.mouse.on ? a.mouse.y : cy;
-
-      var shaftW = Math.max(W, H);
-      for (var s = 0; s < 3; s++){
-        var lean = (s - 1) * 0.26 + Math.sin(t * 0.11 + s) * 0.04;
-        var top = cx + lean * H * 0.5;
-        var sw = shaftW * (0.055 + s * 0.012);
-        var sa = (0.05 + Math.sin(t * 0.23 + s * 2.0) * 0.028) * (1 - pull);
-        if (sa <= 0) continue;
-        var lg = g.createLinearGradient(top, 0, top - lean * H, H);
-        lg.addColorStop(0, 'rgba(178,206,228,' + sa.toFixed(3) + ')');
-        lg.addColorStop(1, 'rgba(178,206,228,0)');
-        g.fillStyle = lg;
+      var spread = Math.min(W, H);
+      for (var i = 0; i < BLOBS.length; i++) {
+        var b = BLOBS[i];
+        var wob = Math.sin(t * b.sp * 6.283 + b.ph);
+        var wob2 = Math.cos(t * b.sp * 4.1 + b.ph);
+        var cx = W * b.u + wob * spread * 0.045;
+        var cy = H * b.v + wob2 * spread * 0.03;
+        var rad = spread * b.r * (1 + wob * 0.07 + charge * 0.55)
+                * (1 + dive * 14);
+        var al = (0.30 + wob2 * 0.06 + charge * 0.34) * (1 - dive * 0.25);
+        var rg = g.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        rg.addColorStop(0,    'rgba(' + b.c + ',' + al.toFixed(3) + ')');
+        rg.addColorStop(0.42, 'rgba(' + b.c + ',' + (al * 0.42).toFixed(3) + ')');
+        rg.addColorStop(1,    'rgba(' + b.c + ',0)');
+        g.fillStyle = rg;
         g.beginPath();
-        g.moveTo(top - sw * 0.34, 0);
-        g.lineTo(top + sw * 0.34, 0);
-        g.lineTo(top - lean * H + sw, H);
-        g.lineTo(top - lean * H - sw, H);
-        g.closePath();
+        g.arc(cx, cy, rad, 0, 6.283);
         g.fill();
       }
 
-      for (var i = 0; i < motes.length; i++){
-        var p = motes[i];
-        p.y -= p.rise * dt;
-        if (p.y < -0.04){ p.y = 1.04; p.x = Math.random(); }
-        var px = (p.x + Math.sin(t * 0.5 + p.ph) * 0.012 * p.sway) * W;
-        var py = p.y * H;
-        var dx = px - mx, dy = py - my;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var lift = dist < 190 ? (1 - dist / 190) : 0;
-        px += dx * lift * lift * 0.3;
-        py += dy * lift * lift * 0.3;
-        py += (cy - py) * pull;
-        px += (cx - px) * pull;
-        var glow = p.a * (0.6 + Math.sin(t * 1.1 + p.ph) * 0.4) + lift * 0.42;
-        var rr = p.r * (1 + lift * 1.5);
-        var rg = g.createRadialGradient(px, py, 0, px, py, rr * 5);
-        rg.addColorStop(0, p.c);
-        rg.addColorStop(1, 'rgba(0,0,0,0)');
-        g.globalAlpha = Math.max(0, Math.min(0.85, glow)) * 0.5;
-        g.fillStyle = rg;
-        g.beginPath(); g.arc(px, py, rr * 5, 0, 6.283); g.fill();
-        g.globalAlpha = Math.max(0, Math.min(1, glow));
-        g.fillStyle = 'rgba(226,240,248,0.9)';
-        g.beginPath(); g.arc(px, py, rr, 0, 6.283); g.fill();
-      }
-      g.globalAlpha = 1;
-
-      if (sink > 0){
-        var burst = Math.min(1, sink * 1.1);
-        var bg = g.createRadialGradient(cx, cy, 0, cx, cy, burst * Math.max(W, H) * 0.7);
-        bg.addColorStop(0, 'rgba(206,226,240,' + (0.5 * (1 - burst)).toFixed(3) + ')');
-        bg.addColorStop(1, 'rgba(206,226,240,0)');
-        g.fillStyle = bg;
-        g.fillRect(0, 0, W, H);
-      } else {
-        for (var k = 0; k < 3; k++){
-          var ph = (t * 0.34 + k / 3) % 1;
-          var rad = 18 + ph * 92;
-          var ra = (1 - ph) * 0.2;
-          g.strokeStyle = 'rgba(206,226,240,' + ra.toFixed(3) + ')';
-          g.lineWidth = 1;
-          g.beginPath(); g.arc(cx, cy, rad, 0, 6.283); g.stroke();
+      if (a.mouse.on && !a.leaving()) {
+        var mvd = lastX == null ? 0 : Math.hypot(a.mouse.x - lastX, a.mouse.y - lastY);
+        if (mvd > 6 && trail.length < 26) {
+          trail.push({ x: a.mouse.x, y: a.mouse.y, born: t, r: 12 + Math.min(26, mvd) });
         }
+        lastX = a.mouse.x; lastY = a.mouse.y;
+      }
+      for (var k = trail.length - 1; k >= 0; k--) {
+        var p = trail[k];
+        var age = t - p.born;
+        if (age > 1.6) { trail.splice(k, 1); continue; }
+        var e = age / 1.6;
+        var rr = p.r * (1 + e * 2.6);
+        var pa = (1 - e) * (1 - e) * 0.16;
+        var pg = g.createRadialGradient(p.x, p.y, rr * 0.55, p.x, p.y, rr);
+        pg.addColorStop(0, 'rgba(226,238,248,0)');
+        pg.addColorStop(0.72, 'rgba(226,238,248,' + pa.toFixed(3) + ')');
+        pg.addColorStop(1, 'rgba(226,238,248,0)');
+        g.fillStyle = pg;
+        g.beginPath();
+        g.arc(p.x, p.y, rr, 0, 6.283);
+        g.fill();
+      }
+
+      var ty = H * 0.34 - dive * H * 0.22;
+      var ta = (1 - dive) * (0.72 - charge * 0.2);
+      if (ta > 0.01) {
+        g.save();
+        g.globalAlpha = ta;
+        g.fillStyle = '#e8eef6';
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        var fs = Math.max(19, Math.min(40, W * 0.026));
+        g.font = '400 ' + fs + 'px Lora, Georgia, serif';
+        var word = 'SOMEWHERE STILL';
+        var sp = fs * 0.42;
+        var total = 0, m;
+        for (m = 0; m < word.length; m++) total += g.measureText(word[m]).width + sp;
+        total -= sp;
+        var x = W / 2 - total / 2;
+        for (m = 0; m < word.length; m++) {
+          var ch = word[m];
+          g.fillText(ch, x + g.measureText(ch).width / 2, ty);
+          x += g.measureText(ch).width + sp;
+        }
+        g.restore();
+      }
+
+      if (hold > 0 && !a.leaving()) {
+        var rx = W / 2, ry = H * 0.62;
+        g.strokeStyle = 'rgba(226,238,248,' + (0.16 + hold * 0.44).toFixed(3) + ')';
+        g.lineWidth = 1.6;
+        g.beginPath();
+        g.arc(rx, ry, spread * 0.11, -1.5708, -1.5708 + 6.283 * hold);
+        g.stroke();
+      }
+
+      if (dive > 0) {
+        g.fillStyle = 'rgba(232,240,248,' + (dive * dive * 0.92).toFixed(3) + ')';
+        g.fillRect(0, 0, W, H);
       }
     };
   }
