@@ -132,7 +132,6 @@ const SND_ALIAS = {
   'megan_fill3_ambience.wav'           : 'Scene Fill 3 Ambience.mp3',
   'megan_fill1_glass.wav'              : 'mirror break sound.mp3',
   'megan_ending_sea.wav'               : 'Scene 9 The Ending.mp3',
-  'megan_fill3_ring.wav'               : 'Phone 2-1.m4a',
   'megan_ending_phone.wav'             : 'Phone 2-2.m4a',
   'megan_last_passedaway.wav'          : "Hans's friend.m4a",
   'megan_last_goahead.wav'             : 'Megan_ go ahead-1.m4a',
@@ -428,15 +427,6 @@ const Sound = {
     if (!DECLINE_LOOP) return;
     if (!this._declineOn){ this._declineOn = true; AudioBank.loop(DECLINE_LOOP, 0); }
     AudioBank.setVol(DECLINE_LOOP, (1 - luc) * .75);
-  },
-  humFor(name, amount){
-    if (!name || amount <= .04){ this._hum = null; return; }
-    this._hum = name;
-    const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-    const gap = 2600 - amount * 1400;
-    if (now - (this._humAt || 0) < gap) return;
-    this._humAt = now;
-    AudioBank.fire(name, amount * .8);
   },
   stopHum(){ this._hum = null; this._humAt = 0; },
   vo(file, speaker, line, cb, clip){
@@ -1777,7 +1767,7 @@ function makeStudio(painting, opts){
       }
       coverage = covHit.size / covCells;
     }
-    let voStarted = false, voT0 = 0, voDurMs = 0, toolHinted = false;
+    let voStarted = false, voT0 = 0, voDurMs = 0, toolHinted = false, voEndT = null;
     let strayLeft = 9, strayLast = 0, strayArmed = false;
     let voNode = null, voLastT = -1, voLastAt = 0;
     function startVoice(){
@@ -1797,14 +1787,18 @@ function makeStudio(painting, opts){
         const d = voNode && voNode.duration;
         if (isFinite(d) && d > 0) voDurMs = d * 1000;
       };
+      const armEnd = ()=>{
+        clearTimeout(voEndT);
+        voEndT = setTimeout(()=>{
+          if (finished || voSeqDone) return;
+          voSeqDone = true;
+          offerEasel();
+        }, Math.min(VO_MAX_MS, (voDurMs || 12000) + 3000));
+      };
       take();
-      if (voNode && voNode.addEventListener) voNode.addEventListener('loadedmetadata', take);
-
-      setTimeout(()=>{
-        if (finished || voSeqDone) return;
-        voSeqDone = true;
-        offerEasel();
-      }, Math.min(26000, (voDurMs || 12000) + 3000));
+      armEnd();
+      if (voNode && voNode.addEventListener)
+        voNode.addEventListener('loadedmetadata', ()=>{ take(); armEnd(); });
     }
     function armNudges(){
       idleT = setTimeout(()=>{
@@ -2017,7 +2011,7 @@ function makeStudio(painting, opts){
       const q = voAudioProgress();
       while (cueAt < CUES.length && q >= CUES[cueAt].at){
         const v = CUES[cueAt++];
-        if (v.f && (SND_ALIAS[v.f] || v.f.indexOf('_dial') > -1)) Sound.play(v.f);
+        if (v.f && SND_ALIAS[v.f]) Sound.play(v.f);
       }
     }
 
@@ -2318,7 +2312,6 @@ function makeStudio(painting, opts){
       const wrap = document.getElementById('stageWrap');
       const host = document.getElementById('studioHost');
       if (!wrap || !host){ AFTER_PAINT.breadth(); return; }
-      Sound.play('megan_awbreadth_easel_crash.wav','wood clatter and canvas slap, the easel goes down');
       const glow = document.createElement('div');
       glow.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;background:radial-gradient(circle at 50% 45%, rgba(255,238,206,.5), rgba(255,238,206,0) 60%);transition:opacity .5s ease';
       host.appendChild(glow);
@@ -2331,6 +2324,8 @@ function makeStudio(painting, opts){
           wrap.style.transform = 'translate('+(Math.sin(e*.045)*6*damp)+'px,'+(Math.sin(e*.062)*4*damp)+'px)';
           requestAnimationFrame(shake);
         } else {
+          Sound.play('megan_canvas_fall.mp3','the easel goes over');
+          setTimeout(()=> Sound.play('megan_canvas_scatter1.mp3','canvases slide across the floor'), 720);
           wrap.style.transition = 'transform 1.05s cubic-bezier(.45,.05,.7,1)';
           wrap.style.transform = 'rotate(11deg) translateY(46vh) scale(.96)';
           glow.style.transition = 'opacity 1.5s ease'; glow.style.opacity = '0';
@@ -2343,7 +2338,8 @@ function makeStudio(painting, opts){
     function collapseAll(){
       const stageEl = document.getElementById('stage');
       if (!stageEl){ AFTER_PAINT.fall(); return; }
-      Sound.play('megan_awfall_easel_crash.wav','the easel crash returns, bigger, then near silence');
+      Sound.play('megan_canvas_fall.mp3','the easel goes over again');
+      setTimeout(()=> Sound.play('megan_canvas_scatter2.mp3','everything comes down with it'), 720);
       const snap = p.get();
       const ov = document.createElement('canvas');
       ov.style.cssText = 'position:fixed;inset:0;z-index:72';
@@ -2780,43 +2776,43 @@ const AFTER_PAINT = {
 
 const VO_TIMELINES = {
   born: [
-    { at:0.100, f:'megan_awborn_vo_doctor_support.wav', s:'Doctor',
+    { at:0.100, s:'Doctor',
       t:"I know this may be difficult to hear, but we'll talk through what this means and how we can support you moving forward." },
 
-    { at:0.433, f:'megan_awborn_vo_launch.wav', s:'Megan',
+    { at:0.433, s:'Megan',
       t:'Today marks the official launch of Morry. Thank you to everyone who has supported us and believed in Morry from the very beginning.' },
-    { at:0.600, f:'megan_awborn_vo_hans_hall.wav', s:'Hans', t:'Yes, Connor said the hall is quite nice for him.' },
-    { at:0.733, f:'megan_awborn_vo_goahead.wav', s:'Megan', t:"That's great, let's just go ahead." },
-    { at:0.867, f:'megan_awborn_vo_men_great.wav', s:'Hans', t:'You guys did a great job!' },
+    { at:0.600, s:'Hans', t:'Yes, Connor said the hall is quite nice for him.' },
+    { at:0.733, s:'Megan', t:"That's great, let's just go ahead." },
+    { at:0.867, s:'Hans', t:'You guys did a great job!' },
   ],
   breadth: [
-    { at:0.083, f:'megan_awbreadth_vo_lasttime.wav', s:'Hans', t:'Megan, listen! This is the last time I work with you!' },
-    { at:0.233, f:'megan_awbreadth_vo_mybusiness.wav', s:'Megan', t:'This is my business, is not yours!' },
-    { at:0.400, f:'megan_awbreadth_dial.wav', s:'Phone', t:'du du du…' },
-    { at:0.533, f:'megan_awbreadth_vo_stubborn.wav', s:'Hans', t:"What's a stubborn person!" },
-    { at:0.667, f:'megan_awbreadth_vo_shutup.wav', s:'Megan', t:'Shut Up!' },
-    { at:0.800, f:'megan_awbreadth_vo_unreachable.wav', s:'Phone', t:"the number you've dial is not reachable" },
-    { at:0.917, f:'megan_awbreadth_dial.wav', s:'Phone', t:'du du du…' },
+    { at:0.083, s:'Hans', t:'Megan, listen! This is the last time I work with you!' },
+    { at:0.233, s:'Megan', t:'This is my business, is not yours!' },
+    { at:0.400, s:'Phone', t:'du du du…' },
+    { at:0.533, s:'Hans', t:"What's a stubborn person!" },
+    { at:0.667, s:'Megan', t:'Shut Up!' },
+    { at:0.800, s:'Phone', t:"the number you've dial is not reachable" },
+    { at:0.917, s:'Phone', t:'du du du…' },
   ],
   calls: [
-    { at:0.083, f:'megan_awcalls_dial.wav', s:'Phone', t:'du du du…' },
-    { at:0.208, f:'megan_awcalls_vo_notallowed.wav', s:'Phone', t:"Sorry, you're not allowed to call this number." },
-    { at:0.354, f:'megan_awcalls_vo_passedaway.wav', s:"Hans's friend", t:'He just passed away.' },
-    { at:0.500, f:'megan_awcalls_dial.wav', s:'Phone', t:'du du du…' },
-    { at:0.625, f:'megan_awcalls_vo_why.wav', s:'Megan', t:'Hans, can you tell me why?' },
-    { at:0.750, f:'megan_awcalls_vo_tryagain.wav', s:'Phone', t:'please try again later.' },
-    { at:0.875, f:'megan_awcalls_vo_livewith.wav', s:'Doctor', t:'Megan, you should live with somebody else' },
-    { at:0.958, f:'megan_awcalls_vo_iquit.wav', s:'Hans', t:'Shut Up! I quit!' },
+    { at:0.083, s:'Phone', t:'du du du…' },
+    { at:0.208, s:'Phone', t:"Sorry, you're not allowed to call this number." },
+    { at:0.354, s:"Hans's friend", t:'He just passed away.' },
+    { at:0.500, s:'Phone', t:'du du du…' },
+    { at:0.625, s:'Megan', t:'Hans, can you tell me why?' },
+    { at:0.750, s:'Phone', t:'please try again later.' },
+    { at:0.875, s:'Doctor', t:'Megan, you should live with somebody else' },
+    { at:0.958, s:'Hans', t:'Shut Up! I quit!' },
   ],
   fall: [
-    { at:0.073, f:'megan_awfall_vo_couldyoutell.wav', s:'Megan', t:'could you tell Hans?' },
-    { at:0.182, f:'megan_awfall_dial.wav', s:'Phone', t:'du du du…' },
-    { at:0.291, f:'megan_awfall_vo_why.wav', s:'Megan', t:'Hans, can you tell me why?' },
-    { at:0.400, f:'megan_awfall_vo_tryagain.wav', s:'Phone', t:'please try again later.' },
-    { at:0.509, f:'megan_awfall_vo_doctor.wav', s:'Doctor', t:'I know this may be difficult to hear, but' },
-    { at:0.618, f:'megan_awfall_vo_listen.wav', s:'Hans', t:'Megan, listen!' },
-    { at:0.727, f:'megan_awfall_dial.wav', s:'Phone', t:'du du du…' },
-    { at:0.836, f:'megan_awfall_vo_shutup.wav', s:'Megan', t:'Shut Up!' },
+    { at:0.073, s:'Megan', t:'could you tell Hans?' },
+    { at:0.182, s:'Phone', t:'du du du…' },
+    { at:0.291, s:'Megan', t:'Hans, can you tell me why?' },
+    { at:0.400, s:'Phone', t:'please try again later.' },
+    { at:0.509, s:'Doctor', t:'I know this may be difficult to hear, but' },
+    { at:0.618, s:'Hans', t:'Megan, listen!' },
+    { at:0.727, s:'Phone', t:'du du du…' },
+    { at:0.836, s:'Megan', t:'Shut Up!' },
   ],
 };
 
@@ -2936,6 +2932,7 @@ const MEM_WANTED = {
   fall:    ['consult','graduation','argue','hall','couple','opening','funeral'],
 };
 
+const VO_MAX_MS = 240000;
 const MEM_MODE = {
   breadth: { kind:'alternate' },
   calls:   { kind:'layered', flicker:true },
@@ -3065,7 +3062,6 @@ function exitGallery(){
   stopEndingDrift();
   if (G && G.repair){ clearInterval(G.repair); G.repair = 0; }
   if (G && G.lastTimers){ G.lastTimers.forEach(clearTimeout); G.lastTimers = null; }
-  clearPhone();
   Sound.stopHum();
   Sound.stopLoop('megan_gallery_ambience.wav');
   Sound.stopLoop('megan_fill3_ambience.wav');
@@ -3232,7 +3228,6 @@ function renderLoop(){
   G.mid.style.transform   = 'translate('+(-nx*26*d + gdx*.7)+'px,'+(-ny*10*d + gdy*.7)+'px) scale(1.02)';
   G.front.style.transform = 'translate('+(-nx*48*d + gdx)+'px,'+(-ny*16*d + gdy)+'px) scale(1.03)';
   drawDust();
-  trackPhone();
   } catch(e){
     if (!renderLoop._told){ renderLoop._told = true; clog('[gallery] render stopped:', e.message); }
   }
@@ -3384,15 +3379,6 @@ const fillConfig = {
   },
 };
 
-const PHONE = {
-  fill1: { at:[26, 62], lines:[
-    ['megan_awborn_vo_hans_hall.wav','Hans','Yes, Connor said the hall is quite nice for him.'] ] },
-  fill2: { at:[74, 34], dial:'megan_awbreadth_dial.wav', lines:[
-    ['megan_awbreadth_vo_stubborn.wav','Hans',"What's a stubborn person!"],
-    ['megan_awbreadth_vo_lasttime.wav','Hans','Megan, listen! This is the last time I work with you!'] ] },
-  fill3: null,
-};
-
 const ELEMENT_POS = {
   whale: { left:'76%', top:'8%', hangs:true },
 };
@@ -3457,79 +3443,6 @@ function startFill(fillN){
     L.appendChild(el);
     dragElement(el, slots, fillN, cfg);
   });
-  buildPhone(fillN);
-}
-
-function spawnPending(x, y){
-  const p = G && G.pending;
-  if (!p) return;
-  G.pending = null;
-  cancelHint();
-  const [em] = p.cfg.elements;
-  const el = document.createElement('div');
-  el.className = 'memElement found';
-  el.style.left = x + 'px';
-  el.style.top  = y + 'px';
-  el.dataset.type = em[0];
-  el.dataset.img  = em[1] || '';
-  el.dataset.asset = Img.file(em[1]) || '(code-drawn)';
-  el.innerHTML = Img.ok(em[1]) ? '<img src="' + Img.url(em[1]) + '" alt="">' : elementSVG(em[0]);
-  G.fillLayer.appendChild(el);
-  dragElement(el, p.slots, p.fillN, p.cfg);
-  requestAnimationFrame(()=> el.classList.add('on'));
-  scheduleHint('drag it into the photograph.', 7000);
-}
-
-function buildPhone(fillN){
-  const cfg = PHONE[fillN];
-  clearPhone();
-  if (!cfg || !G) return;
-  const j = streamFor('phone-' + fillN);
-  const spot = document.createElement('div');
-  spot.id = 'phoneSpot';
-  spot.style.left = (cfg.at[0] + (j() - .5) * 26) + '%';
-  spot.style.top  = (cfg.at[1] + (j() - .5) * 16) + '%';
-  G.mid.appendChild(spot);
-  G.phone = { cfg, el:spot, held:0, spent:false, last:performance.now() };
-}
-
-function clearPhone(){
-  Sound.stopLoop('megan_fill3_ring.wav');
-  const old = document.getElementById('phoneSpot');
-  if (old) old.remove();
-  if (G) G.phone = null;
-  Sound.humFor(null);
-}
-
-function trackPhone(){
-  const ph = G && G.phone;
-  if (!ph) return;
-  const now = performance.now();
-  const dt = Math.min(120, now - ph.last); ph.last = now;
-  if (ph.spent){ Sound.humFor(null); return; }
-  const r = ph.el.getBoundingClientRect();
-  const [mx, my] = G._m();
-  const d = Math.hypot(mx - (r.left + r.width/2), my - (r.top + r.height/2));
-  const near = Math.max(0, 1 - d / 190);
-  Sound.humFor(ph.cfg.dial, near * near * .7);
-  if (near > .55){
-    ph.held += dt;
-    if (ph.held > 1600){
-      ph.spent = true;
-      Sound.humFor(null);
-      const L = ph.cfg.lines;
-      if (L.length){
-        const pick = L[Math.floor(rnd()*L.length)];
-        Sound.vo(pick[0], pick[1], pick[2]);
-      } else {
-        Sound.play(ph.cfg.dial, 'it rings and rings, and no one picks up');
-        const r2 = ph.el.getBoundingClientRect();
-        setTimeout(()=> spawnPending(r2.left + r2.width/2 - 34, r2.top + r2.height/2 - 34), 1500);
-      }
-    }
-  } else {
-    ph.held = Math.max(0, ph.held - dt * .6);
-  }
 }
 
 function hesitateReturn(el, toX, toY){
@@ -4218,14 +4131,12 @@ SCENES.studio_alone = {
       const d = document.createElement('div');
       d.className = 'slayer';
       d.id = 'thresh_' + k;
-      d.style.cssText = 'position:absolute;inset:0;'
+      d.style.cssText = (k === 'front'
+          ? 'position:absolute;left:0;right:0;bottom:0;height:80%;'
+          : 'position:absolute;inset:0;')
         + 'z-index:' + (i+1) + ';opacity:0;transition:opacity 1.6s ease';
       const im = document.createElement('img');
       im.src = url; im.alt = '';
-      if (k === 'front'){
-        im.style.objectFit = 'contain';
-        im.style.objectPosition = 'center bottom';
-      }
       d.appendChild(im);
       ov.appendChild(d);
       setTimeout(()=>{ d.style.opacity = '1'; }, 40 + i*140);
@@ -4236,14 +4147,19 @@ SCENES.studio_alone = {
       + 'background:radial-gradient(74% 70% at 76% 56%,rgba(255,251,240,.9) 0%,rgba(255,251,240,.66) 48%,rgba(255,251,240,0) 80%)';
     ov.appendChild(plate);
     const card = document.createElement('div');
-    card.style.cssText = 'position:absolute;right:7%;bottom:24%;width:min(30vw,380px);z-index:9;opacity:0;'
-      + 'transition:opacity 1.8s ease;color:rgba(27,42,74,.96);text-align:left;'
-      + 'font:400 16px/1.8 Georgia,serif';
+    card.style.cssText = 'position:absolute;left:50%;top:17%;transform:translateX(-50%);'
+      + 'width:min(46vw,600px);z-index:9;opacity:0;'
+      + 'transition:opacity 1.8s ease;color:rgba(27,42,74,.96);text-align:center;'
+      + 'font:400 17px/1.9 Georgia,serif';
     card.innerHTML = '<div style="font:500 10px/1 system-ui;letter-spacing:.28em;text-transform:uppercase;'
-      + 'color:rgba(27,42,74,.62);margin-bottom:16px">her studio</div>'
+      + 'color:rgba(27,42,74,.62);margin-bottom:18px">her studio</div>'
       + 'She cannot finish the whale on her own.<br><br>'
       + 'Her brushes and her colours are on the table.<br><br>'
-      + '<span style="opacity:.82">Paint over the whale she left behind.</span>';
+      + '<span style="opacity:.82">Paint over the whale she left behind.</span>'
+      + '<div id="studioGo" style="margin-top:30px;display:inline-block;padding:12px 30px;'
+      + 'border:1px solid rgba(27,42,74,.42);border-radius:999px;cursor:pointer;'
+      + 'font:400 15px/1 Georgia,serif;letter-spacing:.06em;color:rgba(27,42,74,.9);'
+      + 'transition:background-color .4s ease,border-color .4s ease">I am ready</div>';
     ov.appendChild(card);
     setTimeout(()=>{ plate.style.opacity = '1'; }, 1300);
     setTimeout(()=>{ card.style.opacity = '1'; }, 1500);
@@ -4317,108 +4233,11 @@ SCENES.fill_1 = { enter(){ enterGallery('fill', { fillN:'fill1' }); }, exit(){ e
 SCENES.fill_2 = { enter(){ enterGallery('fill', { fillN:'fill2' }); }, exit(){ exitGallery(); } };
 SCENES.fill_3 = { enter(){ enterGallery('fill', { fillN:'fill3' }); }, exit(){ exitGallery(); } };
 
-const WIPE_CFG = { brush: 46, need: .55, fadeIn: 900, lift: 1400 };
-
-function startGalleryWipe(done){
-  if (!G || !G.FR){ done && done(); return; }
-  const panels = [];
-  let cleared = 0;
-  syncFrames();
-  G.FR.forEach(el=>{
-    const id = el.dataset.id;
-    const ref = Img.el('aw_' + id);
-    const cnv = el.querySelector('canvas');
-    if (!ref || !ref.width || !cnv) return;
-    const w = cnv.width, h = cnv.height;
-    const veil = document.createElement('canvas');
-    veil.width = w; veil.height = h;
-    veil.className = 'wipeVeil';
-    const x = guardEllipses(veil.getContext('2d'));
-    const b = fitBox(ref.width, ref.height, w, h);
-    x.drawImage(ref, b.x, b.y, b.w, b.h);
-    x.save();
-    x.globalCompositeOperation = 'source-atop';
-    x.fillStyle = 'rgba(216,224,236,.34)';
-    x.fillRect(0, 0, w, h);
-    x.restore();
-    x.filter = 'none';
-    el.appendChild(veil);
-    requestAnimationFrame(()=> veil.classList.add('on'));
-    const cells = 12, hit = new Set();
-    const rec = { el, veil, x, w, h, cells, hit, gone:false };
-    panels.push(rec);
-  });
-  if (!panels.length){ done && done(); return; }
-
-  scheduleHint('wipe the frames.', WIPE_CFG.fadeIn + 1400);
-
-  const at = (e, r)=> ({
-    x: (e.clientX - r.left) / r.width,
-    y: (e.clientY - r.top) / r.height,
-  });
-  let drawing = false;
-  const rub = (rec, e)=>{
-    const r = rec.el.getBoundingClientRect();
-    if (!r.width) return;
-    const p = at(e, r);
-    if (p.x < -.02 || p.x > 1.02 || p.y < -.02 || p.y > 1.02) return;
-    const px = p.x * rec.w, py = p.y * rec.h;
-    const g = rec.x;
-    g.save();
-    g.globalCompositeOperation = 'destination-out';
-    const rad = WIPE_CFG.brush * (rec.w / 300);
-    const gr = g.createRadialGradient(px, py, 0, px, py, rad);
-    gr.addColorStop(0, 'rgba(0,0,0,1)');
-    gr.addColorStop(.55, 'rgba(0,0,0,.85)');
-    gr.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = gr;
-    g.fillRect(px - rad, py - rad, rad * 2, rad * 2);
-    g.restore();
-    const ci = Math.floor(p.x * rec.cells), ri = Math.floor(p.y * rec.cells);
-    for (let dc = -1; dc <= 1; dc++)
-      for (let dr = -1; dr <= 1; dr++){
-        const c2 = ci + dc, r2 = ri + dr;
-        if (c2 < 0 || r2 < 0 || c2 >= rec.cells || r2 >= rec.cells) continue;
-        rec.hit.add(c2 + '_' + r2);
-      }
-    if (!rec.gone && rec.hit.size / (rec.cells * rec.cells) >= WIPE_CFG.need){
-      rec.gone = true;
-      rec.veil.classList.add('lift');
-      setTimeout(()=>{ if (rec.veil.parentNode) rec.veil.remove(); }, WIPE_CFG.lift);
-      cleared++;
-      if (cleared === panels.length){
-        cancelHint();
-        stop();
-        setTimeout(()=>{ syncFrames(); done && done(); }, WIPE_CFG.lift + 500);
-      }
-    }
-  };
-  const move = (e)=>{
-    if (!drawing) return;
-    for (const rec of panels) if (!rec.gone) rub(rec, e);
-  };
-  const down = (e)=>{ drawing = true; move(e); };
-  const up = ()=>{ drawing = false; };
-  window.addEventListener('pointerdown', down);
-  window.addEventListener('pointermove', move);
-  window.addEventListener('pointerup', up);
-  function stop(){
-    window.removeEventListener('pointerdown', down);
-    window.removeEventListener('pointermove', move);
-    window.removeEventListener('pointerup', up);
-  }
-  SCENES.ending._wipeStop = stop;
-}
 
 SCENES.ending = {
   enter(){
     try{ sessionStorage.setItem('megan_complete','true'); }catch(e){}
     enterGallery('ending', {});
-    if (!SCENES.ending._wiped){
-      SCENES.ending._wiped = true;
-      startGalleryWipe(()=> SCENES.ending.reveal());
-      return;
-    }
     SCENES.ending.reveal();
   },
   reveal(){
@@ -4482,8 +4301,6 @@ SCENES.ending = {
     SCENES.ending._timers = T;
   },
   exit(){ (SCENES.ending._timers||[]).forEach(clearTimeout);
-    if (SCENES.ending._wipeStop) SCENES.ending._wipeStop();
-    SCENES.ending._wiped = false;
     SCENES.ending._leaving = false;
     if (G && G.wrap) G.wrap.style.filter = ''; exitGallery(); },
 };
