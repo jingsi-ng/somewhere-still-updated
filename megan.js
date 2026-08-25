@@ -4083,6 +4083,7 @@ SCENES.gallery_entry = {
 };
 
 let _gradRaf = 0;
+const GRAD_LEAVE_MS = 5200;
 SCENES.graduation = {
   enter(){
     const cs = document.getElementById('cutscene');
@@ -4099,17 +4100,23 @@ SCENES.graduation = {
       x.fillStyle = 'rgba(120,96,60,.55)'; x.textAlign = 'center';
       x.font = 'italic 26px Georgia,serif'; x.fillText('Megan & Hans', 450, 262);
     }
+    let gradGone = false;
+    const leaveGraduation = ()=>{
+      if (gradGone || _current !== 'graduation') return;
+      gradGone = true;
+      clearTimeout(SCENES.graduation._t);
+      Sound.play('megan_scene3_end_transition.wav','transition into the studio');
+      turnPage(()=>{
+        if (_current !== 'graduation') return;
+        goto('studio_alone', {});
+      }, [232, 224, 198]);
+    };
+    // the file carries applause after the line, so do not wait for it to end
+    SCENES.graduation._t = setTimeout(leaveGraduation, GRAD_LEAVE_MS);
     Sound.vo('megan_graduation_vo_mc.wav','MC',
       'Congratulation the team of Megan and Hans!', ()=>{
         if (_current !== 'graduation') return;
-        SCENES.graduation._t = setTimeout(()=>{
-          if (_current !== 'graduation') return;
-          Sound.play('megan_scene3_end_transition.wav','transition into the studio');
-          turnPage(()=>{
-            if (_current !== 'graduation') return;
-            goto('studio_alone', {});
-          }, [232, 224, 198]);
-        }, 1600);
+        SCENES.graduation._t = setTimeout(leaveGraduation, 600);
       });
   },
   exit(){ const cs = document.getElementById('cutscene');

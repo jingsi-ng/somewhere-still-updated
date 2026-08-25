@@ -1919,11 +1919,14 @@ svg[data-asset].has-asset > * {
 #w2s3-peterclear.on { opacity:1; }
 
 #endingStagePic { position:fixed; inset:0; z-index:57; display:none; opacity:0;
-  background-position:center; background-repeat:no-repeat; background-size:contain;
-  transform:scale(1.06); pointer-events:none;
-  transition:opacity 2.4s var(--e-veil), transform 6s var(--e-drift); }
-#endingStagePic.on { opacity:1; transform:scale(1); }
-#endingStagePic.closing { opacity:0; transform:scale(1.12); transition:opacity 2.4s var(--e-veil), transform 2.4s var(--e-drift); }
+  background-position:center; background-repeat:no-repeat; background-size:34%;
+  transform:none; pointer-events:none;
+  transition:opacity 1.8s var(--e-veil), background-size 2.6s var(--e-drift); }
+#endingStagePic.on { opacity:1; }
+#endingStagePic.grow1 { background-size:62%; }
+#endingStagePic.grow2 { background-size:104%; }
+#endingStagePic.closing { opacity:0; background-size:118%;
+  transition:opacity 2.2s var(--e-veil), background-size 2.4s var(--e-drift); }
 
 #w5s1-cert.show { animation: w5certBreathe 3.2s ease-in-out infinite; cursor:pointer; pointer-events:auto; }
 @keyframes w5certBreathe {
@@ -1932,7 +1935,8 @@ svg[data-asset].has-asset > * {
 }
 @media (prefers-reduced-motion: reduce){
   #w5s1-cert.show { animation:none; }
-  #endingStagePic { transition:opacity 1.2s var(--e-veil); transform:none; }
+  #endingStagePic { transition:opacity 1.2s var(--e-veil); background-size:104%; }
+  #endingStagePic.grow1, #endingStagePic.grow2 { background-size:104%; }
 }
 
 #endingPaper { position:absolute; inset:0; z-index:0; pointer-events:none; }
@@ -2475,22 +2479,6 @@ svg[data-asset].has-asset > * {
   transition:none !important; }
 #w3s3.snapped { filter:invert(1); background:#03070b; }
 #w3s3-xray { transition:opacity .12s linear; }
-
-#endingTree { position:absolute; inset:0; z-index:130; display:none; opacity:0;
-  background:#0A0E13; transition:opacity 1.6s var(--e-veil); }
-#endingTree.on { opacity:1; }
-#endingTree.closing { opacity:0; transition:opacity 2s var(--e-veil); }
-#endingTree > .fit-contain { position:absolute; left:0; right:0; top:8%; bottom:6%;
-  background-repeat:no-repeat; background-position:center bottom; background-size:contain; }
-#endingTree .tree-fifth { position:absolute; left:0; right:0; top:8%; bottom:6%;
-  width:100%; height:92%; overflow:visible; }
-#endingTree.sway .tree-fifth { animation:treeSway 4.6s ease-in-out infinite; transform-origin:29.5% 26%; }
-@keyframes treeSway {
-  0%,100% { transform:rotate(0deg); }
-  35%     { transform:rotate(1.1deg); }
-  70%     { transform:rotate(-0.8deg); }
-}
-@media (prefers-reduced-motion: reduce){ #endingTree.sway .tree-fifth { animation:none; } }
 
 .w2frag-tip { position:absolute; left:50%; bottom:11%; transform:translateX(-50%) translateY(6px);
   z-index:7; pointer-events:none; opacity:0;

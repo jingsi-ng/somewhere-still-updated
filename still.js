@@ -345,44 +345,87 @@
 
   function stillGatePaint(api){
     api.exitMs = 240;
-    api.fadeMs = 700;
+    api.fadeMs = 900;
     var COLS = ['#B23A2E', '#D98324', '#8A8493'];
+    var motes = [];
+    for (var m = 0; m < 46; m++){
+      motes.push({
+        x: Math.random(), y: Math.random(),
+        r: 0.6 + Math.random() * 1.9,
+        rise: 0.008 + Math.random() * 0.026,
+        sway: 0.4 + Math.random() * 1.6,
+        ph: Math.random() * 6.283,
+        c: COLS[m % 3],
+        a: 0.16 + Math.random() * 0.4
+      });
+    }
+    var last = 0;
     return function (a) {
       var g = a.ctx, W = a.w(), H = a.h(), t = a.t(), d = a.dpr;
+      var dt = Math.min(0.05, t - last); last = t;
       g.setTransform(d, 0, 0, d, 0, 0);
-      g.fillStyle = '#05070a';
+
+      var deep = g.createLinearGradient(0, 0, 0, H);
+      deep.addColorStop(0, '#0b2740');
+      deep.addColorStop(0.34, '#0a2135');
+      deep.addColorStop(1, '#04080e');
+      g.fillStyle = deep;
       g.fillRect(0, 0, W, H);
 
       var sink = a.leaving() ? a.since : 0;
       var pull = Math.min(1, sink * 1.5);
-      var mx = a.mouse.on ? a.mouse.x : W / 2;
-      var my = a.mouse.on ? a.mouse.y : H / 2;
       var cx = W / 2, cy = H / 2;
+      var mx = a.mouse.on ? a.mouse.x : cx;
+      var my = a.mouse.on ? a.mouse.y : cy;
 
-      for (var s = 0; s < 3; s++) {
-        var base = cy + (s - 1) * Math.min(H * 0.13, 96);
-        g.strokeStyle = COLS[s];
-        g.lineWidth = 1.6;
-        g.globalAlpha = 0.34 + Math.sin(t * 0.7 + s * 2.1) * 0.14;
+      var shaftW = Math.max(W, H);
+      for (var s = 0; s < 3; s++){
+        var lean = (s - 1) * 0.26 + Math.sin(t * 0.11 + s) * 0.04;
+        var top = cx + lean * H * 0.5;
+        var sw = shaftW * (0.055 + s * 0.012);
+        var sa = (0.05 + Math.sin(t * 0.23 + s * 2.0) * 0.028) * (1 - pull);
+        if (sa <= 0) continue;
+        var lg = g.createLinearGradient(top, 0, top - lean * H, H);
+        lg.addColorStop(0, 'rgba(178,206,228,' + sa.toFixed(3) + ')');
+        lg.addColorStop(1, 'rgba(178,206,228,0)');
+        g.fillStyle = lg;
         g.beginPath();
-        for (var x = 0; x <= W; x += 6) {
-          var w1 = Math.sin(x * 0.006 + t * (0.42 + s * 0.13) + s) * (16 + s * 5);
-          var w2 = Math.sin(x * 0.017 - t * 0.3 + s * 1.7) * 6;
-          var y = base + w1 + w2;
-          var dx = x - mx, dy = y - my;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 220) {
-            var f = (1 - dist / 220);
-            y -= dy * f * f * 0.42;
-          }
-          y += (cy - y) * pull;
-          if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
-        }
-        g.stroke();
+        g.moveTo(top - sw * 0.34, 0);
+        g.lineTo(top + sw * 0.34, 0);
+        g.lineTo(top - lean * H + sw, H);
+        g.lineTo(top - lean * H - sw, H);
+        g.closePath();
+        g.fill();
+      }
+
+      for (var i = 0; i < motes.length; i++){
+        var p = motes[i];
+        p.y -= p.rise * dt;
+        if (p.y < -0.04){ p.y = 1.04; p.x = Math.random(); }
+        var px = (p.x + Math.sin(t * 0.5 + p.ph) * 0.012 * p.sway) * W;
+        var py = p.y * H;
+        var dx = px - mx, dy = py - my;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var lift = dist < 190 ? (1 - dist / 190) : 0;
+        px += dx * lift * lift * 0.3;
+        py += dy * lift * lift * 0.3;
+        py += (cy - py) * pull;
+        px += (cx - px) * pull;
+        var glow = p.a * (0.6 + Math.sin(t * 1.1 + p.ph) * 0.4) + lift * 0.42;
+        var rr = p.r * (1 + lift * 1.5);
+        var rg = g.createRadialGradient(px, py, 0, px, py, rr * 5);
+        rg.addColorStop(0, p.c);
+        rg.addColorStop(1, 'rgba(0,0,0,0)');
+        g.globalAlpha = Math.max(0, Math.min(0.85, glow)) * 0.5;
+        g.fillStyle = rg;
+        g.beginPath(); g.arc(px, py, rr * 5, 0, 6.283); g.fill();
+        g.globalAlpha = Math.max(0, Math.min(1, glow));
+        g.fillStyle = 'rgba(226,240,248,0.9)';
+        g.beginPath(); g.arc(px, py, rr, 0, 6.283); g.fill();
       }
       g.globalAlpha = 1;
 
-      if (sink > 0) {
+      if (sink > 0){
         var burst = Math.min(1, sink * 1.1);
         var bg = g.createRadialGradient(cx, cy, 0, cx, cy, burst * Math.max(W, H) * 0.7);
         bg.addColorStop(0, 'rgba(206,226,240,' + (0.5 * (1 - burst)).toFixed(3) + ')');
@@ -390,12 +433,14 @@
         g.fillStyle = bg;
         g.fillRect(0, 0, W, H);
       } else {
-        var pb = 0.5 + Math.sin(t * 1.3) * 0.5;
-        g.strokeStyle = 'rgba(206,226,240,' + (0.1 + pb * 0.16).toFixed(3) + ')';
-        g.lineWidth = 1;
-        g.beginPath();
-        g.arc(cx, cy, 26 + pb * 7, 0, 6.283);
-        g.stroke();
+        for (var k = 0; k < 3; k++){
+          var ph = (t * 0.34 + k / 3) % 1;
+          var rad = 18 + ph * 92;
+          var ra = (1 - ph) * 0.2;
+          g.strokeStyle = 'rgba(206,226,240,' + ra.toFixed(3) + ')';
+          g.lineWidth = 1;
+          g.beginPath(); g.arc(cx, cy, rad, 0, 6.283); g.stroke();
+        }
       }
     };
   }

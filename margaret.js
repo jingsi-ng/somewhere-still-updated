@@ -1259,12 +1259,15 @@ function openLikeAFlower(){
     }
   };
 
+  const ENTRY_BEAT = 1000;
   const beginEntry = ()=>{
     entryBloomDone = false;
     try { SFX.play('entry_plunge'); } catch(e){}
     startEntryBloom();
     speak('entry_line1', 3200, ()=>{
-      entryToBlack(()=> speak('entry_line2', 5200, ()=>{ entryVoDone = true; }));
+      setTimeout(()=>{
+        entryToBlack(()=> speak('entry_line2', 5200, ()=>{ entryVoDone = true; }));
+      }, ENTRY_BEAT);
     });
     entryVoFloor = setTimeout(()=>{ entryVoDone = true; }, 22000);
   };
@@ -1332,7 +1335,7 @@ function startEntryBloom(){
     delay: Math.random()*0.25
   }));
 
-  const BLOOM_MS = 4600;
+  const BLOOM_MS = 3200;
   const REVEAL_AT = 5000;
   const REVEAL_CAP = 16000;
   const t0 = performance.now();
@@ -6435,68 +6438,6 @@ function loadP5(cb){
   document.head.appendChild(sc);
 }
 
-const TREE = { x:29.5, y:26.0, w:5.4, ring:[0,1,2,3,4] };
-
-function buildMemoryTree(host){
-  const NS = 'http://www.w3.org/2000/svg';
-  const T = document.createElement('div');
-  T.id = 'endingTree';
-  const art = document.createElement('div');
-  art.className = 'fit-contain';
-  art.setAttribute('data-asset', 'map_tree');
-  T.appendChild(art);
-  const svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 100 100');
-  svg.setAttribute('preserveAspectRatio', 'none');
-  svg.setAttribute('class', 'tree-fifth');
-  const g = document.createElementNS(NS, 'g');
-  svg.appendChild(g); T.appendChild(svg);
-  host.appendChild(T);
-  applyAssets(T);
-
-  const X = TREE.x, Y = TREE.y, W = TREE.w;
-  const mk = (tag, attrs)=>{ const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]); g.appendChild(n); return n; };
-  const CL = '#B88A81', INK = '#141210', RED = '#B23A2E';
-  mk('path', { d:'M '+X+' '+Y+' L '+X+' '+(Y+9.5), stroke:INK, 'stroke-width':0.16, fill:'none' });
-  mk('path', { d:'M '+(X-1.1)+' '+(Y+0.5)+' q 1.1 -1.5 2.2 0 z', fill:RED, stroke:INK, 'stroke-width':0.14 });
-  mk('path', { d:'M '+(X-W/2)+' '+(Y+12.6)+' q '+(W/2)+' -3.4 '+W+' 0 z', fill:CL, stroke:INK, 'stroke-width':0.18 });
-  [-0.34, -0.11, 0.12, 0.35].forEach((o,i)=>{
-    const h = 5.2 + (i % 2) * 1.5;
-    mk('rect', { x:(X + o*W).toFixed(2), y:(Y+12.8).toFixed(2), width:(W*0.19).toFixed(2),
-      height:h.toFixed(2), rx:0.3, fill:CL, stroke:INK, 'stroke-width':0.15 });
-  });
-  mk('path', { d:'M '+X+' '+(Y+12.8)+' L '+X+' '+(Y+21.4), stroke:INK, 'stroke-width':0.13, fill:'none' });
-  const sy = Y + 21.4, s = W * 0.62;
-  mk('path', { d:'M '+(X-s*0.30)+' '+sy
-    +' C '+(X-s*0.52)+' '+(sy+s*0.30)+' '+(X-s*0.44)+' '+(sy+s*0.86)+' '+(X-s*0.06)+' '+(sy+s*1.02)
-    +' C '+(X+s*0.34)+' '+(sy+s*1.16)+' '+(X+s*0.56)+' '+(sy+s*0.92)+' '+(X+s*0.50)+' '+(sy+s*0.60)
-    +' C '+(X+s*0.44)+' '+(sy+s*0.26)+' '+(X+s*0.10)+' '+(sy-s*0.06)+' '+(X-s*0.30)+' '+sy+' Z',
-    fill:CL, stroke:INK, 'stroke-width':0.17 });
-  return { T, g };
-}
-
-function showMemoryTree(next){
-  const host = $('margaret-scene') || document.body;
-  let rig = host.querySelector('#endingTree');
-  if (!rig) rig = buildMemoryTree(host).T;
-  else rig = rig;
-  rig.style.display = 'block';
-  void rig.offsetWidth;
-  requestAnimationFrame(()=> rig.classList.add('on'));
-  const rings = ['redshoe_1','redshoe_2','redshoe_3','redshoe_4','redshoe_5'];
-  TREE.ring.forEach((n,i)=> setTimeout(()=>{
-    const a = SFX.play(rings[n]);
-    if (a) a.volume = 0.30;
-    rig.classList.add('sway');
-  }, 1400 + i * 1150));
-  setTimeout(()=> rig.classList.add('closing'), 8200);
-  setTimeout(()=>{
-    rig.classList.remove('on','closing','sway');
-    rig.style.display = 'none';
-    if (typeof next === 'function') next();
-  }, 10200);
-}
 
 function startEndingSequence(){
   hushLanding();
@@ -6623,6 +6564,9 @@ function startRedStorm(){
   });
 }
 
+const SHOE_ASKS = ['redshoe_1','redshoe_3','redshoe_5'];
+const SHOE_AT = [900, 4200, 7500];
+const SHOE_CLOSE = 10600;
 function cutToWhite(){
   hideSub();
   $('endingStorm').style.display = 'none';
@@ -6634,11 +6578,21 @@ function cutToWhite(){
     void pic.offsetWidth;
     requestAnimationFrame(()=> pic.classList.add('on'));
     setTimeout(()=> Fatih.fadeActive(900), 200);
-    setTimeout(()=> pic.classList.add('closing'), 3400);
-    setTimeout(()=>{ pic.classList.remove('on','closing'); pic.style.display = 'none'; showMemoryTree(openStage); }, 5400);
+    SHOE_ASKS.forEach((key, i)=> setTimeout(()=>{
+      const a = SFX.play(key);
+      if (a) a.volume = 0.34;
+    }, SHOE_AT[i]));
+    setTimeout(()=> pic.classList.add('grow1'), SHOE_AT[1] - 700);
+    setTimeout(()=> pic.classList.add('grow2'), SHOE_AT[2] - 700);
+    setTimeout(()=> pic.classList.add('closing'), SHOE_CLOSE);
+    setTimeout(()=>{
+      pic.classList.remove('on','grow1','grow2','closing');
+      pic.style.display = 'none';
+      openStage();
+    }, SHOE_CLOSE + 2200);
   } else {
     Fatih.fadeActive(900);
-    setTimeout(()=> showMemoryTree(openStage), 2200);
+    setTimeout(openStage, 2200);
   }
 }
 

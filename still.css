@@ -94,9 +94,9 @@ body.still-on {
 }
 
 .card.margaret {
-  width:min(30vw, 348px); height:min(37vw, 430px);
-  padding:14px;
-  border-radius:min(15vw,174px) min(15vw,174px) 8px 8px;
+  width:min(50vw, 580px); height:min(29.8vw, 346px);
+  padding:14px 14px 20px;
+  border-radius:min(9vw,104px) min(9vw,104px) 4px 4px;
   background:linear-gradient(152deg,
     #d4dae1 0%, #8e99a6 20%, #eef2f6 38%, #7f8a97 58%,
     #c6cfd8 78%, #93a0ae 100%);
@@ -108,8 +108,18 @@ body.still-on {
 
 .card.margaret .inner {
   position:relative; width:100%; height:100%; overflow:hidden;
-  border-radius:min(13.6vw,158px) min(13.6vw,158px) 3px 3px;
+  border-radius:min(8vw,92px) min(8vw,92px) 2px 2px;
   background:#243448;
+  box-shadow:inset 0 0 0 1px rgba(178,58,46,.34);
+}
+
+.card.margaret::after {
+  content:'';
+  position:absolute; left:14px; right:14px; bottom:7px; height:4px;
+  border-radius:2px;
+  background:linear-gradient(90deg,
+    rgba(178,58,46,0) 0%, rgba(178,58,46,.52) 22%,
+    rgba(178,58,46,.52) 78%, rgba(178,58,46,0) 100%);
 }
 
 .card.margaret .inner::after {
