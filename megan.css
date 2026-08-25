@@ -462,7 +462,7 @@ body.megan-on {
 #gWrap #gMid {
   top:20%;
   bottom:auto;
-  height:90%;
+  height:93%;
 }
 
 #gWrap #gMid::after {
@@ -491,14 +491,9 @@ body.megan-on {
 }
 
 #gWrap #gFront {
-  top:auto;
-  bottom:0;
-  height:30%;
-  background:#c0a383;
-}
-
-#gWrap #gFront > canvas, #gWrap #gFront > img {
-  object-position:center bottom;
+  top:20%;
+  bottom:auto;
+  height:93%;
 }
 
 #gWrap #gFront::after {
@@ -506,13 +501,12 @@ body.megan-on {
   position:absolute;
   left:0;
   right:0;
-  top:0;
-  height:26%;
+  top:55%;
+  height:14%;
   pointer-events:none;
   background:linear-gradient(to bottom,
-    rgba(24,34,58,.42) 0%,
-    rgba(24,34,58,.18) 24%,
-    rgba(24,34,58,.06) 52%,
+    rgba(24,34,58,.40) 0%,
+    rgba(24,34,58,.16) 34%,
     rgba(24,34,58,0) 100%);
 }
 
