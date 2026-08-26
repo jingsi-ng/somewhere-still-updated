@@ -65,6 +65,13 @@ body.megan-on {
   transition:opacity .5s ease;
 }
 
+#meganSub:empty {
+  padding:0;
+  background:none;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+
 #meganSub.panelled {
   padding:14px 34px 16px;
   border-radius:8px;
@@ -1189,7 +1196,20 @@ body.megan-on {
   #app.drifting { animation:none; }
 }
 
+#studioThreshold.waiting {
+  cursor:default !important;
+}
+
+#studioThreshold.waiting #studioGo {
+  opacity:0;
+  transform:translateY(6px);
+  pointer-events:none;
+  cursor:default;
+}
+
 #studioGo {
+  opacity:1;
+  transform:translateY(0);
   margin:30px auto 0;
   display:block;
   width:max-content;
@@ -1201,7 +1221,8 @@ body.megan-on {
   background:#d2cab1;
   border-radius:58% 42% 50% 50% / 62% 55% 45% 38%;
   box-shadow:0 2px 0 rgba(27,42,74,.06) inset;
-  transition:background-color .5s ease, transform .5s cubic-bezier(.3,.7,.3,1), border-radius .9s ease;
+  transition:opacity 1.1s ease, background-color .5s ease,
+             transform .7s cubic-bezier(.3,.7,.3,1), border-radius .9s ease;
 }
 
 #studioGo:hover {

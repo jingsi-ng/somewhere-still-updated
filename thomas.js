@@ -3357,6 +3357,7 @@ function graceNote(){
   Sound.playNote(want,{gain:0.62,detune:0});
   thomasState.score.filled.push(want);
   s3.slots[s3.targetPos]=want;
+  s3LastNoteAt=t;
   captureWave(want);
   s3.targetPos++;
 }
@@ -3367,6 +3368,7 @@ function stage3OnNote(noteIdx){
   if(noteIdx===want){
     thomasState.score.filled.push(want);
     s3.slots[s3.targetPos]=want;
+  s3LastNoteAt=t;
     captureWave(noteIdx);
     s3.targetPos++;
     s3.miss=0;
@@ -3420,16 +3422,33 @@ function s3Sfx(ph){
 }
 const S3_KEEP=['keep going','it is still there','do not stop',
                'play on','stay with it','a little longer'];
+const S3_WARM=['that is the shape of it','the song is coming back',
+               'he is following you','it remembers this part',
+               'that is his hand, not yours','you are further than he got'];
+const S3_IDLE=['the strings are still waiting','sweep again',
+               'it goes quiet when you stop','one more, any one'];
 const S3_KEEP_EVERY=34;
-let s3KeepAt=0, s3KeepI=0;
+const S3_IDLE_AFTER=9;
+let s3KeepAt=0, s3KeepI=0, s3WarmI=0, s3IdleI=0, s3LastNoteAt=0;
 function s3KeepAlive(){
   if(thomasState.scene!=='stage3')return;
   if(s3.inPhoto||s3.collapsing||UI_BLOCK||MEM_LOCK)return;
-  if(t-s3KeepAt<S3_KEEP_EVERY)return;
   const el=$('tcue');
   if(el&&el.classList.contains('on'))return;
+
+  const played=s3.slots.length;
+  const quiet=t-(s3LastNoteAt||stage3T0);
+
+  if(played>0 && quiet>S3_IDLE_AFTER && t-s3KeepAt>16){
+    s3KeepAt=t;
+    cue(S3_IDLE[s3IdleI++%S3_IDLE.length],{hold:4200});
+    return;
+  }
+  if(t-s3KeepAt<S3_KEEP_EVERY)return;
   s3KeepAt=t;
-  cue(S3_KEEP[s3KeepI++%S3_KEEP.length],{hold:3600});
+  const bank=played>=8 ? S3_WARM : S3_KEEP;
+  const i=played>=8 ? s3WarmI++ : s3KeepI++;
+  cue(bank[i%bank.length],{hold:3800});
 }
 function s3BeatTick(){
   if(thomasState.scene!=='stage3'||!SCRATCH_ENABLED||s3.inPhoto)return;

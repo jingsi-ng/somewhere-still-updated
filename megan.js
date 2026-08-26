@@ -537,6 +537,7 @@ function showLine(speaker, text){
   const inStudio = (_current || '').indexOf('studio_') === 0;
   host.style.top = 'auto';
   host.style.bottom = inStudio ? '11%' : '4%';
+  clearTimeout(host.__empty);
   host.classList.toggle('panelled', inStudio);
   host.style.zIndex = '90';
   const linger = subLinger();
@@ -572,6 +573,11 @@ function hideLine(){
     el.style.opacity = '0';
     el.__t = setTimeout(()=> el.remove(), linger);
   });
+  clearTimeout(host.__empty);
+  host.__empty = setTimeout(()=>{
+    if (host.children.length) return;
+    host.classList.remove('on', 'panelled');
+  }, linger + 60);
 }
 
 const HASHES = {
@@ -4204,10 +4210,22 @@ SCENES.studio_alone = {
     setTimeout(()=>{ plate.style.opacity = '1'; }, 1300);
     setTimeout(()=>{ card.style.opacity = '1'; }, 1500);
     host.appendChild(ov);
-    Sound.vo(STUDIO_ENTRY.file, STUDIO_ENTRY.speaker, STUDIO_ENTRY.line);
+
+    const btn = card.querySelector('#studioGo');
+    ov.classList.add('waiting');
+    let armed = false;
+    const arm = ()=>{
+      if (armed) return; armed = true;
+      clearTimeout(SCENES.studio_alone._arm);
+      ov.classList.remove('waiting');
+    };
+    const est = Sound.vo(STUDIO_ENTRY.file, STUDIO_ENTRY.speaker,
+      STUDIO_ENTRY.line, arm);
+    SCENES.studio_alone._arm = setTimeout(arm,
+      Math.min(20000, (typeof est === 'number' && est > 0 ? est : 9000) + 1200));
     let gone = false;
     const go = ()=>{
-      if (gone) return; gone = true;
+      if (!armed || gone) return; gone = true;
       ov.style.pointerEvents = 'none';
       requestAnimationFrame(()=>{
         goto('studio_born', { intro:'openstudio' });
@@ -4219,12 +4237,13 @@ SCENES.studio_alone = {
       });
     };
     ov.addEventListener('click', go);
-    SCENES.studio_alone._t1 = setTimeout(go, 180000);
+    SCENES.studio_alone._t1 = setTimeout(()=>{ arm(); go(); }, 180000);
     SCENES.studio_alone._go = go;
   },
   exit(){
     clearTimeout(SCENES.studio_alone._t1); clearTimeout(SCENES.studio_alone._t2);
     clearTimeout(SCENES.studio_alone._t3); clearTimeout(SCENES.studio_alone._t4);
+    clearTimeout(SCENES.studio_alone._arm);
     const ov = document.getElementById('studioThreshold');
     if (ov && ov.parentNode) ov.remove();
   },
