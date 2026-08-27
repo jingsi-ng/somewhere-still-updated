@@ -526,29 +526,29 @@ body.all-held #floorgate .lb-earned { display: inline; }
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--paper);
-  background: rgba(226, 238, 248, 0.05);
-  border: 1px solid rgba(206, 226, 240, 0.34);
-  border-radius: 3px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(206, 226, 240, 0.26);
   cursor: pointer;
-  padding: 13px 26px;
+  padding: 6px 2px 9px;
   position: relative;
-  opacity: 0.82;
+  opacity: 0.7;
   animation: fgBreathe 5s ease-in-out infinite;
-  transition: background-color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease;
+  transition: opacity 0.5s ease, border-color 0.5s ease, letter-spacing 0.5s ease;
 }
 
 #floorMap:hover, #floorMap:focus-visible {
   outline: none;
   opacity: 1;
-  background: rgba(226, 238, 248, 0.12);
-  border-color: rgba(226, 238, 248, 0.72);
+  letter-spacing: 0.24em;
+  border-bottom-color: rgba(226, 238, 248, 0.66);
 }
 
 #floorMap::after {
   content: '';
   position: absolute;
   left: 50%;
-  bottom: -22px;
+  bottom: -28px;
   width: 1px;
   height: 18px;
   transform: translateX(-50%);
@@ -838,13 +838,14 @@ body.all-held #floorgate .lb-earned { display: inline; }
   font-size: 11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: rgba(226,238,248,0.62);
   text-decoration: none;
+  text-shadow: 0 1px 12px rgba(4,10,20,0.7);
   transition: color 0.5s ease;
 }
 
 #navback:hover {
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.95);
 }
 
 #nava11y {

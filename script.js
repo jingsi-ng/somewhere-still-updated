@@ -616,6 +616,8 @@ document.getElementById('navback').addEventListener('click',(e)=>{
     navCloseTimer=null;
     navlayerEl.classList.remove('show');
     stopNav();
+    try { window.scrollTo(0, 0); } catch(err){ scrollTo(0,0); }
+    readScroll();
     if(ropeLampEl) ropeLampEl.classList.add('on');
   },1100);
 });
