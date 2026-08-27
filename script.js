@@ -662,7 +662,7 @@ document.getElementById('gate0').addEventListener('click',(e)=>{
   setTimeout(()=>{ hasEntered=true; if(window.Grammar) Grammar.cursorOn(); },2800);
 });
 
-const L={1:document.getElementById('l1'),2:document.getElementById('l2'),3:document.getElementById('l3'),b:document.getElementById('lbottom')};
+const L={1:document.getElementById('l1'),2:document.getElementById('l2'),3:document.getElementById('l3')};
 const nameMap=new Map([['margaret',L[1]],['megan',L[2]],['thomas',L[3]]]);
 function band(s,a,b){ if(s<a||s>b)return 0; const t=(s-a)/(b-a); return Math.sin(t*Math.PI); }
 let __floorReached = false;
@@ -682,7 +682,6 @@ function updateText(s){
   if(ropeLampEl) ropeLampEl.dataset.deep = ropeK > 0.14 ? '1' : '0';
 
   const finished = ssAllDone();
-  L.b.style.opacity=(finished ? band(s,0.82,0.94) : band(s,0.83,0.95)).toFixed(3);
   floorgateEl.classList.toggle('earned', finished);
   document.body.classList.toggle('all-held', finished);
   if(finished ? s>0.84 : s>0.88) floorgateEl.classList.add('show');

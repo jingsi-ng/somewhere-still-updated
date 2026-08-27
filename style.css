@@ -475,9 +475,10 @@ html.ss-descended .sink-dots::after {
 
 #floorgate {
   position: fixed;
-  left: 0;
-  right: 0;
-  top: 46%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(74vw, 780px);
   z-index: 8;
   text-align: center;
   opacity: 0;
@@ -485,9 +486,19 @@ html.ss-descended .sink-dots::after {
   transition: opacity 0.8s ease;
 }
 
-#lbottom .lb-earned { display: none; }
-body.all-held #lbottom .lb-open { display: none; }
-body.all-held #lbottom .lb-earned { display: inline; }
+#floorgate .fg-poem {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: clamp(16px, 2.1vw, 25px);
+  line-height: 1.62;
+  color: var(--ui);
+  opacity: 0.66;
+  text-wrap: balance;
+}
+
+#floorgate .lb-earned { display: none; }
+body.all-held #floorgate .lb-open { display: none; }
+body.all-held #floorgate .lb-earned { display: inline; }
 
 #floorgate .fg-earned { display: none; }
 #floorgate.earned .fg-open { display: none; }
@@ -501,27 +512,36 @@ body.all-held #lbottom .lb-earned { display: inline; }
 .fg-line {
   font-family: 'Lora', serif;
   font-style: italic;
-  font-size: clamp(17px, 2.4vw, 28px);
+  font-size: clamp(13px, 1.5vw, 17px);
+  line-height: 1.6;
   color: var(--paper);
-  opacity: 0.9;
-  margin-bottom: 38px;
+  opacity: 0.58;
+  margin: 26px 0 30px;
   text-shadow: 0 2px 22px rgba(2, 8, 14, 0.9);
 }
 
 #floorMap {
-  font-family: 'Lora', serif;
-  font-style: italic;
-  font-size: clamp(17px, 2.3vw, 26px);
-  color: var(--megan);
-  background: none;
-  border: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: rgba(226, 238, 248, 0.05);
+  border: 1px solid rgba(206, 226, 240, 0.34);
+  border-radius: 3px;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  padding: 10px 4px;
+  padding: 13px 26px;
   position: relative;
-  text-shadow: 0 0 18px rgba(180, 200, 220, 0.4), 0 0 40px rgba(180, 200, 220, 0.18);
+  opacity: 0.82;
   animation: fgBreathe 5s ease-in-out infinite;
-  transition: text-shadow 0.6s ease, color 0.6s ease;
+  transition: background-color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease;
+}
+
+#floorMap:hover, #floorMap:focus-visible {
+  outline: none;
+  opacity: 1;
+  background: rgba(226, 238, 248, 0.12);
+  border-color: rgba(226, 238, 248, 0.72);
 }
 
 #floorMap::after {
@@ -570,7 +590,7 @@ body.all-held #lbottom .lb-earned { display: inline; }
   right: 26px;
   z-index: 20;
   width: 168px;
-  height: 104px;
+  height: 116px;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -617,23 +637,65 @@ body.all-held #lbottom .lb-earned { display: inline; }
 
 #ropelamp i {
   position: absolute;
+  isolation: isolate;
   left: 50%;
-  top: 42px;
-  width: 22px;
-  height: 20px;
-  margin-left: -11px;
-  border-radius: 3px 3px 42% 42% / 3px 3px 34% 34%;
+  top: 40px;
+  width: 20px;
+  height: 30px;
+  margin-left: -10px;
+  animation: lampStrike 1400ms ease-out 1 both, lampBreathe 5.2s ease-in-out 1400ms infinite;
+  transition: filter 420ms ease, transform 420ms cubic-bezier(.3,.7,.3,1);
+}
+
+#ropelamp i::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 2px 3px 3px;
   background:
     linear-gradient(to bottom,
-      rgba(150,124,74,0.95) 0 5px,
-      rgba(196,166,104,0.9) 5px 7px,
-      rgba(255,246,214,0.9) 7px 100%);
-  box-shadow:
-    0 0 10px rgba(246,234,196,0.26),
-    0 0 26px rgba(246,234,196,0.1),
-    inset 0 -3px 5px rgba(255,250,226,0.5);
-  animation: lampStrike 1400ms ease-out 1 both, lampBreathe 5.2s ease-in-out 1400ms infinite;
-  transition: box-shadow 420ms ease, transform 420ms cubic-bezier(.3,.7,.3,1);
+      rgba(196,166,104,0) 0 3px,
+      rgba(158,130,78,0.96) 3px 5px,
+      rgba(186,156,96,0.92) 5px 8px,
+      rgba(255,247,216,0.94) 8px 22px,
+      rgba(186,156,96,0.92) 22px 26px,
+      rgba(150,124,74,0.96) 26px 30px),
+    linear-gradient(to right,
+      rgba(120,98,58,0.5) 0 2px,
+      rgba(0,0,0,0) 2px calc(100% - 2px),
+      rgba(120,98,58,0.5) calc(100% - 2px) 100%);
+  clip-path: polygon(
+    18% 10%, 82% 10%, 82% 17%, 92% 27%, 92% 73%, 82% 83%,
+    82% 100%, 18% 100%, 18% 83%, 8% 73%, 8% 27%, 18% 17%);
+  box-shadow: inset 0 -4px 6px rgba(255,250,232,0.4);
+}
+
+#ropelamp i::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 4px;
+  width: 42px;
+  height: 40px;
+  margin-left: -21px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 34%,
+    rgba(255,244,206,0.34) 0%, rgba(255,240,196,0.12) 44%, rgba(255,240,196,0) 74%);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+#ropelamp .bail {
+  position: absolute;
+  left: 50%;
+  top: 32px;
+  width: 14px;
+  height: 12px;
+  margin-left: -7px;
+  border: 1.4px solid rgba(178,150,92,0.85);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
 }
 
 @keyframes lampStrike {
@@ -667,7 +729,7 @@ body.all-held #lbottom .lb-earned { display: inline; }
 #ropelamp .tag {
   position: absolute;
   left: 50%;
-  top: 70px;
+  top: 82px;
   transform: translateX(-50%);
   white-space: nowrap;
   font-family: 'Space Mono', monospace;
@@ -687,11 +749,7 @@ body.all-held #lbottom .lb-earned { display: inline; }
 
 #ropelamp:hover .cord, #ropelamp:focus-visible .cord { height: 54px; }
 #ropelamp:hover i, #ropelamp:focus-visible i {
-  transform: translateY(8px);
-  box-shadow:
-    0 0 20px rgba(255,244,206,0.62),
-    0 0 52px rgba(255,240,198,0.3),
-    inset 0 -3px 6px rgba(255,252,238,0.75);
+  filter: brightness(1.28) drop-shadow(0 0 14px rgba(255,244,206,0.6));
 }
 
 #ropelamp:hover i::after, #ropelamp:focus-visible i::after { transform: scale(1.5); }
@@ -705,8 +763,7 @@ body.all-held #lbottom .lb-earned { display: inline; }
 
 #ropelamp.pulled .cord { height: 74px; }
 #ropelamp.pulled i {
-  transform: translateY(28px) scale(1.12);
-  box-shadow: 0 0 40px rgba(255,248,222,0.9), 0 0 96px rgba(255,244,206,0.5);
+  filter: brightness(1.75) drop-shadow(0 0 30px rgba(255,248,222,0.85));
 }
 
 @media (prefers-reduced-motion: reduce) {
