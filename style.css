@@ -528,20 +528,50 @@ body.all-held #floorgate .lb-earned { display: inline; }
   color: var(--paper);
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(206, 226, 240, 0.26);
   cursor: pointer;
-  padding: 6px 2px 9px;
+  padding: 6px 2px 14px;
   position: relative;
   opacity: 0.7;
   animation: fgBreathe 5s ease-in-out infinite;
-  transition: opacity 0.5s ease, border-color 0.5s ease, letter-spacing 0.5s ease;
+  transition: opacity 0.5s ease, letter-spacing 0.5s ease;
+}
+
+#floorMap::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  bottom: 2px;
+  height: 7px;
+  pointer-events: none;
+  opacity: 0.34;
+  background-repeat: repeat-x;
+  background-size: 46px 7px, 71px 7px;
+  background-position: 0 1px, 0 3px;
+  background-image:
+    radial-gradient(ellipse 23px 7px at 23px 8px,
+      rgba(206,226,240,0) 60%, rgba(206,226,240,0.85) 62%, rgba(206,226,240,0) 68%),
+    radial-gradient(ellipse 35px 6px at 35px -1px,
+      rgba(206,226,240,0) 58%, rgba(206,226,240,0.5) 60%, rgba(206,226,240,0) 67%);
+  animation: fgDrift 19s linear infinite;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes fgDrift {
+  from { background-position: 0 1px, 0 3px; }
+  to   { background-position: 46px 1px, -71px 3px; }
 }
 
 #floorMap:hover, #floorMap:focus-visible {
   outline: none;
   opacity: 1;
   letter-spacing: 0.24em;
-  border-bottom-color: rgba(226, 238, 248, 0.66);
+}
+
+#floorMap:hover::before, #floorMap:focus-visible::before { opacity: 0.72; }
+
+@media (prefers-reduced-motion: reduce) {
+  #floorMap::before { animation: none; }
 }
 
 #floorMap::after {
