@@ -571,6 +571,8 @@ const floorgateEl=document.getElementById('floorgate');
 let floorTransitioned=false;
 const navlayerEl=document.getElementById('navlayer');
 const ropeLampEl=document.getElementById('ropelamp');
+function ssThreadDone(k){ try{ return sessionStorage.getItem(k+'_complete')==='true'; }catch(e){ return false; } }
+function ssAllDone(){ return ssThreadDone('margaret') && ssThreadDone('megan') && ssThreadDone('thomas'); }
 let navOpenTimer=null, navCloseTimer=null, navFadeTimer=null;
 function openNav(skipSurfaceFlash){
   if(navCloseTimer){ clearTimeout(navCloseTimer); navCloseTimer=null; }
@@ -592,8 +594,13 @@ function goNav(){
   if (window.SFX) SFX.play('plunge_rise');
   openNav();
 }
-if(ropeLampEl){ ropeLampEl.addEventListener('click',()=>goNav());
-  ropeLampEl.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); goNav(); } }); }
+function pullLamp(){
+  if(!ropeLampEl || ropeLampEl.classList.contains('pulled')) return;
+  ropeLampEl.classList.add('pulled');
+  setTimeout(()=>{ if(ropeLampEl) ropeLampEl.classList.remove('pulled'); goNav(); }, 420);
+}
+if(ropeLampEl){ ropeLampEl.addEventListener('click',pullLamp);
+  ropeLampEl.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pullLamp(); } }); }
 document.getElementById('navback').addEventListener('click',(e)=>{
   e.preventDefault();
   if(!audioReady){
@@ -670,10 +677,16 @@ function updateText(s){
     document.documentElement.classList.remove('ss-descended');
   }
 
-  document.documentElement.style.setProperty('--rope', Math.max(0, Math.min(1, s)).toFixed(3));
+  const ropeK = Math.max(0, Math.min(1, s));
+  document.documentElement.style.setProperty('--rope', ropeK.toFixed(3));
+  if(ropeLampEl) ropeLampEl.dataset.deep = ropeK > 0.14 ? '1' : '0';
 
-  L.b.style.opacity=band(s,0.78,0.92).toFixed(3);
-  if(s>0.95) floorgateEl.classList.add('show'); else floorgateEl.classList.remove('show');
+  const finished = ssAllDone();
+  L.b.style.opacity=(finished ? band(s,0.82,0.94) : band(s,0.83,0.95)).toFixed(3);
+  floorgateEl.classList.toggle('earned', finished);
+  document.body.classList.toggle('all-held', finished);
+  if(finished ? s>0.84 : s>0.88) floorgateEl.classList.add('show');
+  else floorgateEl.classList.remove('show');
 
   if(!__floorReached && s>0.90){
     __floorReached = true;

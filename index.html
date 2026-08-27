@@ -45,13 +45,14 @@
 <div class="hud layer" id="l1">Margaret &middot; the unfinished dance</div>
 <div class="hud layer" id="l2">Megan &middot; the unsaid words</div>
 <div class="hud layer" id="l3">Thomas &middot; the unsung song</div>
-<div class="hud layer" id="lbottom" style="top:50%;font-size:clamp(16px,2.2vw,26px);color:var(--ui);">Three memories never learned to fade.<br>Swim into the light. Stay, and they will let you in.</div>
+<div class="hud layer" id="lbottom" style="top:50%;font-size:clamp(16px,2.2vw,26px);color:var(--ui);"><span class="lb-open">Three memories never learned to fade.<br>Swim into the light. Stay, and they will let you in.</span><span class="lb-earned">Three memories never learned to fade.<br>You stayed. They are somewhere still.</span></div>
 
 <div class="hud" id="depth"><span class="d-label">DEPTH</span><span class="d-num">0000</span><span class="d-unit">M</span></div>
 
 <div id="floorgate">
-  <div class="fg-line">You have drifted as deep as memory goes.</div>
-  <button id="floorMap">rise through the currents</button>
+  <div class="fg-line fg-open">You have drifted as deep as memory goes.</div>
+  <div class="fg-line fg-earned">You held all three.<br>Nothing you found down here was ever lost.</div>
+  <button id="floorMap">rise to the surface &middot; about the project</button>
 </div>
 
 <div id="navlayer">
@@ -66,9 +67,9 @@
   </nav>
 </div>
 
-<div id="ropelamp" role="button" tabindex="0" aria-label="Rise to the surface: open navigation">
-  <i aria-hidden="true"></i>
-  <span aria-hidden="true">to the surface</span>
+<div id="ropelamp" role="button" tabindex="0" aria-label="About the project: open the surface navigation">
+  <b class="swing" aria-hidden="true"><b class="cord"></b><i></i></b>
+  <span class="tag">ABOUT THE PROJECT</span>
 </div>
 
 <div id="whiteout"></div>
