@@ -47,8 +47,8 @@
           imgs: ['megan_flash_alone_studio_01', 'megan_awcalls_main_01'],
           text: 'They eventually closed the company and started their own businesses. They built new teams and continued their lives separately. Their calls became less frequent. Then one day they stopped completely.' },
         { audio: 'still_Megan_04.mp3',
-          imgs: ['megan_awfall_main_01', 'megan_ending_megan_stick_01'],
-          text: 'Years later Megan began preparing an exhibition called Our Big Whale. She calls him, but there is no answer. She keeps working on their unfinished idea, believing they will somehow complete it together. But her memories begin to blur. She cannot remember his ideas clearly any more, and the painting slowly becomes something different from what they once imagined.' },
+          imgs: ['megan_flash_bedside_01', 'megan_flash_hospital_lastphoto'],
+          text: 'Later, Megan learns that Hans had been suffering from cancer. She rushes to the hospital and finds him awake, but unable to speak. She stays beside him until the end.' },
         { audio: 'still_Megan_05.mp3',
           imgs: ['megan_fill1_whale_01', 'megan_flash_alone_studio_01', 'megan_flash_funeral_01', 'megan_flash_tornpainting_01', 'megan_ending_megan_stick_01'],
           text: 'Years later, Megan began preparing an exhibition called Our Big Whale. As you enter Megan\u2019s memory, you see the world through her eyes. A world that Hans still feels close. She calls him, but there is no answer. She continues working on their unfinished idea, believing they will somehow complete it together, but her memories begin to blur. She cannot remember his ideas clearly anymore. The painting slowly becomes something different from what they once imagined. Hans had been gone for years. But inside Megan\u2019s memories, he was still there.' }
