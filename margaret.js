@@ -2841,7 +2841,6 @@ function fadeEl(el, to, ms, andPause){
 let w1s6CryingEl = null;
 function playCrying(){ w1s6CryingEl = SFX.play('w1s6_crying'); }
 function stopCrying(){ if (w1s6CryingEl){ fadeEl(w1s6CryingEl, 0, 1400, true); w1s6CryingEl = null; } }
-function playHubbyVoice(){  }
 
 function zPull(el, done, ms){
   if (!el) return;
@@ -2898,7 +2897,6 @@ function startWave1Scene6(waveNum){
   w1s6T(()=>{ playCrying(); }, 1600);
 
   w1s6T(()=>{
-    playHubbyVoice();
     
   }, 11000);
 
@@ -2989,7 +2987,6 @@ function stopWave1Scene7(){
 let w1s8Timers = [], w1s8Move = null;
 function w1s8T(fn, ms){ const id = setTimeout(fn, ms); w1s8Timers.push(id); return id; }
 
-function playStageApplause(){  }
 
 function startWave1Scene8(waveNum){
   cueClear();
@@ -3022,7 +3019,6 @@ function startWave1Scene8(waveNum){
   w1s8T(()=>{ SFX.play('w1s2_wedding'); }, 1600);
 
   w1s8T(()=>{
-    playStageApplause();
     
   }, 9000);
 
@@ -3201,7 +3197,6 @@ function stopWave1Scene9(){
 }
 
 const W1S1_EXT_NEAR          = 130;
-const W1S1_PUSH_MS           = 1400;
 const W1S1_OPEN_MS           = 380;
 const W1S1_HOSPITAL_HOLD_MS  = 1500;
 const W1S1_BED_HOLD_MS       = 3000;
@@ -3658,14 +3653,12 @@ function revisitMirror(mirrorEl, waveNum){
 
 function showWaveEndChoice(waveNum){
   hideSub();
-  const c = $('w1s9-choice');
   Fatih.fadeActive(600);
   try{ SFX.cutAll ? SFX.cutAll() : null; }catch(e){}
   ['w1s2_wedding','w1s8_music','w1s5_applause','w1s9_chime','w1s6_crying','w1s7_heldhand','w2s2_wedding','w2s2_beep','w3s1_funeral','w4s1_phone','w5s3_funeral','w5s3_airport','descent_amb','floor_arrival','house_base']
     .forEach(k => { try{ SFX.fade(k, 0, 400); setTimeout(()=>{ try{ SFX.stop(k); }catch(e){} }, 450); }catch(e){} });
   if (window.Ambience) Ambience.silence(500);
   cueClear();
-  if (c) c.classList.remove('on');
   runWaveCleanups();
   returnToHouse(waveNum);
   return;
@@ -3693,7 +3686,6 @@ function returnToHouse(waveNum, opts){
     return;
   }
 
-  const choiceEl = $('w1s9-choice'); if (choiceEl) choiceEl.classList.remove('on');
   ['w1s9','waveStage','w1s1','w1s2','w1s2to3','w1s3','w1s3to4','w1s4','w1s5','w1s6','w1s7','w1s8'].forEach(id=>{
     const el = $(id); if (el){ el.style.display = 'none'; }
   });
@@ -4236,10 +4228,6 @@ function tryMicListen(onTrigger, opts){
   }catch(e){ return null; }
 }
 
-function tryMicVow(onTrigger){
-  return !!tryMicListen(onTrigger, { threshold:0.10, sustain:300, refractory:1000, once:true });
-}
-
 function makePetalField(canvas, opts){
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -4312,19 +4300,6 @@ function invite(el, sceneEl, text, delay){
       el.classList.add('settled');
     }
   };
-}
-
-function idleHint(sceneEl, text){
-  let h = sceneEl.querySelector('.idlehint');
-  if (!h){
-    h = document.createElement('div');
-    h.className = 'whint idlehint';
-    h.style.cssText = 'opacity:0;transition:opacity 1.4s ease';
-    sceneEl.appendChild(h);
-  }
-  h.innerHTML = text;
-  requestAnimationFrame(()=> h.style.opacity = '1');
-  return h;
 }
 
 function startWave2Scene1(waveNum){
@@ -5052,23 +5027,6 @@ function startWave2Scene6(waveNum){
     makeKeyActivatable(sh, 'A shard of the mirror. Enter to take it.');
     addCleanup(()=> sh.removeEventListener('click', h));
   });
-}
-
-function fragHint(el, text, kind){
-  let h = el.querySelector('.w2frag-tip');
-  if (!h){
-    h = document.createElement('div');
-    h.className = 'w2frag-tip';
-    el.appendChild(h);
-  }
-  h.textContent = text;
-  h.className = 'w2frag-tip tip-' + kind;
-  later(700, ()=> h.classList.add('on'));
-  return {
-    ease(p){ h.style.opacity = Math.max(0, 1 - p * 1.6).toFixed(2); },
-    demo(now, beat){ h.demo(now, beat); },
-    clear(){ h.classList.remove('on'); }
-  };
 }
 
 function fragTip(el, text, kind){
@@ -6154,72 +6112,6 @@ function startWave5Scene3(waveNum){
   later(13500, ()=>{ s.style.display = 'none'; startWave5Scene4(waveNum); });
 }
 
-const CRSH = { A:'#5C2623', Adk:'#431917', B:'#9A8E83', Bdk:'#786E64',
-  glass:'#A9C4DA', tyre:'#3A3630', rim:'#BFC8CF', ink:'#000000', lamp:'#E3DCBA' };
-const CSET = { sky:'#C5CCD4', haze:'#D6DAD9', pave:'#CFC7B9', kerb:'#B6ADA1',
-  road:'#BFC8CF', roadDk:'#A79C92', dash:'#E3DCBA', post:'#9A8E83', shade:'#8B9184' };
-const CSIM = { m:1400, e:0.18, vA:16, vB:-14 };
-const CHIT = 0.36, CPEAK = 0.415;
-
-function crashCarPath(c){
-  const bk = 52*c, lf = 22*c;
-  return 'M 14 288 L 20 244 C 34 220 74 210 126 210 C 182 210 224 220 246 246 '
-   +'L '+(266-bk*0.34).toFixed(1)+' '+(252-lf*0.55).toFixed(1)+' '
-   +'C '+(284-bk*0.72).toFixed(1)+' '+(240-lf).toFixed(1)+' '+(298-bk).toFixed(1)+' '+(262-lf*0.3).toFixed(1)+' '+(300-bk).toFixed(1)+' 288 '
-   +'L '+(294-bk).toFixed(1)+' 300 L 20 300 Z';
-}
-function crashCrease(c){
-  if (c < 0.06) return '';
-  const bk = 52*c, lf = 22*c;
-  return 'M '+(250-bk*0.2).toFixed(1)+' '+(248-lf*0.4).toFixed(1)
-   +' L '+(266-bk*0.5).toFixed(1)+' '+(236-lf*1.1).toFixed(1)
-   +' L '+(280-bk*0.8).toFixed(1)+' '+(250-lf*0.5).toFixed(1)
-   +' L '+(292-bk).toFixed(1)+' '+(240-lf*0.9).toFixed(1);
-}
-function drawCrashCar(host, flip, x, pitch, crumple, body, dark, spin, squat){
-  host.innerHTML = '';
-  const NS = 'http://www.w3.org/2000/svg';
-  const mk = (tag, attrs, parent)=>{ const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]); (parent||host).appendChild(n); return n; };
-  const g = mk('g', { transform:'translate('+x.toFixed(1)+','+(squat||0).toFixed(2)+')'
-    + (flip ? ' scale(-1,1) translate(-314,0)' : '')
-    + ' rotate('+pitch.toFixed(2)+' 150 288)' });
-  mk('path', { d:crashCarPath(crumple), fill:body, stroke:CRSH.ink, 'stroke-width':2, 'stroke-linejoin':'round' }, g);
-  const crazed = crumple > 0.12;
-  mk('path', { d:'M 40 244 C 52 226 80 220 118 220 L 118 248 Z', fill:CRSH.glass, stroke:CRSH.ink, 'stroke-width':2, opacity:crazed?0.62:1 }, g);
-  mk('path', { d:'M 132 220 C 172 222 206 230 224 246 L 132 248 Z', fill:CRSH.glass, stroke:CRSH.ink, 'stroke-width':2, opacity:crazed?0.5:1 }, g);
-  if (crazed){
-    const k = Math.min(1,(crumple-0.12)/0.5);
-    for (let i = 0; i < 5; i++){ const a = i*1.15+0.5, L = 26+i*11;
-      mk('path', { d:'M 176 232 L '+(176+Math.cos(a)*L*0.5).toFixed(1)+' '+(232+Math.sin(a)*L*0.4).toFixed(1)
-        +' L '+(176+Math.cos(a+0.2)*L).toFixed(1)+' '+(232+Math.sin(a+0.2)*L*0.8).toFixed(1),
-        stroke:'rgba(0,0,0,'+(0.55*k).toFixed(2)+')', 'stroke-width':1.5, fill:'none' }, g); }
-  }
-  const cr = crashCrease(crumple);
-  if (cr) mk('path', { d:cr, stroke:dark, 'stroke-width':2.4, fill:'none', 'stroke-linejoin':'round' }, g);
-  mk('path', { d:'M 16 288 L '+(298-52*crumple).toFixed(1)+' 288', stroke:dark, 'stroke-width':2 }, g);
-  const lampOn = 1 - crumple*0.85;
-  if (lampOn > 0.12)
-    mk('ellipse', { cx:(300-52*crumple).toFixed(1), cy:(268-22*crumple*0.4).toFixed(1), rx:46, ry:13,
-      fill:CRSH.lamp, opacity:(0.20*lampOn).toFixed(3) }, g);
-  mk('rect', { x:(286-52*crumple).toFixed(1), y:(262-22*crumple*0.4).toFixed(1), width:15, height:11, rx:3,
-    fill:CRSH.lamp, stroke:CRSH.ink, 'stroke-width':2, opacity:lampOn.toFixed(2) }, g);
-  const splay = crumple*13;
-  [[84,300,0],[236,300,1]].forEach(wl=>{
-    const dx = wl[2]?splay*0.8:0, dy = wl[2]?-splay*0.25:0, rot = wl[2]?splay*1.3:0;
-    const wg = mk('g', { transform:'translate('+dx.toFixed(1)+','+dy.toFixed(1)+') rotate('+rot.toFixed(1)+' '+wl[0]+' '+wl[1]+')' }, g);
-    mk('circle', { cx:wl[0], cy:wl[1], r:28, fill:CRSH.tyre, stroke:CRSH.ink, 'stroke-width':2 }, wg);
-    const hub = mk('g', { transform:'rotate('+((spin||0)%360).toFixed(1)+' '+wl[0]+' '+wl[1]+')' }, wg);
-    for (let k = 0; k < 4; k++){
-      const a = k*Math.PI/4;
-      mk('line', { x1:(wl[0]-Math.cos(a)*19).toFixed(1), y1:(wl[1]-Math.sin(a)*19).toFixed(1),
-        x2:(wl[0]+Math.cos(a)*19).toFixed(1), y2:(wl[1]+Math.sin(a)*19).toFixed(1),
-        stroke:CRSH.rim, 'stroke-width':2.4, opacity:0.75 }, hub);
-    }
-    mk('circle', { cx:wl[0], cy:wl[1], r:10, fill:CRSH.rim, stroke:CRSH.ink, 'stroke-width':2 }, wg);
-  });
-}
-
 function matteEdgeWhite(src, ok, fail){
   const img = new Image();
   img.onerror = fail;
@@ -6275,6 +6167,8 @@ function buildCrashStage(host){
   root.__rig = rig;
   return rig;
 }
+
+const CHIT = 0.36, CPEAK = 0.415;
 
 function renderCrash(rig, u, now){
   if (!rig || !rig.img) return 0;

@@ -4150,7 +4150,7 @@ SCENES.graduation = {
         goto('studio_alone', {});
       }, [232, 224, 198]);
     };
-    // the file carries applause after the line, so do not wait for it to end
+    
     SCENES.graduation._t = setTimeout(leaveGraduation, GRAD_LEAVE_MS);
     Sound.vo('megan_graduation_vo_mc.wav','MC',
       'Congratulation the team of Megan and Hans!', ()=>{
