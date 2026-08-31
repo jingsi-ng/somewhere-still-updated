@@ -73,10 +73,6 @@ function fogFade(file,to,ms){
   step();
 }
 function initAudio(){ fogPlay('128 BPM Metronome.mp3',0,true); }
-function startHeartbeat(bpm){  }
-function accelerateHeartbeat(missCount){  }
-function triggerSpatialMismatch(fleeDir){  }
-function triggerShatterSound(){  }
 
 const renderer=new THREE.WebGLRenderer({canvas:$('c'),antialias:true});
 renderer.setPixelRatio(DPR); renderer.setSize(W,H);
@@ -411,7 +407,7 @@ const SNOWN=1800;
   scene.add(new THREE.Points(g,m)); }
 
 let gazeProgress=0, dolly=null, consume=null, stage1BaseZ=-7.8, stage1StartT=0;
-let holdingFork=false, hintedHold=false, forkChosen=false;
+let hintedHold=false, forkChosen=false;
 addEventListener('pointerdown',function(){
   if(stage!==0||!fogEntered||dolly) return;
   const lane=gazeLaneAt();
@@ -497,7 +493,6 @@ function beginStage1(){
   stage1BaseZ=camGroup.position.z;
   stage1StartT=t;
   setTimeout(()=>$('consume').classList.remove('ink'),600);
-  startHeartbeat(42);
   WORDS.forEach((wd,i)=>{
     const el=document.createElement('div');
     el.className='w'; el.textContent=wd[0];
@@ -553,8 +548,6 @@ function nearMiss(word,fleeDir){
   nearMissCount++;
   word.extraLife+=2.8;
   updateVignette(nearMissCount);
-  accelerateHeartbeat(nearMissCount);
-  triggerSpatialMismatch(fleeDir);
 
   if(nearMissCount===4 && s1Wave<1){ s1Wave=1; releaseWave(1);
     whisper('who lives here?'); }
@@ -602,7 +595,6 @@ function stepWords(){
     }else if(attractWord===w && !w.shattered){
       w.shattered=true;
       w.el.classList.add('shattering');
-      triggerShatterSound();
       setTimeout(beginPlunge,620);
     }else{
 
@@ -676,13 +668,12 @@ function showScreen(id){
 function hideAllOverlays(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
 }
-function setCounter(n){}
 
-let s2Rounds=0, s2Swapping=false, s2Over=false, slips=[], notches=[], s2GrabT=-9;
+let s2Swapping=false, s2Over=false, slips=[], notches=[], s2GrabT=-9;
 let dragSlip=null;
 function beginStage2(){
   footnote('chronology breaks before the memories themselves \u00b7 Khot et al., 2026');
-  stage=2; setCounter(2); raiseWeight('conflict');
+  stage=2; raiseWeight('conflict');
   renderer.domElement.style.opacity=0.25;
   showScreen('screen-stage2');
 
@@ -754,15 +745,10 @@ function s2Drop(){
       }else{ b.slot=null; b.hx=mpx; b.hy=ty-120; }
     }
     best.slip=s; s.slot=notches.indexOf(best); s.rise=0;
-
-    s2CheckFull();
   }else{ s.hx=s.x; s.hy=s.y; }
   s.prevSlot=null;
 }
-let s2Placed=0, s2DropT=0, s2FirstSlip=true, s2Murmured=false, s2StruggleT=0, s2Losses=0;
-function s2CheckFull(){
-
-}
+let s2DropT=0, s2FirstSlip=true, s2Murmured=false, s2StruggleT=0, s2Losses=0;
 
 function s2LoseGrip(){
   if(s2Over||stage!==2||dragSlip)return;
@@ -885,6 +871,21 @@ function s3BuildKeyboard(){
     });
     kb.appendChild(r);
   });
+  const last=kb.lastChild;
+  if(last){
+    const del=document.createElement('div');
+    del.className='key key-del';
+    del.textContent='delete';
+    del.setAttribute('role','button');
+    del.setAttribute('tabindex','0');
+    del.setAttribute('aria-label','delete the last letter');
+    const fire=e=>{ e.preventDefault();
+      del.classList.add('down'); setTimeout(()=>del.classList.remove('down'),150);
+      if(stage===3&&!s3EndScheduled) s3Backspace(); };
+    del.addEventListener('mousedown',fire);
+    del.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') fire(e); });
+    last.appendChild(del);
+  }
 }
 function s3KeyByChar(ch){
   return [...$('s3-keyboard').querySelectorAll('.key')].find(k=>k.dataset.ch===ch.toUpperCase());
@@ -895,12 +896,19 @@ function s3Phase(){
   const e=t-s3StartT;
   return e<8?1 : e<17?2 : 3;
 }
+const S3_NEAR={Q:'WA',W:'QES',E:'WRD',R:'ETF',T:'RYG',Y:'TUH',U:'YIJ',I:'UOK',O:'IPL',P:'O',
+  A:'QSZ',S:'AWDX',D:'SEFC',F:'DRGV',G:'FTHB',H:'GYJN',J:'HUKM',K:'JIL',L:'KO',
+  Z:'AX',X:'ZSC',C:'XDV',V:'CFB',B:'VGN',N:'BHM',M:'NJ'};
+function s3Slip(ch){
+  const near=S3_NEAR[ch];
+  if(!near) return ch;
+  return near[Math.floor(Math.random()*near.length)];
+}
 function s3Press(ch,keyEl){
   keyEl=keyEl||s3KeyByChar(ch); if(!keyEl)return;
 
   keyEl.classList.add('down');
   setTimeout(()=>keyEl.classList.remove('down'),150);
-  triggerSpatialMismatch(0);
   if(stage!==3||s3EndScheduled)return;
   const ph=s3Phase();
   if(ph===3){
@@ -912,7 +920,8 @@ function s3Press(ch,keyEl){
   }
 
   const life = ph===2 ? (1.2+Math.random()*2.6) : 999;
-  s3Letters.push({ch, born:t, life, el:null});
+  const shown = (ph===1 && Math.random()<0.34) ? s3Slip(ch) : ch;
+  s3Letters.push({ch:shown, born:t, life, el:null});
 
   if(ph===1 && s3Letters.length>=2 && Math.random()<0.5){
     const n=s3Letters.length;
@@ -949,7 +958,7 @@ function shuffle(str){
   return a.join('');
 }
 function beginStage3(){
-  stage=3; setCounter(3); raiseWeight('dissolve');
+  stage=3; raiseWeight('dissolve');
   showScreen('screen-stage3');
   s3Letters=[]; s3StartT=t; s3EndScheduled=false; s3Muttered=false;
   s3BuildKeyboard();
@@ -990,7 +999,7 @@ let s4paths=[], s4seed=[];
 
 let s4Dwell=0, s4Attempts=0, s4WasClose=false, s4W2A=false, s4W3A=false;
 function beginStage4(){
-  stage=4; setCounter(4); raiseWeight('relabel');
+  stage=4; raiseWeight('relabel');
   showScreen('screen-stage4');
   s4Idx=0; s4Peak=0; s4Done=false; s4T0=t;
   s4Dwell=0; s4Attempts=0; s4WasClose=false; s4W2A=false; s4W3A=false;
@@ -1081,7 +1090,7 @@ function s5Recompute(){
     const r=el.getBoundingClientRect(); s5Center[id]={x:r.left+r.width/2,y:r.top+r.height/2}; });
 }
 function beginStage5(){
-  stage=5; setCounter(5); raiseWeight('reset');
+  stage=5; raiseWeight('reset');
   showScreen('screen-stage5');
   s5Done={}; s5T0=t; s5Ended=false; s5UndoT=t; s5Completes=0; s5Murmured=false;
   S5_TASKS.forEach(id=>{ s5Done[id]=false; const el=$(id); el.classList.remove('done'); });
@@ -1108,17 +1117,13 @@ function s5Tap(id){
   s5LastTap=id;
   if(!s5Done[id]){
     s5Done[id]=true; el.classList.add('done');
-    playReceipt();
+
     dimScreen();
     if(S5_TASKS.every(x=>s5Done[x])) s5OnComplete();
   }else{
 
-    s5Done[id]=true; el.classList.add('done'); playReceipt();
+    s5Done[id]=true; el.classList.add('done');
   }
-}
-function playReceipt(){
-
-  triggerSpatialMismatch(0);
 }
 let s5Dim=0;
 function dimScreen(){
@@ -1176,7 +1181,7 @@ let s6Start=0, s6Phases=[], s6Base=[], s6Drift=[], s6Bonus=0, s6Clicked=false, s
 let s6Ended=false, s6Lying=false, s6LieVal=0, s6Beat=0, s6Focus='none', s6FocusT=0;
 function beginStage6(){
   footnote('sound and sight drift apart: the binding window widens \u00b7 Wu et al., 2012 / Festa et al., 2017');
-  stage=6; setCounter(6); raiseWeight('delay');
+  stage=6; raiseWeight('delay');
   showScreen('screen-stage6');
   s6Start=t; s6Ended=false; s6Lying=false; s6LieVal=0; s6Focus='none';
   s6Streak=0; s6LastConduct=-99; s6Held=false; s6Accent=-99;
@@ -1326,7 +1331,7 @@ let s7Clicks=0, s7Speed=1, s7Done=false, whiteO=0;
 let s7LastMove=0, s7Still=0, s7Struggle=0, s7Murmured=false;
 function beginStage7(){
   footnote('in the late stage, perception itself withdraws \u00b7 Alzheimer\u2019s Society, 2023');
-  stage=7; setCounter(7); raiseWeight('occlude');
+  stage=7; raiseWeight('occlude');
   s7LastMove=t; s7Still=0; s7Struggle=0;
 
   $('s7-stop').addEventListener('click',()=>{
@@ -1369,7 +1374,6 @@ function stepStage7(){
     sessionStorage.setItem('fog_complete','true');
 
     setTimeout(()=>{ $('s7-final').style.opacity=1;
-
     },1800);
 
     setTimeout(()=>{ $('s7-final').style.opacity=0;

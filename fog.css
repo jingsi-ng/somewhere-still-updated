@@ -124,6 +124,10 @@ canvas#c{position:fixed;inset:0;z-index:0;display:block;}
   cursor:none;user-select:none;transition:background 0.12s,color 0.12s,transform 0.08s;}
 #s3-keyboard .key.down{background:rgba(14,22,30,0.92);color:rgba(222,238,248,0.9);
   transform:translateY(2px);}
+#s3-keyboard .key.key-del{width:auto;padding:0 16px;border-radius:19px;
+  font-size:11px;letter-spacing:0.14em;
+  background:rgba(222,238,248,0.62);color:rgba(12,22,30,0.72);}
+#s3-keyboard .key.key-del:focus-visible{outline:2px solid rgba(222,238,248,0.8);outline-offset:2px;}
 #s3-typed{position:absolute;left:50%;top:63%;transform:translate(-50%,-50%);
   font-family:var(--mono);font-size:20px;letter-spacing:0.12em;
   color:rgba(222,238,248,0.9);min-height:26px;pointer-events:none;
@@ -325,4 +329,11 @@ body::after{content:"";position:fixed;inset:-60px;z-index:9980;pointer-events:no
 #forkhint.on{ opacity:1; transform:translateY(0); }
 @media (prefers-reduced-motion: reduce){
   #forkhint{ transition:opacity .3s linear; transform:none; }
+}
+
+.ev-line.ev-source {
+  color: rgba(16, 23, 28, 0.9);
+  font-style: italic;
+  font-family: 'Lora', serif;
+  font-size: 12px;
 }
