@@ -1900,7 +1900,7 @@ function makeStudio(painting, opts){
         lab.className = 'wm-label';
         w.appendChild(lab);
       }
-      lab.textContent = 'her hands are busy. just watch.';
+      lab.textContent = 'just watch.';
       const run = w.querySelector('.run');
       if (!run) return;
       if (!on){
@@ -4150,7 +4150,6 @@ SCENES.graduation = {
         goto('studio_alone', {});
       }, [232, 224, 198]);
     };
-    
     SCENES.graduation._t = setTimeout(leaveGraduation, GRAD_LEAVE_MS);
     Sound.vo('megan_graduation_vo_mc.wav','MC',
       'Congratulation the team of Megan and Hans!', ()=>{

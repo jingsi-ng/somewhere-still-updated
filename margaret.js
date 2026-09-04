@@ -5491,7 +5491,6 @@ function w3CrossFade(sceneEl, layers, done){
 }
 
 function startWave3Scene2(waveNum){
-  later(1400, ()=> cueBrief('move', 'Stay with him. Keep your cursor near.', ()=>{}));
   const s = sceneShow('w3s2');
   Fatih.fadeActive(900);
   s.style.transform = ''; s.style.clipPath = ''; s.style.webkitClipPath = '';
@@ -5511,13 +5510,21 @@ function startWave3Scene2(waveNum){
   wSay('w3s2_hers', 200);
   wSay('w3s2_his', 1800);
 
-  const tip = fragTip(s, 'move your cursor closer to him', 'approach');
+  const tip = fragTip(s, 'move into the circle, then hold still', 'approach');
   const tipEl = s.querySelector('.w2frag-tip');
   if (tipEl) tipEl.classList.add('tip-corner');
   let saidStay = false;
   const r = s.getBoundingClientRect();
   const cx = r.left + r.width / 2, cy = r.top + r.height * 0.44;
   const reach = Math.max(160, Math.min(r.width, r.height) * 0.44);
+  const halo = document.createElement('div');
+  halo.className = 'w3s2-halo';
+  halo.style.left = cx + 'px';
+  halo.style.top = cy + 'px';
+  halo.style.width = halo.style.height = (reach * 1.5) + 'px';
+  s.appendChild(halo);
+  requestAnimationFrame(()=> halo.classList.add('on'));
+  addCleanup(()=>{ if (halo.parentNode) halo.remove(); });
   const SPAN = 7000;
   let p = 0, near = 0, ended = false, lastT = performance.now();
   let aim = { x: 0.86, y: 0.5 };
@@ -5534,7 +5541,8 @@ function startWave3Scene2(waveNum){
     if (ended || s.style.display === 'none') return;
     const now = performance.now(), dt = Math.min(48, now - lastT); lastT = now;
     p = near > 0.42 ? Math.min(1, p + dt / SPAN) : Math.max(0, p - dt / (SPAN * 1.6));
-    if (!saidStay && near > 0.42){ saidStay = true; tip.say('stay close to him'); }
+    halo.classList.toggle('near', near > 0.42);
+    if (!saidStay && near > 0.42){ saidStay = true; tip.say('stay here. do not move.'); }
     tip.set(p); tip.demo(now, 0, aim);
     illo.style.filter = 'blur(' + (0.4 + p * 13).toFixed(2) + 'px) saturate(' + (1 - p * 0.55).toFixed(2) + ')';
     illo.style.transform = 'scale(' + (1 + p * 0.13).toFixed(3) + ')';

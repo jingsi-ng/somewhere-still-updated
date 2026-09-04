@@ -769,6 +769,7 @@ addEventListener('resize',()=>{
   let U=DPRn*2.4;
   let nW,nH,navRunning=false,navRAF=null,nt=0;
   let nmx=-9999,nmy=-9999;
+  let closeT=0;
   let hoverLamp=null,hoverChild=null,threadsOpen=false;
   let rising=null,sinkingTo=null;
   let surfRings=[],nextRingT=4,farBoatX=-0.4;
@@ -805,49 +806,8 @@ addEventListener('resize',()=>{
     ssComingSoon._t = setTimeout(()=>{ el.style.opacity = '0'; }, 2200);
   }
 
-  const wake={ margaret:false, megan:false, thomas:false, n:0 };
 
-  function drawWake(yOff){
-    if(!wake.n) return;
-    const a=Math.min(1, (nt-0.4)/2.2);
-    if(a<=0) return;
-    if(wake.margaret){
-      for(let i=0;i<3;i++){
-        const y=surfY(nW*0.5)+yOff+(nH*0.16+i*nH*0.09);
-        const g=nctx.createLinearGradient(0,y-9*U,0,y+9*U);
-        g.addColorStop(0,'rgba(178,58,46,0)');
-        g.addColorStop(0.5,`rgba(178,58,46,${(0.055*a*(1-i*0.24)).toFixed(3)})`);
-        g.addColorStop(1,'rgba(178,58,46,0)');
-        nctx.fillStyle=g;
-        nctx.beginPath();
-        for(let x=0;x<=nW;x+=12){
-          nctx.lineTo(x, y+Math.sin(x*0.006+nt*0.42+i*1.3)*6*U);
-        }
-        nctx.lineTo(nW,y+16*U); nctx.lineTo(0,y+16*U); nctx.closePath(); nctx.fill();
-      }
-    }
-    if(wake.thomas){
-      for(let i=0;i<4;i++){
-        const ph=((nt*0.11+i/4)%1);
-        const rad=ph*nW*0.46;
-        nctx.beginPath();
-        nctx.arc(nW*0.5, surfY(nW*0.5)+yOff+nH*0.30, rad, 0, Math.PI*2);
-        nctx.strokeStyle=`rgba(150,186,206,${((1-ph)*0.07*a).toFixed(3)})`;
-        nctx.lineWidth=1.2*U; nctx.stroke();
-      }
-    }
-    if(wake.megan){
-      for(let i=0;i<16;i++){
-        const sd=(i*2654435761)%1000/1000;
-        const px=((sd*1.7+nt*0.008*(0.4+sd))%1)*nW;
-        const py=surfY(px)+yOff+nH*(0.12+((sd*3.3)%1)*0.62);
-        nctx.fillStyle=`rgba(${180+sd*60|0},${150+sd*50|0},${120+sd*70|0},${(0.10*a).toFixed(3)})`;
-        nctx.beginPath(); nctx.arc(px,py,(1.4+sd*2.6)*U,0,Math.PI*2); nctx.fill();
-      }
-    }
-  }
-
-  const LAMPS=[
+const LAMPS=[
     {key:'understanding',text:'Understanding',  href:'understanding.html', bx:0.16, depth:0.44, col:'201,211,218'},
     {key:'ourstory',     text:'Our Story',      href:'our-story.html',     bx:0.34, depth:0.58, col:'214,196,158'},
     {key:'team',         text:'The Team',       href:'team.html',          bx:0.66, depth:0.42, col:'207,227,236', knots:4},
@@ -1021,103 +981,7 @@ addEventListener('resize',()=>{
     });
   }
 
-  let wakeM=0, wakeG=0, wakeT=0, wakeF=0, wakeAll=0, closeT=0;
-  function readWakes(){
-    wakeM=threadDone('margaret')?1:0;
-    wakeG=threadDone('megan')?1:0;
-    wakeT=threadDone('thomas')?1:0;
-    try{ wakeF=sessionStorage.getItem('fog_complete')==='true'?1:0; }catch(e){ wakeF=0; }
-    wakeAll=(wakeM&&wakeG&&wakeT&&wakeF)?1:0;
-  }
-
-  function drawWakes(yOff){
-    const surfY0=y=>surfY(y)+yOff;
-    if(wakeM){
-      for(let i=0;i<3;i++){
-        const px=nW*(0.22+i*0.27)+Math.sin(nt*0.22+i*2.1)*nW*0.05;
-        const py=surfY0(px)+nH*(0.14+i*0.19);
-        const g=nctx.createRadialGradient(px,py,0,px,py,nH*0.16);
-        g.addColorStop(0,`rgba(178,58,46,${0.15+0.05*Math.sin(nt*0.5+i)})`);
-        g.addColorStop(1,'rgba(178,58,46,0)');
-        nctx.fillStyle=g;
-        nctx.beginPath(); nctx.arc(px,py,nH*0.16,0,Math.PI*2); nctx.fill();
-      }
-    }
-    if(wakeG){
-      for(let i=0;i<4;i++){
-        const px=nW*(0.14+i*0.24)+Math.cos(nt*0.17+i*1.6)*nW*0.06;
-        const py=surfY0(px)+nH*(0.28+((i*37)%23)/100);
-        const hue=[ [96,150,178], [150,132,178], [120,168,150], [186,150,120] ][i%4];
-        const g=nctx.createRadialGradient(px,py,0,px,py,nH*0.13);
-        g.addColorStop(0,`rgba(${hue[0]},${hue[1]},${hue[2]},${0.13+0.045*Math.sin(nt*0.4+i*1.3)})`);
-        g.addColorStop(1,`rgba(${hue[0]},${hue[1]},${hue[2]},0)`);
-        nctx.fillStyle=g;
-        nctx.beginPath(); nctx.arc(px,py,nH*0.13,0,Math.PI*2); nctx.fill();
-      }
-    }
-    if(wakeT){
-      const cx=nW*0.5;
-      for(let i=0;i<4;i++){
-        const ph=((nt*0.11+i/4)%1);
-        const rr=ph*nW*0.62;
-        nctx.beginPath();
-        nctx.ellipse(cx,surfY0(cx)+nH*0.22,rr,rr*0.26,0,0,Math.PI*2);
-        nctx.strokeStyle=`rgba(196,178,140,${((1-ph)*0.20).toFixed(3)})`;
-        nctx.lineWidth=(2.4-ph)*U;
-        nctx.stroke();
-      }
-    }
-    if(wakeF){
-      const g=nctx.createLinearGradient(0,0,0,nH*0.6);
-      g.addColorStop(0,'rgba(196,212,222,0.17)');
-      g.addColorStop(0.55,'rgba(180,200,212,0.075)');
-      g.addColorStop(1,'rgba(170,192,206,0)');
-      nctx.fillStyle=g; nctx.fillRect(0,0,nW,nH*0.6);
-      for(let i=0;i<3;i++){
-        const bx=((nt*0.008+i*0.37)%1.3-0.15)*nW;
-        const by=nH*(0.10+i*0.11);
-        const bg=nctx.createRadialGradient(bx,by,0,bx,by,nW*0.20);
-        bg.addColorStop(0,'rgba(206,220,228,0.05)');
-        bg.addColorStop(1,'rgba(206,220,228,0)');
-        nctx.fillStyle=bg;
-        nctx.beginPath(); nctx.arc(bx,by,nW*0.20,0,Math.PI*2); nctx.fill();
-      }
-    }
-  }
-
-  function drawConfluence(yOff){
-    if(!wakeAll) return;
-    closeT=Math.min(1,closeT+0.0042);
-    const e=closeT*closeT*(3-2*closeT);
-    const cx=nW*0.5, top=surfY(cx)+yOff+nH*0.10, bot=nH*0.90;
-    const COL=[[178,58,46],[150,132,178],[196,178,140],[196,212,222]];
-    for(let k=0;k<4;k++){
-      const x0=cx+(k-1.5)*nW*0.115;
-      nctx.beginPath();
-      for(let i=0;i<=44;i++){
-        const u=i/44;
-        const conv=Math.max(0,Math.min(1,(u-0.10)/0.80))*e;
-        const cv2=conv*conv*(3-2*conv);
-        const wob=Math.sin(u*6.4+k*1.8+nt*0.32)*nW*0.016*(1-cv2);
-        const tw=Math.sin(u*17+k*2.2)*nW*0.010*cv2*(1-u*0.7);
-        nctx.lineTo(x0+(cx-x0)*cv2+wob+tw, top+(bot-top)*u);
-      }
-      nctx.strokeStyle=`rgba(${COL[k].join(',')},${(0.30*e).toFixed(3)})`;
-      nctx.lineWidth=(1.5+e*1.5)*U;
-      nctx.lineCap='round';
-      nctx.stroke();
-    }
-    if(e>0.5){
-      const a=(e-0.5)/0.5;
-      nctx.fillStyle=`rgba(232,240,246,${(a*0.52).toFixed(3)})`;
-      nctx.font=`italic ${13*U}px Lora, serif`;
-      nctx.textAlign='center';
-      nctx.fillText('somewhere, still', cx, bot+26*U);
-      nctx.textAlign='start';
-    }
-  }
-
-  function navDraw(){
+function navDraw(){
     if(!navRunning) return;
     nt+=0.016;
     nctx.clearRect(0,0,nW,nH);
@@ -1224,14 +1088,11 @@ addEventListener('resize',()=>{
       nctx.closePath(); nctx.fill();
     }
 
-    drawWake(yOff);
     LAMPS.forEach((l,i)=>{
       const tgt=(hoverLamp===l)?1:0;
       l.glow+=(tgt-l.glow)*0.08;
       drawLamp(l,i,yOff);
     });
-    drawWakes(yOff);
-    drawConfluence(yOff);
     drawChildren(yOff);
     CHILDREN.forEach(c=>{ const tgt=(hoverChild===c)?1:0; c.glow+=(tgt-c.glow)*0.1; });
 
@@ -1300,9 +1161,6 @@ addEventListener('resize',()=>{
     if(!nsnow.length) for(let i=0;i<110;i++){ const p=nseed(); nsnow.push(p); }
     navRunning=true; nt=0; rising=null; sinkingTo=null; threadsOpen=false; threadsExt=0;
     surfRings=[]; nextRingT=4; farBoatX=-0.4; hoverLamp=null; hoverChild=null;
-    readWakes(); closeT=0;
-    wake.margaret=threadDone('margaret'); wake.megan=threadDone('megan');
-    wake.thomas=threadDone('thomas'); wake.n=doneCount();
     LAMPS.forEach(l=>{ l.glow=0; });
     CHILDREN.forEach(c=>{ c.glow=0; });
     navCanvas.addEventListener('mousemove',navHandleMove);

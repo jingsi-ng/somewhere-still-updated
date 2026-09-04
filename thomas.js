@@ -2092,7 +2092,7 @@ function stage1Complete(){
   if(s1.done)return; s1.done=true;
   s1.open=false;
   goalClear();
-  watch(S1_M_END,'let it play. just watch.');
+  watch(S1_M_END,'just watch.');
   Sound.play('applause_dying');
   stopLoop('s1_bed',2.2);
   loopBuf('room_empty','room_empty',{gain:0.3,bus:'amb',fade:3});
@@ -2102,7 +2102,7 @@ function stage1Complete(){
   replayUserMelody(0.34,3400,S1_M_STACK-4600);
   s1Montage();
   goalClear();
-  watch(S1_M_END-1200,'let it play. just watch.');
+  watch(S1_M_END-1200,'just watch.');
 
   setTimeout(()=>{
     if(thomasState.scene!=='stage1')return;
@@ -2264,7 +2264,7 @@ const S2_OPEN_HOLD=6800;
 function s2ScoreOpened(){
   Sound.play('book_open');
   hideCue(); goalClear();
-  watch(S2_OPEN_HOLD+2600,'let it play. just watch.');
+  watch(S2_OPEN_HOLD+2600,'just watch.');
   s2.trueMixPlayed=true;
   stopLoop('livingroom',2.2);
   const shore=playBuf('shore_harp',{gain:0.34,bus:'amb',fade:1.2});
@@ -2552,7 +2552,7 @@ function watch(ms,label){
   const el=$('twatch'); if(!el)return;
   watchEnd();
   goalClear();
-  el.querySelector('b').textContent=label||'let it play. just watch.';
+  el.querySelector('b').textContent=label||'just watch.';
   const line=el.querySelector('.wb-line');
   const fill=el.querySelector('.wb-line i');
   const timed=(ms&&isFinite(ms)&&ms>400);
@@ -3052,7 +3052,7 @@ function s2CheckComplete(){
     punchIn(1.02,3000);
     goalClear();
     if(s2CallTimer){ clearInterval(s2CallTimer); s2CallTimer=null; }
-    watch(12000,'let it play. just watch.');
+    watch(12000,'just watch.');
     s2VoiceLoop();
     s2EchoLoop();
     _st(()=>{ if(thomasState.scene!=='stage2'||s2.done)return;
@@ -3162,7 +3162,7 @@ function s2End(){
 function s2Drift(){
   s2.driftPhase=true; s2.driftT0=t;
   goalClear();
-  watch(S2_DRIFT_MS,'let it play. just watch.');
+  watch(S2_DRIFT_MS,'just watch.');
   _st(()=>{ if(thomasState.scene==='stage2'&&s2.driftPhase)
     showFlashback('thomas_anchor_accident_01.webp','a truck through a red light.'); },1000);
   _st(()=>{ if(thomasState.scene==='stage2') hideFlashback(); },8200);
@@ -3593,7 +3593,7 @@ function collapse(){
   if(s3.collapsing)return; s3.collapsing=true;
   s3BarClear();
   goalClear(); hideCue();
-  watch(4600+INTERLUDE_MS+600,'let it play. just watch.');
+  watch(4600+INTERLUDE_MS+600,'just watch.');
   screenFlicker();
   for(const s of thomasState.strings){ if(s.state!=='snapped') dropString(s); }
   spawnShards();
@@ -3732,7 +3732,7 @@ function beginEnding(){
   bursts.length=0; ebNext=t+2.5;
   goalClear(); hideCue();
   { const wel=$('twatch'); if(wel) wel.classList.add('low-left'); }
-  watch(WALK_END_MS,'let it play. just watch.');
+  watch(WALK_END_MS,'just watch.');
   clearWeave(); memDim(false); hideFlashback(); spotlightOn(false);
   $('whitefade').style.opacity=0;
   $('blackfade').style.opacity=0;
