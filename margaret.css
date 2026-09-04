@@ -1618,43 +1618,6 @@ svg[data-asset].has-asset > * {
 @keyframes w1s4chest{ 0%,100%{ --bscale:1; } 50%{ --bscale:1.02; } }
 #w1s4-facewrap.breathing{ animation:w1s4chest 7s ease-in-out infinite; }
 
-#w1s9-choice{ position:fixed; inset:0; z-index:120; display:none;
-  flex-direction:column; align-items:center; justify-content:center; gap:0;
-  opacity:0; background:radial-gradient(ellipse 70% 60% at 50% 50%, rgba(6,10,14,.55), rgba(4,7,10,.92));
-  transition:opacity 2.4s var(--e-veil); }
-#w1s9-choice.on{ display:flex; opacity:1; }
-
-#w1s9-choice button{
-  position:relative; appearance:none; -webkit-appearance:none;
-  background:none; border:0; padding:26px 10px 30px; cursor:pointer;
-  font-family:'Lora',Georgia,serif; font-style:italic; font-weight:400;
-  font-size:clamp(19px, 2.5vw, 27px); letter-spacing:.10em; text-transform:lowercase;
-  color:rgba(238,226,208,.42); line-height:1.5;
-  transition:color 1.1s var(--e-veil), letter-spacing 1.1s var(--e-veil); }
-
-#w1s9-choice button::after{
-  content:''; position:absolute; left:50%; bottom:20px;
-  width:0; height:1px; background:linear-gradient(90deg,
-    transparent, rgba(178,58,46,.85), transparent);
-  transform:translateX(-50%);
-  transition:width 1.2s var(--e-emerge); }
-
-#w1s9-choice button:hover,
-#w1s9-choice button:focus-visible{
-  color:rgba(248,240,226,.96); letter-spacing:.19em; outline:none; }
-#w1s9-choice button:hover::after,
-#w1s9-choice button:focus-visible::after{ width:min(58vw, 420px); }
-
-#w1s9-choice button + button{ margin-top:6px; }
-#w1s9-choice button + button::before{
-  content:''; position:absolute; left:50%; top:-4px;
-  width:3px; height:3px; margin-left:-1.5px; border-radius:50%;
-  background:rgba(238,226,208,.22); }
-
-@media (prefers-reduced-motion: reduce){
-  #w1s9-choice button, #w1s9-choice button::after { transition:none; }
-}
-
 @keyframes mirrorShatter{
   0%   { transform:scale(1) translate(0,0); filter:brightness(1); }
   8%   { transform:scale(1.04) translate(-3px,2px); filter:brightness(2.4); }
@@ -2445,22 +2408,18 @@ svg[data-asset].has-asset > * {
   background-position:center; opacity:0; transform:scale(1);
   transition:opacity 2.6s var(--e-veil); will-change:transform, opacity; }
 #w2s2.lit #w2s2-altar { opacity:1; }
-#w2s2.dolly #w2s2-altar { transition:opacity 2.6s var(--e-veil),
-  transform 12s cubic-bezier(.30,.02,.28,1); transform:scale(1.05); }
+
 
 #w2s2-petals { position:absolute; inset:0; width:100%; height:100%;
   z-index:20; pointer-events:none; }
 
 #w2s2-margaret, #w2s2-peter { position:absolute; bottom:1%; aspect-ratio:600/800;
   z-index:30; pointer-events:none; transform-origin:50% 100%;
-  transform:scale(.85) translateY(4%); opacity:0;
-  transition:opacity 2.6s var(--e-veil); will-change:transform, opacity; }
+  transform:scale(1) translateY(0); opacity:0;
+  transition:opacity 2.6s var(--e-veil); will-change:opacity; }
 #w2s2-margaret { left:33%; width:25%; z-index:30; }
 #w2s2-peter    { left:44%; width:28%; z-index:29; }
 #w2s2.lit #w2s2-margaret { opacity:1; }
-#w2s2.dolly #w2s2-margaret, #w2s2.dolly #w2s2-peter {
-  transition:opacity 1.1s var(--e-veil), transform 12s cubic-bezier(.30,.02,.28,1), filter 1s ease;
-  transform:scale(1) translateY(0); }
 #w2s2-peter { filter:none; }
 #w2s2-peter.on { opacity:1; }
 #w2s2-peter.clear { filter:blur(0); }
@@ -2615,4 +2574,56 @@ svg[data-asset].has-asset > * {
   align-items:flex-start;
   justify-content:flex-start;
   padding:4.4vh 0 0 3.4vw;
+}
+
+#danceBar {
+  position: fixed;
+  left: 50%;
+  bottom: 7vh;
+  z-index: 140;
+  width: min(30vw, 330px);
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease;
+}
+
+#danceBar.on { opacity: 1; }
+
+#danceBar b {
+  display: block;
+  margin-bottom: 9px;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(178, 58, 46, 0.72);
+}
+
+#danceBar i {
+  display: block;
+  height: 2px;
+  width: 0;
+  border-radius: 1px;
+  background: linear-gradient(90deg,
+    rgba(178, 58, 46, 0.34) 0%, rgba(178, 58, 46, 0.86) 100%);
+  box-shadow: 0 0 10px rgba(178, 58, 46, 0.34);
+  transition: width 700ms cubic-bezier(.3, .7, .3, 1);
+}
+
+#danceBar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(178, 58, 46, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #danceBar i { transition: none; }
 }

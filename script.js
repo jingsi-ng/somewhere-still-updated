@@ -13,7 +13,6 @@
 })();
 
 (function(){
-var DEBUG = /[?&]debug\b/.test(location.search);
 var BASE = window.SITE_AUDIO_BASE || 'assets/audio/';
 var EXT = ['.mp3', '.wav', '.m4a', '.ogg'];
 
@@ -60,16 +59,10 @@ var GAIN = {};
 var ctx = null, master = null, lowpass = null, comp = null;
 var busSfx = null, busAmb = null;
 var unlocked = false;
-var buf = {}, job = {}, failed = {}, warned = {};
+var buf = {}, job = {}, failed = {};
 var live = [];
 var ambNow = null, ambHandle = null;
 var pending = [];
-
-function warn(msg) {
-  if (!DEBUG || warned[msg]) return;
-  warned[msg] = true;
-
-}
 
 function candidates(key) {
   var out = [];
@@ -86,7 +79,6 @@ function loadKey(key) {
   function next() {
     if (i >= names.length) {
       failed[key] = true;
-      warn('no file for "' + key + '" (tried ' + names.join(', ') + ' under ' + BASE + ')');
       return null;
     }
     var name = names[i++];
@@ -233,7 +225,7 @@ var SFX = {
       return null;
     }
     if (buf[key]) return start(key, opts, busSfx);
-    if (failed[key]) { warn('skipped "' + key + '"'); return null; }
+    if (failed[key]) return null;
     loadKey(key).then(function (b) {
       if (b) start(key, opts, busSfx);
     });
@@ -289,7 +281,7 @@ var Ambience = {
     loadKey(key).then(function (b) {
       if (ambNow !== key) return;
       if (prev) stopHandle(prev, opts.fadeOut == null ? 900 : opts.fadeOut);
-      if (!b) { warn('ambience "' + key + '" unavailable, staying silent'); return; }
+      if (!b) return;
       ambHandle = start(key, {
         loop: true,
         gain: opts.gain != null ? opts.gain : 0.7,
@@ -313,11 +305,6 @@ window.Ambience = Ambience;
   window.addEventListener(ev, unlock, { once: false, passive: true });
 });
 
-if (DEBUG) {
-  window.addEventListener('load', function () {
-    setTimeout(function () {  }, 3000);
-  });
-}
 })();
 
 (function(){
@@ -568,9 +555,13 @@ addEventListener('click',()=>{
 });
 
 const floorgateEl=document.getElementById('floorgate');
-let floorTransitioned=false;
 const navlayerEl=document.getElementById('navlayer');
 const ropeLampEl=document.getElementById('ropelamp');
+const riseTopEl=document.getElementById('risetop');
+if(riseTopEl) riseTopEl.addEventListener('click',()=>{
+  try { window.scrollTo({ top:0, behavior:'smooth' }); }
+  catch(e){ window.scrollTo(0,0); }
+});
 function ssThreadDone(k){ try{ return sessionStorage.getItem(k+'_complete')==='true'; }catch(e){ return false; } }
 function ssAllDone(){ return ssThreadDone('margaret') && ssThreadDone('megan') && ssThreadDone('thomas'); }
 let navOpenTimer=null, navCloseTimer=null, navFadeTimer=null;
@@ -682,6 +673,7 @@ function updateText(s){
   const ropeK = Math.max(0, Math.min(1, s));
   document.documentElement.style.setProperty('--rope', ropeK.toFixed(3));
   if(ropeLampEl) ropeLampEl.dataset.deep = ropeK > 0.14 ? '1' : '0';
+  if(riseTopEl) riseTopEl.classList.toggle('on', ropeK > 0.16);
 
   const finished = ssAllDone();
   floorgateEl.classList.toggle('earned', finished);
@@ -781,8 +773,6 @@ addEventListener('resize',()=>{
   let rising=null,sinkingTo=null;
   let surfRings=[],nextRingT=4,farBoatX=-0.4;
 
-  function playNavChime(){  }
-  function playNavWind(){   }
 
   function threadDone(k){ try{ return sessionStorage.getItem(k+'_complete')==='true'; }catch(e){ return false; } }
   function doneCount(){ return (threadDone('margaret')?1:0)+(threadDone('megan')?1:0)+(threadDone('thomas')?1:0); }
@@ -1269,7 +1259,7 @@ addEventListener('resize',()=>{
   let hadHover=false;
   function navHandleMove(e){
     nmx=e.clientX*DPRn; nmy=e.clientY*DPRn; pick(nmx,nmy);
-    if((hoverLamp||hoverChild)&&!hadHover){ hadHover=true; playNavChime(); }
+    if((hoverLamp||hoverChild)&&!hadHover){ hadHover=true; }
     if(!hoverLamp&&!hoverChild) hadHover=false;
   }
   function navHandleLeave(){ hoverLamp=null; hoverChild=null; }
@@ -1285,7 +1275,6 @@ addEventListener('resize',()=>{
     if(hoverLamp.threads){ threadsOpen=!threadsOpen; return; }
     if(ssLocked(hoverLamp.key)){ ssComingSoon(hoverLamp.text); return; }
     navSetDiscovered(hoverLamp.key);
-    playNavWind();
     rising={t0:nt,lamp:hoverLamp};
   }
   function navHandleTouch(e){ if(e.touches[0]){ navHandleMove(e.touches[0]); e.preventDefault(); } }

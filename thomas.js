@@ -872,15 +872,7 @@ const VO_LINE={
 
 const voSpan={};
 
-const AUDIO_TODO = {
-  harp_low_octave : 'Harp_Note_C3 ... B3 (one octave below what is delivered)'
-};
-
-const abuf={}, aFail={}, aJob={}, warned={};
-function todoWarn(name){
-  if(!DEBUG||warned[name])return; warned[name]=true;
-
-}
+const abuf={}, aFail={}, aJob={};
 function spanOf(buf){
   const d=buf.getChannelData(0), sr=buf.sampleRate;
   const h=Math.max(1,Math.round(sr*0.01));
@@ -938,7 +930,7 @@ function decodeAudio(key){
   if(abuf[key]) return Promise.resolve(abuf[key]);
   if(aJob[key]) return aJob[key];
   const file=AUDIO[key]||VO_FILES[key];
-  if(!file){ aFail[key]=true; todoWarn(key); return Promise.resolve(null); }
+  if(!file){ aFail[key]=true; return Promise.resolve(null); }
   if(!ctx) return Promise.resolve(null);
   const names=audioNames(file);
   let i=0;
@@ -999,7 +991,7 @@ function playBuf(key,opt){
   opt=opt||{};
   if(!ctx) return null;
   const buf=abuf[key];
-  if(!buf){ todoWarn(key); return null; }
+  if(!buf)return null;
   const src=ctx.createBufferSource(); src.buffer=buf;
   src.loop=!!opt.loop;
   if(opt.rate) src.playbackRate.value=opt.rate;
@@ -1133,7 +1125,7 @@ const Sound={
     const slack=!!opts.slack;
     const key=slack?'slack':sampleKeyFor(noteIdx);
     const buf=abuf[key];
-    if(!buf){ todoWarn(key); return; }
+    if(!buf)return;
     if(voices.length>=MAX_VOICES){
       const old=voices.shift();
       try{ old.g.gain.cancelScheduledValues(ctx.currentTime);
@@ -1167,7 +1159,7 @@ const Sound={
   },
   steal(noteIdx){
     const buf=abuf['note_cut'];
-    if(!buf){ todoWarn('note_cut'); return; }
+    if(!buf)return;
     const s=ctx.createBufferSource(); s.buffer=buf;
     s.playbackRate.value=clamp(FREQS[noteIdx]/NOTE_CUT_HZ,0.4,2.2);
     const g=ctx.createGain(); g.gain.value=(NORM.note_cut||1)*0.09;
@@ -1177,14 +1169,14 @@ const Sound={
     if(thomasState.scene==='stage3'&&s3Phase()<3) intensity=(intensity||1)*0.42;
     const n=1+Math.floor(Math.random()*3);
     const key='scrape0'+n;
-    if(!abuf[key]){ todoWarn(key); return; }
+    if(!abuf[key])return;
     playBuf(key,{gain:(NORM[key]||1)*0.05*clamp(intensity==null?1:intensity,0.3,1.6),
                  bus:'harp', rate:0.9+Math.random()*0.35});
   },
   snap(){
     const n=1+Math.floor(Math.random()*3);
     const key='snap0'+n;
-    if(!abuf[key]){ todoWarn(key); return; }
+    if(!abuf[key])return;
     playBuf(key,{gain:(NORM[key]||1)*0.5,bus:'harp',rate:0.92+Math.random()*0.2});
   },
   allSnap(){
@@ -1200,8 +1192,7 @@ const Sound={
           when:ctx.currentTime+Math.random()*2.2});
       }
     }
-    if(!any) todoWarn('snap01');
-  },
+      },
   play(name){
     if(!ctx)return;
     const real=SFX[name];
@@ -1210,7 +1201,6 @@ const Sound={
       decodeAudio(real.key).then(b=>{ if(b) playBuf(real.key,{gain:real.gain}); });
       return;
     }
-    todoWarn(name);
   },
   playVO(line){
     if(VO_TEXT_ONLY[line]) return 0;
@@ -1222,7 +1212,7 @@ const Sound={
     const key=VO_LINE[line];
     if(!key){ return 0; }
     const buf=abuf[key];
-    if(!buf){ todoWarn(key); return 0; }
+    if(!buf)return 0;
     const clip=VO_CLIP[key];
     const sp=clip?{lead:clip[0],end:clip[1]}:(voSpan[key]||{lead:0,end:buf.duration});
     const cut=VO_TONE[key]||0;
@@ -1360,6 +1350,7 @@ const HARP={x0:0,span:0,yTop:0,yBot:0,minLen:0};
 let scratchLayer=null;
 let waterY=1e9, WATER_Y0=0, WATER_Y1=0;
 const STAGE3_DURATION=240;
+const S3_TOTAL=20;
 const FLOOR_STRINGS=4, ELEGY_STRINGS=[6,7,9,10];
 const MELODY_STRINGS=[13,14,15,16,17,18,19,20];
 const HARMONY_STRINGS=[6,7,8,9,10,11];
@@ -1539,6 +1530,13 @@ function pluck(target,sweep){
       pan:stringPan(sounded.id),
     });
 
+  } else {
+    Sound.playNote(sounded.note,{
+      gain:clamp(0.14+0.26*sweep/V_MAX,0.14,0.4),
+      detune:detuneAt(thomasState.accord)*(Math.random()*2-1),
+      slack:true,
+      pan:stringPan(sounded.id),
+    });
   }
   if(thomasState.scene==='stage3'&&!s3.inPhoto){
     traces.push({x0:mpx,y0:mpy,x1:sounded.x,
@@ -2172,7 +2170,6 @@ async function renderStems(){
   let got=0;
   for(const k in stems){ stems[k].buf=abuf[STEM_KEY[k]]||null; if(stems[k].buf) got++; }
   if(got===4){ stemDur=stems.wave.buf.duration; return; }
-  todoWarn('stems');
   stemDur=stems.wave.buf?stems.wave.buf.duration:0;
 }
 
@@ -2189,7 +2186,7 @@ function startStemBed(){
     stemDur=s.buf.duration;
     any=true;
   }
-  if(!any){ todoWarn('stems'); return; }
+  if(!any)return;
   stemT0=t0; stemsStarted=true;
 }
 function stemPhase(){
@@ -2439,7 +2436,6 @@ function objSolve(el){
     if(i>=cands.length){
       el.dataset.solving='0';
       el.dataset.missing='1';
-      todoWarn('img:'+file);
       return;
     }
     im.src=cands[i++];
@@ -2719,21 +2715,6 @@ function clearWeave(){
 }
 
 let fbToken=0;
-function playFlashbacks(seq, onDone){
-  const my=++fbToken;
-  let i=0;
-  const step=()=>{
-    if(my!==fbToken) return;
-    fbToken=my;
-    if(i>=seq.length){ hideFlashback(); if(onDone) onDone(); return; }
-    const it=seq[i++];
-    if(!showFlashback(it[0],it[1],true)){ step(); return; }
-    _st(()=>{ if(my===fbToken) step(); }, it[2]);
-  };
-  step();
-  return my;
-}
-
 function showFlashback(asset,cap,fromQueue){
   if(!fromQueue) fbToken++;
   const card=$('fb-card');
@@ -3120,7 +3101,6 @@ function s2Wrong(){
   const wrongBuf=abuf['ourstory_wrong'];
   const musicMs=wrongBuf?wrongBuf.duration*1000:16000;
   if(!wrongBuf){
-    todoWarn('ourstory_wrong');
   }else{
     const boundary=stemsStarted?nextStemBoundary():(ctx?ctx.currentTime+0.05:0);
     playBuf('ourstory_wrong',{gain:0.95,bus:'music',when:boundary});
@@ -3278,6 +3258,7 @@ function s3EnterMain(){
   thomasState.water=0;
 
   s3.targetSeq=[9,8,7,9, 5,3,6,8, 2,7,6,9, 1,8,7,6, 0,9,8,7];
+  s3Bar();
   s3.targetPos=0;
   VO('Wife','come baby. 1, 2, 3, 4! You did it!',4000);
   _st(()=>{ if(thomasState.scene==='stage3')
@@ -3360,7 +3341,36 @@ function graceNote(){
   s3LastNoteAt=t;
   captureWave(want);
   s3.targetPos++;
+  s3Bar();
 }
+function s3Bar(){
+  if(thomasState.scene!=='stage3') return;
+  let bar=$('s3bar');
+  if(!bar){
+    bar=document.createElement('div');
+    bar.id='s3bar';
+    bar.innerHTML='<b class="s3b-cap"></b><span class="s3b-stave"></span>';
+    const st=bar.querySelector('.s3b-stave');
+    for(let i=0;i<S3_TOTAL;i++) st.appendChild(document.createElement('i'));
+    ROOT.appendChild(bar);
+    requestAnimationFrame(()=>bar.classList.add('on'));
+  }
+  const done=Math.min(S3_TOTAL, s3.targetPos||0);
+  const dots=bar.querySelectorAll('.s3b-stave i');
+  for(let i=0;i<dots.length;i++) dots[i].classList.toggle('lit', i<done);
+  if(done>0 && dots[done-1]){
+    const d=dots[done-1];
+    d.classList.remove('just'); void d.offsetWidth; d.classList.add('just');
+  }
+  const cap=bar.querySelector('.s3b-cap');
+  const left=S3_TOTAL-done;
+  cap.textContent = done===0 ? 'the song is still empty'
+    : left<=0 ? 'the song is whole'
+    : left<=4 ? 'almost the whole song'
+    : done+' of '+S3_TOTAL+' notes back';
+}
+function s3BarClear(){ const b=$('s3bar'); if(b) b.remove(); }
+
 function stage3OnNote(noteIdx){
   if(s3.collapsing||thomasState.sub==='lucid'&&false)return;
   if(s3.inPhoto)return;
@@ -3371,12 +3381,15 @@ function stage3OnNote(noteIdx){
   s3LastNoteAt=t;
     captureWave(noteIdx);
     s3.targetPos++;
+    s3Bar();
     s3.miss=0;
     s3.hits=(s3.hits||0)+1;
     if(s3.hits%8===0 && thomasState.sub!=='lucid') s3HitMemory();
     return;
   }
   s3.miss++;
+  const bar=$('s3bar');
+  if(bar){ bar.classList.remove('miss'); void bar.offsetWidth; bar.classList.add('miss'); }
   if(s3.miss>=3 && s3.graceUsed<GRACE_MAX && thomasState.sub!=='lucid'){
     s3.miss=0; s3.graceUsed++;
     setTimeout(()=>{ if(thomasState.scene==='stage3'&&!s3.collapsing) graceNote(); },620);
@@ -3578,6 +3591,7 @@ function screenFlicker(){
 }
 function collapse(){
   if(s3.collapsing)return; s3.collapsing=true;
+  s3BarClear();
   goalClear(); hideCue();
   watch(4600+INTERLUDE_MS+600,'let it play. just watch.');
   screenFlicker();
@@ -4659,14 +4673,6 @@ function drawRoom(p){
   dc.strokeStyle='rgba(20,34,46,0.5)';
   dc.lineWidth=2;
   dc.beginPath(); dc.moveTo(W*0.055,0); dc.lineTo(W*0.055,H); dc.stroke();
-}
-function staffLine(p, x0, yb, x1, amp, ph){
-  if(amp < 0.5){ p.line(x0, yb, x1, yb); return; }
-  p.noFill(); p.beginShape();
-  for(let x=x0; x<=x1; x+=6){
-    p.vertex(x, yb + Math.sin(x*0.03+ph)*amp + Math.sin(x*0.018-ph*1.3)*amp*0.4);
-  }
-  p.endShape();
 }
 function scoreArtKey(){
   const placed=thomasState.objects.placed.length;
@@ -5951,7 +5957,6 @@ window.teardownThomasThread=function(){
   for(const k in abuf) delete abuf[k];
   for(const k in aJob) delete aJob[k];
   for(const k in aFail) delete aFail[k];
-  for(const k in warned) delete warned[k];
   for(const k in buses) delete buses[k];
   for(const k in loops) delete loops[k];
   for(const k in stems){ stems[k].buf=null; stems[k].src=null; stems[k].gain=null; }

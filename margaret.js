@@ -1291,14 +1291,15 @@ function openLikeAFlower(){
     }
   };
 
-  const ENTRY_BEAT = 1000;
+  const ENTRY_BEAT = 450;
   const beginEntry = ()=>{
     entryBloomDone = false;
     try { SFX.play('entry_plunge'); } catch(e){}
     startEntryBloom();
     speak('entry_line1', 3200, ()=>{
       setTimeout(()=>{
-        entryToBlack(()=> speak('entry_line2', 5200, ()=>{ entryVoDone = true; }));
+        speak('entry_line2', 5200, ()=>{ entryVoDone = true; });
+        entryToBlack(()=>{});
       }, ENTRY_BEAT);
     });
     entryVoFloor = setTimeout(()=>{ entryVoDone = true; }, 22000);
@@ -2012,7 +2013,7 @@ function playScene2to3ransition(waveNum){
 function startWave1Scene2(waveNum, underlay){
   cueClear();
   if (!underlay) hideAllWaveScenes('w1s2');
-  later(1600, ()=> cueBrief('move', 'Hold SPACE to rise onto her toes. Move over an object to look at it.', ()=>{}));
+  later(1600, ()=> cueBrief('move', 'Hold SPACE to rise onto her toes. Click an object to look at it.', ()=>{}));
   SFX.play('w1s2_wedding');
   let balletOn = false;
   wSay('w1s2_notme', 2000);
@@ -2162,45 +2163,30 @@ function startWave1Scene2(waveNum, underlay){
 
   const dwellRing = $('w1s2-dwellRing');
   const dwellRingProgress = dwellRing.querySelector('.progress');
-  const W1S2_OBJECT_DWELL_MS = 500;
+
+  function chooseObject(o){
+    if (resolved || previewing || intro) return;
+    const key = o.dataset.object;
+    if (key === 'hand') finalResolve(key);
+    else if (key === 'trophy') showPreview('dancing', key);
+    else if (key === 'shoe') showPreview('shoe', key);
+    else if (key === 'ring') showPreview('ring', key);
+    else showPreview('young', key);
+  }
 
   objects.forEach(o => {
-    let dwellStart = null;
-    let dwellTimer = null;
-    let hovering = false;
-
-    function tick(){
-      if (!hovering || resolved || previewing || intro) return;
-      const p = Math.min(1, (performance.now() - dwellStart) / W1S2_OBJECT_DWELL_MS);
-      dwellRingProgress.setAttribute('stroke-dashoffset', (94.25 * (1 - p)).toFixed(2));
-      if (p >= 1){
-        const key = o.dataset.object;
-        if (key === 'hand') finalResolve(key);
-        else if (key === 'trophy') showPreview('dancing', key);
-        else if (key === 'shoe') showPreview('shoe', key);
-        else if (key === 'ring') showPreview('ring', key);
-        else showPreview('young', key);
-        return;
-      }
-      dwellTimer = requestAnimationFrame(tick);
-    }
-
-    o.addEventListener('mouseenter', (e) => {
+    o.addEventListener('mouseenter', () => {
       if (intro || resolved || previewing) return;
-      hovering = true;
-      dwellStart = performance.now();
       dwellRing.style.display = 'block';
-      dwellRingProgress.setAttribute('stroke-dashoffset', '94.25');
+      dwellRingProgress.setAttribute('stroke-dashoffset', '0');
       const r = o.getBoundingClientRect();
       dwellRing.style.left = (r.left + r.width/2) + 'px';
       dwellRing.style.top  = (r.top + r.height/2) + 'px';
-      tick();
     });
     o.addEventListener('mouseleave', () => {
-      hovering = false;
-      if (dwellTimer) cancelAnimationFrame(dwellTimer);
       dwellRing.style.display = 'none';
     });
+    o.addEventListener('click', () => chooseObject(o));
   });
 }
 
@@ -2401,7 +2387,7 @@ function startWave1Scene3(waveNum, underlay){
   window.addEventListener('mousemove', onMoveT);
   window.addEventListener('keydown', onKeyDown);
 
-  let fallTimer = null, armed = false, armedAt = 0;
+  let fallTimer = null, armed = false, armedAt = 0, warnedFall = false;
   addCleanup(()=>{ waitRing(false); cueClear(); });
   const h3 = $('w1s3-hint'); if (h3) h3.classList.remove('on');
   later(900, ()=>{
@@ -2430,6 +2416,10 @@ function startWave1Scene3(waveNum, underlay){
     gripDot.style.opacity = (0.15 + gripStrength * 0.85).toFixed(2);
     cueProgress(elapsedP);
     cueUrgency(elapsedP);
+    if (armed && !fallen && elapsedP > 0.7 && !warnedFall){
+      warnedFall = true;
+      cueBriefLeft('press', 'You cannot hold her much longer.', ()=>{});
+    }
 
     const baseAmp = W1S3_WOBBLE_AMP_DEG * intensity;
     const wobbleAmp = baseAmp * (1 - gripStrength * suppressionCap);
@@ -4390,10 +4380,9 @@ function startWave2Scene2(waveNum){
 
   function beginDolly(){
     if (dollyStarted) return; dollyStarted = true;
-    s.classList.add('dolly');
     [mgret, peter].forEach(el => {
       if (!el) return;
-      el.style.transition = 'transform 9s cubic-bezier(.32,.02,.28,1)';
+      el.style.transition = 'none';
       el.style.transform = 'scale(1) translateY(0)';
     });
   }
@@ -5141,6 +5130,26 @@ function fragWatch(el, done, o){
   });
 }
 
+function fragHold(el, done, cue, note){
+  const { art } = fragBox(el);
+  const a = Fatih.cue(cue, note);
+  cueWatch(9000);
+  if (art){
+    art.style.transition = 'opacity 1.4s var(--e-veil)';
+    art.style.opacity = '1';
+    art.style.filter = '';
+    art.style.transform = '';
+  }
+  let ended = false;
+  later(9000, ()=>{
+    if (ended) return; ended = true;
+    if (a) Fatih.fadeActive(900);
+    cueClear();
+    el.classList.add('solved');
+    later(900, done);
+  });
+}
+
 function fragLift(el, done, cue, note, endLine){
   const { art } = fragBox(el);
   const a = Fatih.cue(cue, note);
@@ -5307,8 +5316,8 @@ const FRAG_SCENES = {
       line:'w1s5_mothervoice', cry:'w1s6_crying' });
   },
   2: function(el, done){
-    fragLift(el, done, 'margaret_w2_frag2_audio_01.wav',
-      'the mirror room, hushed, the girl with the doll in the distance', 'w1s2_congrats');
+    fragHold(el, done, 'margaret_w2_frag2_audio_01.wav',
+      'the mirror room, hushed, the girl with the doll in the distance');
   },
   3: function(el, done){
     fragCatchRing(el, done, 'margaret_w2_frag3_audio_01.wav',
@@ -5319,7 +5328,7 @@ const FRAG_SCENES = {
       'no crying here, only the line itself', 'w3_crib');
   },
   5: function(el, done){
-    fragGently(el, done, 'margaret_w2_frag5_audio_01.wav',
+    fragHold(el, done, 'margaret_w2_frag5_audio_01.wav',
       'here you go darling, you did it');
   }
 };
@@ -5525,7 +5534,7 @@ function startWave3Scene2(waveNum){
     if (ended || s.style.display === 'none') return;
     const now = performance.now(), dt = Math.min(48, now - lastT); lastT = now;
     p = near > 0.42 ? Math.min(1, p + dt / SPAN) : Math.max(0, p - dt / (SPAN * 1.6));
-    if (!saidStay && near > 0.42){ saidStay = true; tip.say('stay with him'); }
+    if (!saidStay && near > 0.42){ saidStay = true; tip.say('stay close to him'); }
     tip.set(p); tip.demo(now, 0, aim);
     illo.style.filter = 'blur(' + (0.4 + p * 13).toFixed(2) + 'px) saturate(' + (1 - p * 0.55).toFixed(2) + ')';
     illo.style.transform = 'scale(' + (1 + p * 0.13).toFixed(3) + ')';
@@ -5635,7 +5644,7 @@ function startWave3Scene3(waveNum){
 }
 
 function startWave3Scene4(waveNum){
-  later(1400, ()=> cueBrief('drag', 'Press on the picture and drag it downward.', ()=>{}));
+  later(900, ()=> cueWatch(9000));
   const s = sceneShow('w3s4');
   Fatih.fadeActive(800);
   const corridor = $('w3s4-corridor'), hint = $('w3s4-hint');
@@ -5649,6 +5658,7 @@ function startWave3Scene4(waveNum){
   Fatih.cue('margaret_w2_finalshatter_01.wav', 'the ring breaking, under the corridor flip');
   const open = ()=>{
     if (armed) return; armed = true;
+    cueClear();
     if (!done) cueBrief('drag', 'Press on the picture and drag it downward.', ()=>{});
   };
   later(900, ()=>{
@@ -6720,21 +6730,7 @@ function cuePanel(){
   return el;
 }
 
-const WAVE_MARKS = {
-  1: ['Rest the cursor on a place and wait for it to settle.',
-      'Hold the space bar to lift her onto her toes.',
-      'Press it again and again when she slips.'],
-  2: ['Click the door, the pieces, the things that wait.',
-      'Hold the I, D and O keys when she cannot say it.',
-      'Move slowly. She cannot follow anything fast.'],
-  3: ['Move the mouse and stay near her.',
-      'Hold the mouse button and pull downward.',
-      'Click what she is looking at.'],
-  4: ['Click the mirror when the phone starts ringing.',
-      'Move the mouse over a thing to look at it.',
-      'Wait. She is slower than you.'],
-  5: ['Click to open what arrives.']
-};
+const WAVE_MARKS = {};
 
 function cueHome(){
   const el = $('cuePanel');
@@ -6795,7 +6791,7 @@ function centredMarks(rows, seenKey, after){
 }
 
 function houseBrief(){
-  centredMarks(['Hold the mouse button down and pull the room sideways.',
+  centredMarks(['Click and drag with the mouse to explore the room.',
                 'The left and right arrow keys move it too.',
                 'Five mirrors are waiting. Each one holds a memory.',
                 'Click a mirror to go inside it.'], 'house');
@@ -7326,8 +7322,10 @@ function onDanceComplete(){
     if (cur) cur.classList.remove('on');
     if (stage){ stage.classList.remove('on'); stage.style.display = 'none';
       stage.style.filter = ''; stage.style.opacity = ''; stage.style.transition = ''; }
-    endingStarted = false; startEndingSequence._ran = false; onDanceComplete._home = false;
+    startEndingSequence._ran = false; onDanceComplete._home = false;
     try{ SFX.cutAll(); }catch(e){}
+    if (window.Ending){ Ending.offer('margaret'); endingStarted = false; return; }
+    endingStarted = false;
     if (typeof returnToDeepSea === 'function') returnToDeepSea();
   };
 
@@ -7356,6 +7354,37 @@ function onDanceComplete(){
       onDanceComplete._floor = setTimeout(after, 9000);
     } else setTimeout(after, 2400);
   }, 2600);
+}
+
+const DANCE_SAY = [
+  [0.00, 'keep her moving'],
+  [0.22, 'she is still following you'],
+  [0.46, 'keep dancing'],
+  [0.68, 'she is holding on'],
+  [0.86, 'almost there. do not stop']
+];
+let _danceSaid = -1;
+function danceProgress(p){
+  let bar = document.getElementById('danceBar');
+  if (!bar){
+    bar = document.createElement('div');
+    bar.id = 'danceBar';
+    bar.innerHTML = '<b></b><i></i>';
+    document.body.appendChild(bar);
+    requestAnimationFrame(()=> bar.classList.add('on'));
+  }
+  bar.querySelector('i').style.width = (p * 100).toFixed(1) + '%';
+  let idx = 0;
+  for (let k = 0; k < DANCE_SAY.length; k++) if (p >= DANCE_SAY[k][0]) idx = k;
+  if (idx !== _danceSaid){
+    _danceSaid = idx;
+    bar.querySelector('b').textContent = DANCE_SAY[idx][1];
+  }
+}
+function danceProgressClear(){
+  const b = document.getElementById('danceBar');
+  if (b) b.remove();
+  _danceSaid = -1;
 }
 
 function mountGraceDance(){
@@ -7908,6 +7937,7 @@ function mountGraceDance(){
         if (!danceT0) danceT0 = now;
         const e = now - danceT0;
         const A = actSplit();
+        danceProgress(Math.min(1, e / DANCE_MS));
 
         if (inputPt && inputPrev){
           const dx = inputPt.x-inputPrev.x, dy = inputPt.y-inputPrev.y;
@@ -7983,6 +8013,7 @@ function mountGraceDance(){
       }
       if (st.phase === 'dissolve' && now-st.phaseT0 > D.dissolveMs && !st.fired){
         st.fired = true; st.phase = 'done';
+        danceProgressClear();
         window.dispatchEvent(new CustomEvent('margaretGestureComplete'));
       }
 

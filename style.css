@@ -1429,3 +1429,33 @@ html.ss-grammar [role="button"]{
   background: rgba(217, 131, 36, 0.36);
   border-color: rgba(217, 131, 36, 1);
 }
+
+#risetop {
+  position: fixed;
+  top: 22px;
+  left: 24px;
+  z-index: 20;
+  padding: 8px 2px 11px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ui);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 700ms ease, letter-spacing 500ms ease;
+}
+
+#risetop.on {
+  opacity: 0.58;
+  pointer-events: auto;
+}
+
+#risetop:hover, #risetop:focus-visible {
+  outline: none;
+  opacity: 1;
+  letter-spacing: 0.24em;
+}
