@@ -5101,6 +5101,7 @@ function fragWatch(el, done, o){
   const art = el.querySelector('.artlayer');
   const first = fragSecond(el, o.first, true);
   const music = Fatih.cue(o.cue, o.note);
+  cueWatch(o.turn + o.hold);
   let ended = false;
   const stopAll = ()=>{
     try{ if (o.cry) SFX.stop(o.cry); }catch(e){}
@@ -5125,6 +5126,7 @@ function fragWatch(el, done, o){
     if (ended) return; ended = true;
     if (music) Fatih.fadeActive(900);
     stopAll();
+    cueClear();
     el.classList.add('solved');
     later(900, done);
   });
@@ -5133,7 +5135,7 @@ function fragWatch(el, done, o){
 function fragHold(el, done, cue, note){
   const { art } = fragBox(el);
   const a = Fatih.cue(cue, note);
-  cueWatch(9000);
+  cueWatch(3000);
   if (art){
     art.style.transition = 'opacity 1.4s var(--e-veil)';
     art.style.opacity = '1';
@@ -5141,7 +5143,7 @@ function fragHold(el, done, cue, note){
     art.style.transform = '';
   }
   let ended = false;
-  later(9000, ()=>{
+  later(3000, ()=>{
     if (ended) return; ended = true;
     if (a) Fatih.fadeActive(900);
     cueClear();
@@ -5312,7 +5314,7 @@ const FRAG_SCENES = {
     fragWatch(el, done, {
       cue:'margaret_w2_frag1_music_01.wav',
       note:'ballet music with her body in it, then the fall, then a child crying',
-      first:'dancing_stage', turn:4200, hold:6400,
+      first:'dancing_stage', turn:2200, hold:3400,
       line:'w1s5_mothervoice', cry:'w1s6_crying' });
   },
   2: function(el, done){
@@ -5695,6 +5697,7 @@ function startWave3Scene4(waveNum){
     if (!dragging || done || !armed) return;
     const dy = e.clientY - lastY; lastY = e.clientY;
     if (dy > 0) pull += dy;
+    if (pull > 24 && !move._cleared){ move._cleared = true; cueClear(); }
     const deg = Math.min(180, (pull/NEED)*180);
     if (corridor) corridor.style.transform = 'rotateX(' + deg.toFixed(1) + 'deg)';
     if (pull >= NEED) finish();
@@ -6560,6 +6563,13 @@ function openStage(){
   requestAnimationFrame(()=> stage.classList.add('on'));
   if (cameraAllowed()) loadMediaPipeHands();
 
+  clearTimeout(openStage._offerNet);
+  openStage._offerNet = setTimeout(()=>{
+    if (document.getElementById('ss-ending')) return;
+    if (window.Ending){ Ending.offer('margaret'); endingStarted = false; }
+    else if (typeof returnToDeepSea === 'function'){ endingStarted = false; returnToDeepSea(); }
+  }, 90000);
+
   let started = false;
   const begin = ()=>{
     if (started) return; started = true;
@@ -6947,7 +6957,11 @@ function awaitControl(maxMs){
       hideHandCue();
       resolve();
     };
+    const hardCap = maxMs * 1.5;
+    let elapsed = 0;
     const tick = setInterval(()=>{
+      elapsed += STEP;
+      if (elapsed >= hardCap){ finish(); return; }
       if (GestureDrive._pending) return;
       waited += STEP;
       if (waited >= maxMs) finish();
@@ -7332,6 +7346,7 @@ function onDanceComplete(){
       stage.style.filter = ''; stage.style.opacity = ''; stage.style.transition = ''; }
     startEndingSequence._ran = false; onDanceComplete._home = false;
     try{ SFX.cutAll(); }catch(e){}
+    clearTimeout(openStage._offerNet);
     if (window.Ending){ Ending.offer('margaret'); endingStarted = false; return; }
     endingStarted = false;
     if (typeof returnToDeepSea === 'function') returnToDeepSea();
