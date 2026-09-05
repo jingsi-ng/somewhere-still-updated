@@ -1810,6 +1810,12 @@ function makeStudio(painting, opts){
       clearTimeout(idleT);
       voT0 = p.millis();
       voLastT = -1; voLastAt = p.millis();
+      clearTimeout(startVoice._floor);
+      startVoice._floor = setTimeout(()=>{
+        if (finished || voSeqDone) return;
+        voSeqDone = true;
+        offerEasel();
+      }, 26000);
       const est = Sound.vo('megan_vo_' + painting + '.wav', '', '', ()=>{
         voDurMs = Math.max(voDurMs, p.millis() - voT0);
         voSeqDone = true;
@@ -1980,17 +1986,24 @@ function makeStudio(painting, opts){
       const need = Math.min(0.995, lastCueAt() + 0.06);
       const poll = ()=>{
         if (finished) return;
-        if (voSeqDone || voAudioProgress() >= need){ armTools(); return; }
+        if (voSeqDone || coverGraceReady() || voAudioProgress() >= need){ armTools(); return; }
         holdT = setTimeout(poll, 250);
       };
       holdT = setTimeout(poll, 250);
     }
     function progress(){ return Math.min(1, coverage / C.covThresh[painting]); }
     function paintedEnough(){ return coverage >= C.covThresh[painting]; }
+    let _coverGraceAt = 0;
+    function coverGraceReady(){
+      if (!paintedEnough()) { _coverGraceAt = 0; return false; }
+      if (!_coverGraceAt) _coverGraceAt = performance.now();
+      return performance.now() - _coverGraceAt >= 8000;
+    }
     function paintElapsed(){ return paintT0 ? (performance.now() - paintT0) / 1000 : 0; }
     function canRest(){
       const cap = C.restAfter[painting];
       if (cap && dabCount >= 25 && paintElapsed() >= cap) return true;
+      if (coverGraceReady()) return true;
       if (!voSeqDone) return false;
       return paintedEnough();
     }

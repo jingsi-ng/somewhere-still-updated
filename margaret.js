@@ -5666,10 +5666,20 @@ function startWave3Scene4(waveNum){
   let dragging = false, lastY = 0, pull = 0, done = false;
   const NEED = 340;
   Fatih.cue('margaret_w2_finalshatter_01.wav', 'the ring breaking, under the corridor flip');
+  let flipTip = null;
   const open = ()=>{
     if (armed) return; armed = true;
     cueClear();
-    if (!done) cueBrief('drag', 'Press on the picture and drag it downward.', ()=>{});
+    if (done) return;
+    flipTip = document.createElement('div');
+    flipTip.className = 'w3s4-fliptip';
+    flipTip.textContent = 'Press on the picture and drag it downward.';
+    s.appendChild(flipTip);
+    requestAnimationFrame(()=> flipTip.classList.add('on'));
+  };
+  const clearFlipTip = ()=>{
+    if (flipTip){ flipTip.classList.remove('on'); const f = flipTip; flipTip = null;
+      setTimeout(()=>{ if (f.parentNode) f.remove(); }, 500); }
   };
   later(900, ()=>{
     const a = bindCues(SFX.play('w3s4_mama'), 'w3s4_mama');
@@ -5697,7 +5707,7 @@ function startWave3Scene4(waveNum){
     if (!dragging || done || !armed) return;
     const dy = e.clientY - lastY; lastY = e.clientY;
     if (dy > 0) pull += dy;
-    if (pull > 24 && !move._cleared){ move._cleared = true; cueClear(); }
+    if (pull > 24 && !move._cleared){ move._cleared = true; clearFlipTip(); }
     const deg = Math.min(180, (pull/NEED)*180);
     if (corridor) corridor.style.transform = 'rotateX(' + deg.toFixed(1) + 'deg)';
     if (pull >= NEED) finish();
